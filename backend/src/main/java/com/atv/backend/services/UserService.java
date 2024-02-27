@@ -19,13 +19,11 @@ public class UserService {
     private final UserRepository userRepository;
     private final TokenRepository tokenRepository;
 
-    private final EmailService emailService;
 
     @Autowired
-    public UserService(UserRepository userRepository, TokenRepository tokenRepository, EmailService emailService) {
+    public UserService(UserRepository userRepository, TokenRepository tokenRepository) {
         this.userRepository = userRepository;
         this.tokenRepository = tokenRepository;
-        this.emailService = emailService;
     }
 
     public User getUserByToken(String token) {
@@ -60,8 +58,6 @@ public class UserService {
 
         String text = MessageFormat.format("<html><body><p>You have logged in from {0} at {1}. Your token is {2}</p><p>Follow this link to authenticate to your account: <a href=\"{3}\">Activate</a></p></body></html>",
                 device, new Date(), token.getToken(), device + "/activate/" + token.getToken());
-
-        emailService.sendHtmlMessage(user.getEmail(), "Login", text);
 
         return tokenRepository.save(token);
     }
