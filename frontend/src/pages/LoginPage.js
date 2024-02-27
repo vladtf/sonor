@@ -27,8 +27,7 @@ function LoginPage() {
       .then((response) => {
         console.log(response.data);
 
-        alert("Login successful! Check your email for the activation link.");
-        window.location.href = "/login";
+        window.location.href = "/home";
       })
       .catch((error) => {
         alert("Login failed!");

@@ -23,7 +23,7 @@ const MyFooter = () => {
   return (
     <div style={containerStyle}>
       <Nav style={footerStyle}>
-        <Nav.Item>
+        {/* <Nav.Item>
           <Nav.Link
             href="https://github.com/vladtf/vta-ip-project"
             target="_blank"
@@ -31,7 +31,7 @@ const MyFooter = () => {
             <FaGithub style={{ marginRight: "5px" }} />
             Visit Our GitHub Page
           </Nav.Link>
-        </Nav.Item>
+        </Nav.Item> */}
       </Nav>
     </div>
   );
