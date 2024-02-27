@@ -1,0 +1,66 @@
+name: Build and Push to ECR Frontend
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - "frontend/**"
+  workflow_dispatch:
+
+env:
+  ECR_REPOSITORY: frontend_repository
+  AWS_REGION: eu-central-1
+  DOCKER_BUILDKIT: 1
+  DOCKER_CLI_EXPERIMENTAL: enabled
+  LOAD_BALANCER_NAME: vta-load-balancer
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          mkdir -p ~/.aws
+          echo "[default]" > ~/.aws/credentials
+          echo "aws_access_key_id = ${AWS_ACCESS_KEY_ID}" >> ~/.aws/credentials
+          echo "aws_secret_access_key = ${AWS_SECRET_ACCESS_KEY}" >> ~/.aws/credentials
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Get Load Balancer DNS Name
+        id: get-lb-dns-name
+        working-directory: frontend
+        run: |
+          DNS_NAME=$(aws elbv2 describe-load-balancers --names $LOAD_BALANCER_NAME --region $AWS_REGION --query 'LoadBalancers[0].DNSName' --output text)
+          echo "REACT_APP_LOAD_BALANCER_DNS=$DNS_NAME" > .env
+          cat .env
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm install
+
+      - name: Build app
+        env:
+          CI: false
+        working-directory: frontend
+        run: npm run build
+
+      - name: Build and push Docker image to ECR
+        working-directory: frontend
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build -t $ECR_REGISTRY/${{ env.ECR_REPOSITORY }}:$IMAGE_TAG -t $ECR_REGISTRY/${{ env.ECR_REPOSITORY }}:latest .
+          docker push $ECR_REGISTRY/${{ env.ECR_REPOSITORY }}:$IMAGE_TAG
+          docker push $ECR_REGISTRY/${{ env.ECR_REPOSITORY }}:latest
