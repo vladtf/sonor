@@ -3,7 +3,6 @@ package com.pweb.backend.controllers;
 
 import com.pweb.backend.dao.entities.Account;
 import com.pweb.backend.dao.entities.User;
-import com.pweb.backend.requests.RegisterRequest;
 import com.pweb.backend.requests.TransactionRequest;
 import com.pweb.backend.services.AccountService;
 import com.pweb.backend.services.TransactionService;
@@ -31,15 +30,6 @@ public class UserController {
         this.userService = userService;
         this.transactionService = transactionService;
         this.accountService = accountService;
-    }
-
-    @PostMapping("/register")
-    public User registerUser(@RequestBody RegisterRequest registerRequest) {
-        if (registerRequest.getEmail() == null || registerRequest.getEmail().equals("")) {
-            throw new RuntimeException("email not provided");
-        }
-
-        return userService.registerUser(registerRequest);
     }
 
 

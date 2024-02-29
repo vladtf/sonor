@@ -1,7 +1,6 @@
 package com.pweb.backend.config;
 
 import com.pweb.backend.security.JwtRequestFilter;
-import com.pweb.backend.services.DatabaseUserDetailsService;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +12,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.util.matcher.RegexRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
@@ -65,9 +65,16 @@ public class SecurityConfig {
                 .authorizeRequests(authorizeRequests ->
                         authorizeRequests
                                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/webjars/**").permitAll()
-                                .requestMatchers("/login").permitAll()
+                                .requestMatchers("/login", "/register").permitAll()
                                 .anyRequest().authenticated()
-                );
+                )
+                .logout()
+                .logoutRequestMatcher(new RegexRequestMatcher("/logout", "GET"))
+                .invalidateHttpSession(true)
+                .deleteCookies("JSESSIONID")
+                .logoutSuccessHandler((request, response, authentication) -> response.setStatus(HttpServletResponse.SC_OK))
+                .clearAuthentication(true)
+                .permitAll();
 
         // Add JWT token filter
         http.addFilterBefore(
@@ -77,6 +84,7 @@ public class SecurityConfig {
 
         return http.build();
     }
+
     // Used by Spring Security if CORS is enabled.
     @Bean
     public CorsFilter corsFilter() {

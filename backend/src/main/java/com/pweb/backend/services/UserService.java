@@ -1,16 +1,16 @@
 package com.pweb.backend.services;
 
+import com.pweb.backend.dao.entities.Role;
 import com.pweb.backend.dao.entities.Token;
 import com.pweb.backend.dao.entities.User;
+import com.pweb.backend.dao.repositories.RoleRepository;
 import com.pweb.backend.dao.repositories.TokenRepository;
 import com.pweb.backend.dao.repositories.UserRepository;
-import com.pweb.backend.requests.LoginRequest;
 import com.pweb.backend.requests.RegisterRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.text.MessageFormat;
-import java.util.Date;
 import java.util.List;
 
 @Service
@@ -18,12 +18,14 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final TokenRepository tokenRepository;
-
-
+    private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
     @Autowired
-    public UserService(UserRepository userRepository, TokenRepository tokenRepository) {
+    public UserService(UserRepository userRepository, TokenRepository tokenRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.tokenRepository = tokenRepository;
+        this.roleRepository = roleRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public User getUserByToken(String token) {
@@ -33,10 +35,18 @@ public class UserService {
 
     public User registerUser(RegisterRequest registerRequest) {
         User user = new User();
-        user.setPassword(registerRequest.getPassword());
-        user.setUsername(registerRequest.getEmail());
 
-        return userRepository.save(user);
+        user.setUsername(registerRequest.getUsername());
+        user.setPassword(passwordEncoder.encode(registerRequest.getPassword()));
+
+        user = userRepository.save(user);
+
+        Role role = new Role();
+        role.setName(Role.RoleEnum.USER);
+        role.setUser(user);
+        roleRepository.save(role);
+
+        return user;
     }
 
     public List<String> getRegisteredUsers() {

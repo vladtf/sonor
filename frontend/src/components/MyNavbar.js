@@ -1,15 +1,32 @@
 import React from "react";
 import { Nav, Navbar, NavDropdown } from "react-bootstrap";
 import { FaPiggyBank } from "react-icons/fa"; // Import the piggy bank icon from react-icons
+import axios from "axios";
+import { BACKEND_URL } from "../configuration/BackendConfig";
+import { useNavigate } from "react-router-dom";
 
 const MyNavbar = () => {
   const email = localStorage.getItem("email");
   const jwtToken = localStorage.getItem("jwtToken");
+  const roles = localStorage.getItem("roles");
+
+  const navigate = useNavigate();
 
   const handleLogout = () => {
     localStorage.removeItem("jwtToken");
     localStorage.removeItem("email");
-    window.location.href = "/login";
+
+    // send a get request to the server to invalidate the token
+    axios
+      .get(BACKEND_URL + "/logout")
+      .then((response) => {
+        console.log(response.data);
+        navigate("/login");
+      })
+      .catch((error) => {
+        console.log(error);
+      }
+      );
   };
 
   const dropdownContainerStyle = {
@@ -75,28 +92,28 @@ const MyNavbar = () => {
             </>
           )}
         </Nav>
-        {jwtToken && (
-          <Nav style={dropdownContainerStyle}>
+        <Nav style={dropdownContainerStyle}>
+          {roles.includes("ADMIN") && jwtToken && (
             <Nav.Link href="/admin" style={navLinkStyle}>
               Admin
             </Nav.Link>
-            <NavDropdown
-              title={email}
-              id="profile-nav-dropdown"
-              style={navLinkStyle}
+          )}
+          <NavDropdown
+            title="Profile"
+            id="profile-nav-dropdown"
+            style={navLinkStyle}
+          >
+            <NavDropdown.Item onClick={() => { }} style={dropdownItemStyle}>
+              Change Password
+            </NavDropdown.Item>
+            <NavDropdown.Item
+              onClick={handleLogout}
+              style={dropdownItemStyle}
             >
-              <NavDropdown.Item onClick={() => {}} style={dropdownItemStyle}>
-                Change Password
-              </NavDropdown.Item>
-              <NavDropdown.Item
-                onClick={handleLogout}
-                style={dropdownItemStyle}
-              >
-                Logout
-              </NavDropdown.Item>
-            </NavDropdown>
-          </Nav>
-        )}
+              Logout
+            </NavDropdown.Item>
+          </NavDropdown>
+        </Nav>
       </Navbar.Collapse>
     </Navbar>
   );

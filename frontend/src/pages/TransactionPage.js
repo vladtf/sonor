@@ -3,6 +3,7 @@ import MyNavbar from "../components/MyNavbar";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { BACKEND_URL } from "../configuration/BackendConfig";
+import { useNavigate } from "react-router-dom";
 
 function TransactionPage() {
   const [ibanSource, setIbanSource] = useState("");
@@ -15,9 +16,13 @@ function TransactionPage() {
 
   const token = localStorage.getItem("jwtToken");
 
-  if (!token) {
-    window.location.href = "/login";
-  }
+  const navigate = useNavigate();
+
+      useEffect(() => {
+    if (!token) {
+      navigate("/login");
+    }
+  }, [token, navigate]);
 
   useEffect(() => {
     getMyAccounts();

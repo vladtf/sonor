@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Container, Row, Col, Form, Button, Spinner } from "react-bootstrap";
 import axios from "axios";
-import MyNavbar from "../components/MyNavbar";
 import { BACKEND_URL } from "../configuration/BackendConfig";
 import { useNavigate } from "react-router-dom";
 
@@ -27,8 +26,11 @@ function LoginPage() {
       .post(BACKEND_URL + "/login", postData)
       .then((response) => {
         console.log(response.data);
-        const token = response.data
+        const data = response.data
+        const token = data.token;
+        const roles = data.roles;
         localStorage.setItem("jwtToken", "Bearer " + token); // Store the token in the local storage
+        localStorage.setItem("roles", roles); // Store the roles in the local storage
         axios.defaults.headers.common["Authorization"] = "Bearer " + token; // Set the default Authorization header
         navigate("/home");
       })
@@ -43,8 +45,7 @@ function LoginPage() {
 
   return (
     <>
-      <Container>
-        <MyNavbar />
+      <Container style={{ marginTop: "250px" }}>
         <Row>
           <Col>
             <h2

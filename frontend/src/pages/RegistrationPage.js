@@ -1,15 +1,16 @@
 import React, { useState } from "react";
 import { Container, Row, Col, Form, Button, Spinner } from "react-bootstrap";
 import axios from "axios";
-import MyNavbar from "../components/MyNavbar";
 import { BACKEND_URL } from "../configuration/BackendConfig";
+import { useNavigate } from "react-router-dom";
 
 function RegistrationPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
-  const [firstName, setFirstName] = useState("");
   const [loading, setLoading] = useState(false); // Added loading state
+
+  const navigate = useNavigate();
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -24,11 +25,11 @@ function RegistrationPage() {
     console.log("Sending registration data: ", postData);
 
     axios
-      .post(BACKEND_URL + "/api/register", postData)
+      .post(BACKEND_URL + "/register", postData)
       .then((response) => {
         console.log("Register response:", response.data);
         alert("Registration successful!");
-        window.location.href = "/login";
+        navigate("/login");
       })
       .catch((error) => {
         alert("Registration failed!");
@@ -41,8 +42,7 @@ function RegistrationPage() {
 
   return (
     <>
-      <MyNavbar />
-      <Container>
+      <Container style={{ marginTop: "250px" }}>
         <Row>
           <Col>
             <h2
@@ -65,8 +65,8 @@ function RegistrationPage() {
                     <Form.Control
                       type="text"
                       placeholder="Username*"
-                      value={firstName}
-                      onChange={(event) => setFirstName(event.target.value)}
+                      value={username}
+                      onChange={(event) => setUsername(event.target.value)}
                     />
                   </Form.Group>
                 </Col>
