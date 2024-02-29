@@ -9,6 +9,7 @@ import com.pweb.backend.requests.RegisterRequest;
 import com.pweb.backend.requests.TransactionRequest;
 import com.pweb.backend.services.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -72,8 +73,8 @@ public class UserController {
     }
 
     @GetMapping("/accounts/all")
-    public List<Account> getAllAccounts(@RequestHeader("Authorization") String token) {
-        return accountService.getAllAccounts(token);
+    public List<Account> getAllAccounts() {
+        return accountService.getAllAccounts();
     }
 
     @PutMapping("/accounts")
@@ -84,28 +85,6 @@ public class UserController {
 
         return accountService.updateAccount(token, account);
     }
-
-    @PostMapping("/login")
-    public boolean loginUser(@RequestBody LoginRequest loginRequest) {
-        Token token = userService.login(loginRequest);
-
-        if (token == null) {
-            throw new RuntimeException("user not found");
-        }
-
-        return true;
-    }
-
-    @GetMapping("/activate")
-    public TokenResponse activateUser(@RequestParam("token") String token) {
-        User user = userService.getUserByToken(token);
-        if (user == null) {
-            throw new RuntimeException("user not found");
-        }
-
-        return new TokenResponse(token, user.getEmail());
-    }
-
 
     @PostMapping("/transaction")
     public String makeTransaction(@RequestBody TransactionRequest transactionRequest, @RequestHeader("Authorization") String token) {
@@ -142,27 +121,9 @@ public class UserController {
     }
 
     @GetMapping("/news")
+    @Secured("ADMIN")
     public List<NewsService.NewsResponse> getNews() {
         return newsService.getNews();
-    }
-
-
-    private static class TokenResponse {
-        private final String token;
-        private final String email;
-
-        public TokenResponse(String token, String email) {
-            this.token = token;
-            this.email = email;
-        }
-
-        public String getToken() {
-            return token;
-        }
-
-        public String getEmail() {
-            return email;
-        }
     }
 
 

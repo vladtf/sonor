@@ -124,7 +124,7 @@ public class AccountService {
         return accounts;
     }
 
-    public List<Account> getAllAccounts(String token) {
+    public List<Account> getAllAccounts() {
         Iterable<Account> all = accountRepository.findAll();
         List<Account> allAccounts = new ArrayList<>();
         all.forEach(allAccounts::add);

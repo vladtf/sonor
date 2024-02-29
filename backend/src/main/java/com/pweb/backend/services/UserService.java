@@ -53,7 +53,7 @@ public class UserService {
 
         User user = userRepository.findByEmail(form.getEmail());
 
-        String device = form.getDevice();
+        String device = "TO REMOVE";
         Token token = new Token(device, user);
 
         String text = MessageFormat.format("<html><body><p>You have logged in from {0} at {1}. Your token is {2}</p><p>Follow this link to authenticate to your account: <a href=\"{3}\">Activate</a></p></body></html>",
