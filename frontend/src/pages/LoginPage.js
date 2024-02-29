@@ -3,11 +3,10 @@ import { Container, Row, Col, Form, Button, Spinner } from "react-bootstrap";
 import axios from "axios";
 import MyNavbar from "../components/MyNavbar";
 import { BACKEND_URL } from "../configuration/BackendConfig";
-import MyFooter from "../components/MyFooter";
 import { useNavigate } from "react-router-dom";
 
 function LoginPage() {
-  const [username, setUsername] = useState(""); 
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -44,8 +43,8 @@ function LoginPage() {
 
   return (
     <>
-      <MyNavbar />
       <Container>
+        <MyNavbar />
         <Row>
           <Col>
             <h2
@@ -120,7 +119,6 @@ function LoginPage() {
           </Col>
         </Row>
       </Container>
-      <MyFooter />
     </>
   );
 }

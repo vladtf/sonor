@@ -33,45 +33,18 @@ public class UserService {
 
     public User registerUser(RegisterRequest registerRequest) {
         User user = new User();
-        user.setFirstName(registerRequest.getFirstName());
-        user.setLastName(registerRequest.getLastName());
         user.setPassword(registerRequest.getPassword());
-        user.setEmail(registerRequest.getEmail());
-        user.setPhone(registerRequest.getPhone());
+        user.setUsername(registerRequest.getEmail());
 
         return userRepository.save(user);
     }
 
-    public boolean userExists(LoginRequest loginRequest) {
-        return userRepository.existsByEmailAndPassword(loginRequest.getEmail(), loginRequest.getPassword());
-    }
-
-    public Token login(LoginRequest form) {
-        if (!userRepository.existsByEmailAndPassword(form.getEmail(), form.getPassword())) {
-            return null;
-        }
-
-        User user = userRepository.findByEmail(form.getEmail());
-
-        String device = "TO REMOVE";
-        Token token = new Token(device, user);
-
-        String text = MessageFormat.format("<html><body><p>You have logged in from {0} at {1}. Your token is {2}</p><p>Follow this link to authenticate to your account: <a href=\"{3}\">Activate</a></p></body></html>",
-                device, new Date(), token.getToken(), device + "/activate/" + token.getToken());
-
-        return tokenRepository.save(token);
-    }
-
-    public boolean userExists(String email) {
-        return userRepository.existsByEmail(email);
-    }
-
     public List<String> getRegisteredUsers() {
-        return userRepository.findAll().stream().map(User::getEmail).toList();
+        return userRepository.findAll().stream().map(User::getUsername).toList();
     }
 
     public List<String> getAllEmails(String token) {
         List<User> all = userRepository.findAll();
-        return all.stream().map(User::getEmail).toList();
+        return all.stream().map(User::getUsername).toList();
     }
 }

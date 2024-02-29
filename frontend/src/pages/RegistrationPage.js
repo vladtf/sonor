@@ -3,27 +3,20 @@ import { Container, Row, Col, Form, Button, Spinner } from "react-bootstrap";
 import axios from "axios";
 import MyNavbar from "../components/MyNavbar";
 import { BACKEND_URL } from "../configuration/BackendConfig";
-import MyFooter from "../components/MyFooter";
 
 function RegistrationPage() {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
   const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
   const [loading, setLoading] = useState(false); // Added loading state
 
   const handleSubmit = (event) => {
     event.preventDefault();
 
     const postData = {
-      email: email,
       password: password,
-      phoneNumber: phoneNumber,
-      firstName: firstName,
-      lastName: lastName,
-      username: firstName + lastName,
+      username: username,
     };
 
     setLoading(true); // Set loading state to true
@@ -68,22 +61,12 @@ function RegistrationPage() {
             <Form onSubmit={handleSubmit}>
               <Row className="mb-3">
                 <Col>
-                  <Form.Group controlId="firstName">
+                  <Form.Group controlId="username">
                     <Form.Control
                       type="text"
-                      placeholder="First Name*"
+                      placeholder="Username*"
                       value={firstName}
                       onChange={(event) => setFirstName(event.target.value)}
-                    />
-                  </Form.Group>
-                </Col>
-                <Col>
-                  <Form.Group controlId="lastName">
-                    <Form.Control
-                      type="text"
-                      placeholder="Last Name*"
-                      value={lastName}
-                      onChange={(event) => setLastName(event.target.value)}
                     />
                   </Form.Group>
                 </Col>
@@ -113,24 +96,6 @@ function RegistrationPage() {
                   </Form.Group>
                 </Col>
               </Row>
-
-              <Form.Group controlId="email" className="mb-3">
-                <Form.Control
-                  type="email"
-                  placeholder="Your Email*"
-                  value={email}
-                  onChange={(event) => setEmail(event.target.value)}
-                />
-              </Form.Group>
-
-              <Form.Group controlId="phoneNumber" className="mb-3">
-                <Form.Control
-                  type="text"
-                  placeholder="Your Phone*"
-                  value={phoneNumber}
-                  onChange={(event) => setPhoneNumber(event.target.value)}
-                />
-              </Form.Group>
 
               <div className="d-flex justify-content-center">
                 <Button
@@ -169,7 +134,6 @@ function RegistrationPage() {
           </Col>
         </Row>
       </Container>
-      <MyFooter />
     </>
   );
 }

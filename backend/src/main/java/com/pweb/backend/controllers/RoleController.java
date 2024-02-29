@@ -31,7 +31,7 @@ public class RoleController {
 
     @GetMapping("/my-roles")
     @Operation(summary = "List roles")
-    public List<Role.Action> listRoles(@RequestHeader("Authorization") String token){
+    public List<Role.RoleEnum> listRoles(@RequestHeader("Authorization") String token){
         return roleService.listActions(token);
     }
 }

@@ -4,6 +4,7 @@ import { FaPiggyBank } from "react-icons/fa"; // Import the piggy bank icon from
 
 const MyNavbar = () => {
   const email = localStorage.getItem("email");
+  const jwtToken = localStorage.getItem("jwtToken");
 
   const handleLogout = () => {
     localStorage.removeItem("jwtToken");
@@ -39,6 +40,8 @@ const MyNavbar = () => {
         width: "100%",
         left: 0,
         right: 0,
+        borderBottomLeftRadius: "5px",
+        borderBottomRightRadius: "5px",
       }}
       className="mb-4 navbar-full-width" // Added a custom class for full width
     >
@@ -49,7 +52,7 @@ const MyNavbar = () => {
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="ml-auto">
-          {!email ? (
+          {!jwtToken ? (
             <>
               <Nav.Link href="/registration" style={navLinkStyle}>
                 Registration
@@ -72,7 +75,7 @@ const MyNavbar = () => {
             </>
           )}
         </Nav>
-        {email && (
+        {jwtToken && (
           <Nav style={dropdownContainerStyle}>
             <Nav.Link href="/admin" style={navLinkStyle}>
               Admin

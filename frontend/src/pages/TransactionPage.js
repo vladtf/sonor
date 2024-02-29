@@ -3,7 +3,6 @@ import MyNavbar from "../components/MyNavbar";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { BACKEND_URL } from "../configuration/BackendConfig";
-import MyFooter from "../components/MyFooter";
 
 function TransactionPage() {
   const [ibanSource, setIbanSource] = useState("");
@@ -117,8 +116,9 @@ function TransactionPage() {
 
   return (
     <>
-      <MyNavbar />
       <Container>
+        <MyNavbar />
+
         <Row>
           <h2
             style={{ color: "#89CFF0", fontSize: "24px", textAlign: "center" }}
@@ -243,7 +243,6 @@ function TransactionPage() {
           </Col>
         </Row>
       </Container>
-      <MyFooter />
     </>
   );
 }

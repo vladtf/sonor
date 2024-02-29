@@ -5,20 +5,20 @@ import com.pweb.backend.dao.entities.Role;
 public class AddRoleRequest {
 
     private final String email;
-    private final Role.Action action;
+    private final Role.RoleEnum roleEnum;
 
 
     public String getEmail() {
         return email;
     }
 
-    public Role.Action getAction() {
-        return action;
+    public Role.RoleEnum getAction() {
+        return roleEnum;
     }
 
-    public AddRoleRequest(String email, Role.Action action) {
+    public AddRoleRequest(String email, Role.RoleEnum roleEnum) {
         this.email = email;
-        this.action = action;
+        this.roleEnum = roleEnum;
     }
 
 

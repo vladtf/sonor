@@ -3,7 +3,6 @@ import MyNavbar from "../components/MyNavbar";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import BackendConfig, { BACKEND_URL } from "../configuration/BackendConfig";
-import MyFooter from "../components/MyFooter";
 
 function AccountsPage() {
   const [accounts, setAccounts] = useState([]);
@@ -112,8 +111,8 @@ function AccountsPage() {
 
   return (
     <>
-      <MyNavbar />
       <Container>
+        <MyNavbar />
         <Row></Row>
         <Row>
           <h2
@@ -205,7 +204,6 @@ function AccountsPage() {
           )}
         </Row>
       </Container>
-      <MyFooter />
     </>
   );
 }

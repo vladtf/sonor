@@ -11,21 +11,27 @@ public class Role {
     private Integer id;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    private Action action;
+    private RoleEnum name;
 
-    public static enum Action {
-        DISPLAY_USERS, UPDATE_USERS, DISPLAY_ACCOUNTS
+    public static enum RoleEnum {
+        USER, ADMIN
     }
 
     public Role() {
     }
-    public Role(Integer id, User user, Action action) {
+
+    public Role(RoleEnum name, User user) {
+        this.name = name;
+        this.user = user;
+    }
+
+    public Role(Integer id, User user, RoleEnum name) {
         this.id = id;
         this.user = user;
-        this.action = action;
+        this.name = name;
     }
 
     public Integer getId() {
@@ -44,11 +50,12 @@ public class Role {
         this.user = user;
     }
 
-    public Action getAction() {
-        return action;
+    public RoleEnum getName() {
+        return name;
     }
 
-    public void setAction(Action action) {
-        this.action = action;
+    public void setName(RoleEnum name) {
+        this.name = name;
     }
+
 }

@@ -3,7 +3,6 @@ import MyNavbar from "../components/MyNavbar";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { BACKEND_URL } from "../configuration/BackendConfig";
-import MyFooter from "../components/MyFooter";
 
 function HomePage() {
   const token = localStorage.getItem("jwtToken");
@@ -93,8 +92,8 @@ function HomePage() {
 
   return (
     <>
-      <MyNavbar />
       <Container>
+        <MyNavbar />
         <Row>
           <Col>
             <h2
@@ -216,7 +215,6 @@ function HomePage() {
           </Col>
         </Row>
       </Container>
-      <MyFooter />
     </>
   );
 }

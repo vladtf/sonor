@@ -3,7 +3,6 @@ import MyNavbar from "../components/MyNavbar";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { BACKEND_URL } from "../configuration/BackendConfig";
-import MyFooter from "../components/MyFooter";
 
 function AdminPage() {
   const [roles, setRoles] = useState([]);
@@ -169,8 +168,8 @@ function AdminPage() {
 
   return (
     <>
-      <MyNavbar />
       <Container>
+        <MyNavbar />
         <Row>
           <Col>
             <h2 className="text-center" style={{ color: "#89CFF0" }}>
@@ -296,7 +295,6 @@ function AdminPage() {
           </Col>
         </Row>
       </Container>
-      <MyFooter />
     </>
   );
 }

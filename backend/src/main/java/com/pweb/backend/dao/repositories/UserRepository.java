@@ -14,6 +14,8 @@ public interface UserRepository extends CrudRepository<User, Integer> {
     @Override
     Optional<User> findById(Integer id);
 
+    Optional<User> findByUsername(String username);
+
     @Override
     <S extends User> S save(S entity);
 
@@ -26,9 +28,6 @@ public interface UserRepository extends CrudRepository<User, Integer> {
     @Override
     boolean existsById(Integer id);
 
-    boolean existsByEmail(String email);
+    boolean existsByUsername(String username);
 
-    boolean existsByEmailAndPassword(String email, String password);
-
-    User findByEmail(String email);
 }
