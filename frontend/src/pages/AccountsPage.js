@@ -10,7 +10,7 @@ function AccountsPage() {
   const [currency, setCurrency] = useState("EUR");
   const [type, setType] = useState("SAVINGS");
 
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("jwtToken");
 
   if (!token) {
     window.location.href = "/login";

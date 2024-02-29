@@ -6,7 +6,7 @@ import { BACKEND_URL } from "../configuration/BackendConfig";
 import MyFooter from "../components/MyFooter";
 
 function HomePage() {
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("jwtToken");
   if (!token) {
     window.location.href = "/login";
   }
@@ -17,8 +17,8 @@ function HomePage() {
   const [news, setNews] = useState([]);
 
   useEffect(() => {
-    getAccounts();
-    getTransactions();
+    // getAccounts();
+    // getTransactions();
     getExchangeResults();
     getNews();
   }, []);

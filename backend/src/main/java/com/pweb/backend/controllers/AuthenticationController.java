@@ -1,8 +1,7 @@
-package com.pweb.backend.security;
+package com.pweb.backend.controllers;
 
 import com.pweb.backend.requests.LoginRequest;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import org.springframework.http.HttpHeaders;
+import com.pweb.backend.security.JwtUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/")
-@SecurityRequirement(name = "BearerAuth") // Make sure this matches your SecurityScheme name
 public class AuthenticationController {
     private final JwtUtil jwtUtil;
     private final AuthenticationManager authenticationManager;
@@ -25,7 +23,7 @@ public class AuthenticationController {
         this.authenticationManager = authenticationManager;
     }
     @PostMapping("/login")
-    public ResponseEntity<Void> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<String> login(@RequestBody LoginRequest request) {
         try {
             Authentication authenticate = authenticationManager
                     .authenticate(
@@ -35,20 +33,16 @@ public class AuthenticationController {
                     );
 
             User user = (User) authenticate.getPrincipal();
+            String token = jwtUtil.generateToken(user);
 
-            return ResponseEntity.ok()
-                    .header(
-                            HttpHeaders.AUTHORIZATION,
-                            jwtUtil.generateToken(user)
-                    )
-                    .build();
+            return ResponseEntity.ok().body(token); // Return the token in the response header "Authorization
         } catch (BadCredentialsException ex) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
 
     @GetMapping("/protected")
-    @Secured("USER") // Role-based authorization
+    @Secured("ADMIN") // Role-based authorization
     public String protectedResource() {
         return "This is a protected resource.";
     }

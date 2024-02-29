@@ -6,7 +6,7 @@ const MyNavbar = () => {
   const email = localStorage.getItem("email");
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
+    localStorage.removeItem("jwtToken");
     localStorage.removeItem("email");
     window.location.href = "/login";
   };

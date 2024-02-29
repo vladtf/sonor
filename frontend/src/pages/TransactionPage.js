@@ -14,7 +14,7 @@ function TransactionPage() {
   const [transactions, setTransactions] = useState([]);
   const [selectedAccount, setSelectedAccount] = useState("");
 
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("jwtToken");
 
   if (!token) {
     window.location.href = "/login";

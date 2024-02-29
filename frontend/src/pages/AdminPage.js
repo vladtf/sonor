@@ -13,7 +13,7 @@ function AdminPage() {
   const [accounts, setAccounts] = useState([]);
   const [updatedBalances, setUpdatedBalances] = useState({});
 
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("jwtToken");
 
   if (!token) {
     window.location.href = "/login";

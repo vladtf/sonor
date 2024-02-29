@@ -4,30 +4,34 @@ import axios from "axios";
 import MyNavbar from "../components/MyNavbar";
 import { BACKEND_URL } from "../configuration/BackendConfig";
 import MyFooter from "../components/MyFooter";
+import { useNavigate } from "react-router-dom";
 
 function LoginPage() {
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState(""); 
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const navigate = useNavigate();
 
   const handleSubmit = (event) => {
     event.preventDefault();
 
     const postData = {
-      email: email,
+      username: username,
       password: password,
-      device: window.location.protocol + "//" + window.location.host,
     };
 
     setLoading(true); // Set loading state to true
 
     console.log("Sending login data: ", postData);
     axios
-      .post(BACKEND_URL + "/api/login", postData)
+      .post(BACKEND_URL + "/login", postData)
       .then((response) => {
         console.log(response.data);
-
-        window.location.href = "/home";
+        const token = response.data
+        localStorage.setItem("jwtToken", "Bearer " + token); // Store the token in the local storage
+        axios.defaults.headers.common["Authorization"] = "Bearer " + token; // Set the default Authorization header
+        navigate("/home");
       })
       .catch((error) => {
         alert("Login failed!");
@@ -58,12 +62,12 @@ function LoginPage() {
         <Row>
           <Col md={{ span: 6, offset: 3 }}>
             <Form onSubmit={handleSubmit}>
-              <Form.Group controlId="email" className="mb-3">
-                <Form.Label>Email:</Form.Label>
+              <Form.Group controlId="username" className="mb-3">
+                <Form.Label>Username:</Form.Label>
                 <Form.Control
-                  type="email"
-                  value={email}
-                  onChange={(event) => setEmail(event.target.value)}
+                  type="text"
+                  value={username}
+                  onChange={(event) => setUsername(event.target.value)}
                 />
               </Form.Group>
 

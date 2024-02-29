@@ -2,14 +2,13 @@
 package com.pweb.backend.controllers;
 
 import com.pweb.backend.dao.entities.Account;
-import com.pweb.backend.dao.entities.Token;
 import com.pweb.backend.dao.entities.User;
-import com.pweb.backend.requests.LoginRequest;
 import com.pweb.backend.requests.RegisterRequest;
 import com.pweb.backend.requests.TransactionRequest;
-import com.pweb.backend.services.*;
+import com.pweb.backend.services.AccountService;
+import com.pweb.backend.services.TransactionService;
+import com.pweb.backend.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -26,17 +25,12 @@ public class UserController {
 
     private final AccountService accountService;
 
-    private final ExchangeService exchangeService;
-
-    private final NewsService newsService;
 
     @Autowired
-    public UserController(UserService userService, TransactionService transactionService, AccountService accountService, ExchangeService exchangeService, NewsService newsService) {
+    public UserController(UserService userService, TransactionService transactionService, AccountService accountService) {
         this.userService = userService;
         this.transactionService = transactionService;
         this.accountService = accountService;
-        this.exchangeService = exchangeService;
-        this.newsService = newsService;
     }
 
     @PostMapping("/register")
@@ -114,18 +108,6 @@ public class UserController {
 
         return accountService.findTransactionsByIban(iban, user);
     }
-
-    @GetMapping("/exchange")
-    public List<ExchangeService.ExchangeResponse> getExchangeRates() {
-        return exchangeService.getExchangeRates();
-    }
-
-    @GetMapping("/news")
-    @Secured("ADMIN")
-    public List<NewsService.NewsResponse> getNews() {
-        return newsService.getNews();
-    }
-
 
     public static class TransactionResponse {
         private final Double sum;
