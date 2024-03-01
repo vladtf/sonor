@@ -12,14 +12,15 @@ public class LoggingInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
-        // Log request details
         logger.info("Received request: {} {} from {}", request.getMethod(), request.getRequestURI(), request.getRemoteAddr());
         return true;
     }
 
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
-        // Log response details
-        logger.info("Sent response: {} {} with status {} and exception {}", request.getMethod(), request.getRequestURI(), response.getStatus(), ex);
+        logger.info("Request {} {} from {} completed with status {}", request.getMethod(), request.getRequestURI(), request.getRemoteAddr(), response.getStatus());
+        if (ex != null) {
+            logger.error("Request {} {} from {} failed with exception", request.getMethod(), request.getRequestURI(), request.getRemoteAddr(), ex);
+        }
     }
 }
