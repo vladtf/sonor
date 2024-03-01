@@ -1,4 +1,4 @@
-package com.pweb.backend.services;
+package com.pweb.backend.security;
 
 import com.pweb.backend.dao.entities.Role;
 import com.pweb.backend.dao.repositories.RoleRepository;
@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -42,6 +43,7 @@ public class DatabaseUserDetailsService implements UserDetailsService {
     }
 
     @PostConstruct
+    @Transactional
     public void init() {
         // delete admin user if exists
         userRepository.findByUsername("admin").ifPresent(userRepository::delete);
@@ -53,6 +55,7 @@ public class DatabaseUserDetailsService implements UserDetailsService {
 
         user = userRepository.findByUsername("admin").orElseThrow();
         roleRepository.save(new Role(Role.RoleEnum.USER, user));
+        roleRepository.save(new Role(Role.RoleEnum.ADMIN, user));
 
 
         // delete user user if exists

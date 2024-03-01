@@ -19,18 +19,10 @@ public class User {
     private String username;
     private String password;
 
-
-//    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
-//    @Cascade(org.hibernate.annotations.CascadeType.ALL)
-//    private List<Token> tokens;
-
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
-    //@OneToMany(mappedBy = "user")
-    @Cascade(org.hibernate.annotations.CascadeType.ALL)
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Post> posts;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
-    @Cascade(org.hibernate.annotations.CascadeType.ALL)
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Role> roles;
 
 
@@ -50,6 +42,14 @@ public class User {
         this.id = id;
     }
 
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
     public String getPassword() {
         return password;
     }
@@ -58,8 +58,12 @@ public class User {
         this.password = password;
     }
 
-    public List<Post> getAccounts() {
+    public List<Post> getPosts() {
         return posts;
+    }
+
+    public void setPosts(List<Post> posts) {
+        this.posts = posts;
     }
 
     public List<Role> getRoles() {
@@ -68,17 +72,5 @@ public class User {
 
     public void setRoles(List<Role> roles) {
         this.roles = roles;
-    }
-
-    public void setAccounts(List<Post> posts) {
-        this.posts = posts;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
     }
 }

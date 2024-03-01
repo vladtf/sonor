@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import BackendConfig, { BACKEND_URL } from "../configuration/BackendConfig";
 import { useNavigate } from "react-router-dom";
 
-function PostsPage() {
+function PostPage() {
   const [posts, setPosts] = useState([]);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -160,7 +160,7 @@ function PostsPage() {
             posts.map((post, index) => {
               return (
                 <Col md="3" key={index} className="p-2">
-                  <Card  className="card-hover-effect" >
+                  <Card  className="card-hover-effect" onClick={() => navigate(`/post/${post.id}`)}>
                     <Card.Body>
                       <Card.Title>{post.title}</Card.Title>
                       <Card.Subtitle className="mb-2 text-muted">
@@ -185,4 +185,4 @@ function PostsPage() {
   );
 }
 
-export default PostsPage;
+export default PostPage;

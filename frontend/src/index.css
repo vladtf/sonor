@@ -11,3 +11,13 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.card-hover-effect {
+  cursor: pointer; /* Changes cursor to pointer */
+  transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transition for hover effects */
+}
+
+.card-hover-effect:hover {
+  transform: scale(1.05); /* Slightly increase the size of the card on hover */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add shadow for depth effect on hover */
+}

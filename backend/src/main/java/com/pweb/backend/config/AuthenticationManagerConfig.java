@@ -1,6 +1,6 @@
 package com.pweb.backend.config;
 
-import com.pweb.backend.services.DatabaseUserDetailsService;
+import com.pweb.backend.security.DatabaseUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -28,4 +28,6 @@ public class AuthenticationManagerConfig {
                 .and()
                 .build();
     }
+
+
 }

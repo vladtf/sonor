@@ -1,6 +1,6 @@
 import React from "react";
 import { Nav, Navbar, NavDropdown } from "react-bootstrap";
-import { FaTeamspeak } from "react-icons/fa"; // Import the piggy bank icon from react-icons
+import { FaCloud, FaHome, FaTeamspeak } from "react-icons/fa"; // Import the piggy bank icon from react-icons
 import axios from "axios";
 import { BACKEND_URL } from "../configuration/BackendConfig";
 import { useNavigate } from "react-router-dom";
@@ -60,30 +60,30 @@ const MyNavbar = () => {
       }}
       className="mb-4"
     >
-      <Navbar.Brand href="/home" style={brandStyle}>
-        <FaTeamspeak style={{ marginRight: "5px", marginLeft: "10px" }} /> Sonor
+      <Navbar.Brand href="/home" style={brandStyle} className="px-2">
+        <FaTeamspeak style={{ marginRight: "5px"}} /> Sonor
       </Navbar.Brand>
-      <Navbar.Toggle aria-controls="basic-navbar-nav" />
-      <Navbar.Collapse id="basic-navbar-nav">
+      <Navbar.Toggle aria-controls="basic-navbar-nav" className="mx-2"/>
+      <Navbar.Collapse id="basic-navbar-nav" >
         <Nav className="ml-auto">
           {!jwtToken ? (
             <>
-              <Nav.Link href="/registration" style={navLinkStyle}>
+              <Nav.Link href="/registration" style={navLinkStyle} className="px-2">
                 Registration
               </Nav.Link>
-              <Nav.Link href="/login" style={navLinkStyle}>
+              <Nav.Link href="/login" style={navLinkStyle} className="px-2">
                 Login
               </Nav.Link>
             </>
           ) : (
             <>
-              <Nav.Link href="/home" style={{ ...navLinkStyle, fontWeight: currentPage === "/home" ? "bold" : "normal" }}>
-                Home
+              <Nav.Link href="/home" style={{ ...navLinkStyle, fontWeight: currentPage === "/home" ? "bold" : "normal" }} className="px-2">
+                <FaHome style={{ marginRight: "5px" }} /> Home
               </Nav.Link>
-              <Nav.Link href="/posts" style={{ ...navLinkStyle, fontWeight: currentPage === "/posts" ? "bold" : "normal" }}>
-                Posts
+              <Nav.Link href="/posts" style={{ ...navLinkStyle, fontWeight: currentPage === "/posts" ? "bold" : "normal" }} className="px-2">
+                <FaCloud style={{ marginRight: "5px" }} /> Posts
               </Nav.Link>
-              <Nav.Link href="/transactions" style={{ ...navLinkStyle, fontWeight: currentPage === "/transactions" ? "bold" : "normal" }}>
+              <Nav.Link href="/transactions" style={{ ...navLinkStyle, fontWeight: currentPage === "/transactions" ? "bold" : "normal" }} className="px-2">
                 Transactions
               </Nav.Link>
             </>
@@ -91,7 +91,7 @@ const MyNavbar = () => {
         </Nav>
         <Nav style={dropdownContainerStyle}>
           {roles.includes("ADMIN") && jwtToken && (
-            <Nav.Link href="/admin" style={navLinkStyle}>
+            <Nav.Link href="/admin" style={navLinkStyle} className="px-2">
               Admin
             </Nav.Link>
           )}
@@ -99,6 +99,7 @@ const MyNavbar = () => {
             title="Profile"
             id="profile-nav-dropdown"
             style={navLinkStyle}
+            className="px-2"
           >
             <NavDropdown.Item onClick={() => { }} style={dropdownItemStyle}>
               Change Password

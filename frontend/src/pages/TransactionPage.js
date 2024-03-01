@@ -103,7 +103,7 @@ function TransactionPage() {
   return (
     <>
       <Container>
-        <MyNavbar />
+        
         <Row>
           <Col md={6}>
             <div className="mb-3">

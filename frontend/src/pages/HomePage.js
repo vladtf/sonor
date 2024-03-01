@@ -87,7 +87,7 @@ function HomePage() {
   return (
     <>
       <Container>
-        <MyNavbar />
+        
         <Row className="mt-4">
           <Col>
             <Card>

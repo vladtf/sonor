@@ -7,9 +7,11 @@ import LoginPage from "./pages/LoginPage";
 import RegistrationPage from "./pages/RegistrationPage";
 import HomePage from "./pages/HomePage";
 import { Navigate } from "react-router-dom";
-import PostPage from "./pages/PostPage.js";
+import PostsPage from "./pages/PostsPage.js";
 import TransactionPage from "./pages/TransactionPage";
 import AdminPage from "./pages/AdminPage.js";
+import PostPage from "./pages/PostPage";
+import MyNavbar from "./components/MyNavbar";
 
 function App() {
   const [email, setEmail] = useState("");
@@ -22,16 +24,17 @@ function App() {
 
   return (
     <BrowserRouter>
+      <MyNavbar />
       <Routes>
         {/* <Route exact path="/" component={Home} /> */}
         <Route exact path="/" element={<Navigate to="/login" />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/registration" element={<RegistrationPage />} />
         <Route path="/home" element={<HomePage />} />
-        <Route path="/posts" element={<PostPage />} />
+        <Route path="/posts" element={<PostsPage />} />
+        <Route path="/post/:postId" element={<PostPage />} />
         <Route path="/transactions" element={<TransactionPage />} />
         <Route path="/admin" element={<AdminPage />} />
-
         <Route path="/*" element={<h1>Not Found</h1>} />
       </Routes>
     </BrowserRouter>

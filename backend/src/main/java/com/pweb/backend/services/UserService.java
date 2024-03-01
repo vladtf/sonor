@@ -1,10 +1,8 @@
 package com.pweb.backend.services;
 
 import com.pweb.backend.dao.entities.Role;
-import com.pweb.backend.dao.entities.Token;
 import com.pweb.backend.dao.entities.User;
 import com.pweb.backend.dao.repositories.RoleRepository;
-import com.pweb.backend.dao.repositories.TokenRepository;
 import com.pweb.backend.dao.repositories.UserRepository;
 import com.pweb.backend.requests.RegisterRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,21 +15,16 @@ import java.util.List;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final TokenRepository tokenRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     @Autowired
-    public UserService(UserRepository userRepository, TokenRepository tokenRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
-        this.tokenRepository = tokenRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
-    public User getUserByToken(String token) {
-        Token updatedToken = tokenRepository.findByToken(token);
-        return updatedToken.getUser();
-    }
+
 
     public User registerUser(RegisterRequest registerRequest) {
         User user = new User();

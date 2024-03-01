@@ -141,7 +141,7 @@ function AdminPage() {
   return (
     <>
       <Container>
-        <MyNavbar />
+        
         <Row>
           <Col>
             <h3>My Roles</h3>

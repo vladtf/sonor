@@ -25,6 +25,11 @@ public class Post {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @PreRemove
+    public void preRemove() {
+        user.getPosts().remove(this);
+    }
+
     public Post() {
     }
 

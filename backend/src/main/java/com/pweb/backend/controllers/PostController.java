@@ -40,8 +40,8 @@ public class PostController {
     @Secured("ROLE_USER")
     public ResponseEntity<List<PostResponse>> deletePost(@RequestBody DeletePostRequest deletePostRequest) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        List<Post> posts = postService.deletePost(user, deletePostRequest.id);
-        return new ResponseEntity<>(buildResponseBody(posts), HttpStatus.OK);
+        postService.deletePost(user, deletePostRequest.id);
+        return new ResponseEntity<>(buildResponseBody(postService.getAllPosts(user)), HttpStatus.OK);
     }
 
     private List<PostResponse> buildResponseBody(List<Post> posts) {
