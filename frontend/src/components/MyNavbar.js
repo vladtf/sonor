@@ -1,6 +1,6 @@
 import React from "react";
 import { Nav, Navbar, NavDropdown } from "react-bootstrap";
-import { FaCloud } from "react-icons/fa"; // Import the piggy bank icon from react-icons
+import { FaTeamspeak } from "react-icons/fa"; // Import the piggy bank icon from react-icons
 import axios from "axios";
 import { BACKEND_URL } from "../configuration/BackendConfig";
 import { useNavigate } from "react-router-dom";
@@ -61,7 +61,7 @@ const MyNavbar = () => {
       className="mb-4"
     >
       <Navbar.Brand href="/home" style={brandStyle}>
-        <FaCloud style={{ marginRight: "5px", marginLeft: "10px" }} /> Sonor
+        <FaTeamspeak style={{ marginRight: "5px", marginLeft: "10px" }} /> Sonor
       </Navbar.Brand>
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">
