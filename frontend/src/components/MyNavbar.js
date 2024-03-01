@@ -10,6 +10,8 @@ const MyNavbar = () => {
   const jwtToken = localStorage.getItem("jwtToken");
   const roles = localStorage.getItem("roles");
 
+  const currentPage = window.location.pathname;
+
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -75,13 +77,13 @@ const MyNavbar = () => {
             </>
           ) : (
             <>
-              <Nav.Link href="/home" style={navLinkStyle}>
+              <Nav.Link href="/home" style={{ ...navLinkStyle, fontWeight: currentPage === "/home" ? "bold" : "normal" }}>
                 Home
               </Nav.Link>
-              <Nav.Link href="/accounts" style={navLinkStyle}>
-                Accounts
+              <Nav.Link href="/posts" style={{ ...navLinkStyle, fontWeight: currentPage === "/posts" ? "bold" : "normal" }}>
+                Posts
               </Nav.Link>
-              <Nav.Link href="/transactions" style={navLinkStyle}>
+              <Nav.Link href="/transactions" style={{ ...navLinkStyle, fontWeight: currentPage === "/transactions" ? "bold" : "normal" }}>
                 Transactions
               </Nav.Link>
             </>

@@ -46,6 +46,23 @@ public class PostService {
         return getAllPosts(user);
     }
 
+    public List<Post> deletePost(org.springframework.security.core.userdetails.User user, Integer id) {
+        Optional<User> userOptional = userRepository.findByUsername(user.getUsername());
+        if (userOptional.isEmpty()) {
+            throw new RuntimeException("User not found.");
+        }
+        Optional<Post> postOptional = postRepository.findById(id);
+        if (postOptional.isEmpty()) {
+            throw new RuntimeException("Post not found.");
+        }
+        Post post = postOptional.get();
+        if (!post.getUser().getId().equals(userOptional.get().getId())) {
+            throw new RuntimeException("Post not found.");
+        }
+        postRepository.delete(post);
+        return getAllPosts(user);
+    }
+
 //    public List<Post> getUserAccountsByToken(String token) {
 //        User user = userService.getUserByToken(token);
 //        //return user.getAccounts();

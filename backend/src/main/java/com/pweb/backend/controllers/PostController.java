@@ -25,14 +25,7 @@ public class PostController {
     @Secured("ROLE_USER")
     public ResponseEntity<List<PostResponse>> getAllPosts() {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return new ResponseEntity<>(postService.getAllPosts(user).stream().map(post -> {
-            PostResponse postResponse = new PostResponse();
-            postResponse.id = post.getId();
-            postResponse.title = post.getTitle();
-            postResponse.content = post.getContent();
-            postResponse.category = post.getCategory();
-            return postResponse;
-        }).toList(), HttpStatus.OK);
+        return new ResponseEntity<>(buildResponseBody(postService.getAllPosts(user)), HttpStatus.OK);
     }
 
     @PostMapping("/create")
@@ -40,14 +33,26 @@ public class PostController {
     public ResponseEntity<List<PostResponse>> createPost(@RequestBody NewPostRequest newPostRequest) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         List<Post> posts = postService.createPost(user, newPostRequest);
-        return new ResponseEntity<>(posts.stream().map(post -> {
+        return new ResponseEntity<>(buildResponseBody(posts), HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("/delete")
+    @Secured("ROLE_USER")
+    public ResponseEntity<List<PostResponse>> deletePost(@RequestBody DeletePostRequest deletePostRequest) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        List<Post> posts = postService.deletePost(user, deletePostRequest.id);
+        return new ResponseEntity<>(buildResponseBody(posts), HttpStatus.OK);
+    }
+
+    private List<PostResponse> buildResponseBody(List<Post> posts) {
+        return posts.stream().map(post -> {
             PostResponse postResponse = new PostResponse();
             postResponse.id = post.getId();
             postResponse.title = post.getTitle();
             postResponse.content = post.getContent();
             postResponse.category = post.getCategory();
             return postResponse;
-        }).toList(), HttpStatus.CREATED);
+        }).toList();
     }
 
 
@@ -55,6 +60,10 @@ public class PostController {
         public String title;
         public String content;
         public Post.PostCategory category;
+    }
+
+    public static class DeletePostRequest {
+        public Integer id;
     }
 
     public static class PostResponse {

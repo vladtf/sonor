@@ -11,46 +11,42 @@ function HomePage() {
   const navigate = useNavigate();
   useEffect(() => {
     if (!token) {
+      delete axios.defaults.headers.common["Authorization"];
       navigate("/login");
+    } else {
+      axios.defaults.headers.common["Authorization"] = token;
     }
   }, [token, navigate]);
 
-  const [accounts, setAccounts] = useState([]);
+  const [posts, setPosts] = useState([]);
   const [transactions, setTransactions] = useState([]);
   const [exchangeResults, setExchangeResults] = useState([]);
   const [news, setNews] = useState([]);
 
+
   useEffect(() => {
-    // getAccounts();
+    getPosts();
     // getTransactions();
     getExchangeResults();
     getNews();
   }, []);
 
-  const getAccounts = () => {
-    const headers = {
-      Authorization: token,
-    };
-
+  const getPosts = () => {
     axios
-      .get(BACKEND_URL + "/api/accounts", { headers: headers })
+      .get(BACKEND_URL + "/api/posts/all")
       .then((response) => {
         console.log(response.data);
-        setAccounts(response.data);
+        setPosts(response.data);
       })
       .catch((error) => {
-        alert("Error retrieving accounts!");
+        alert("Error retrieving posts!");
         console.error(error.response.data);
       });
   };
 
   const getTransactions = () => {
-    const headers = {
-      Authorization: token,
-    };
-
     axios
-      .get(BACKEND_URL + "/api/transactions", { headers: headers })
+      .get(BACKEND_URL + "/api/transactions")
       .then((response) => {
         console.log(response.data);
         setTransactions(response.data);
@@ -62,12 +58,9 @@ function HomePage() {
   };
 
   const getExchangeResults = () => {
-    const headers = {
-      Authorization: token,
-    };
 
     axios
-      .get(BACKEND_URL + "/api/exchange", { headers: headers })
+      .get(BACKEND_URL + "/api/exchange")
       .then((response) => {
         console.log(response.data);
         setExchangeResults(response.data);
@@ -79,12 +72,8 @@ function HomePage() {
   };
 
   const getNews = () => {
-    const headers = {
-      Authorization: token,
-    };
-
     axios
-      .get(BACKEND_URL + "/api/news", { headers: headers })
+      .get(BACKEND_URL + "/api/news")
       .then((response) => {
         console.log(response.data);
         setNews(response.data);
@@ -164,28 +153,27 @@ function HomePage() {
           </Col>
           <Col>
             <Card>
-              <Card.Header>Accounts</Card.Header>
+              <Card.Header>Posts</Card.Header>
               <Card.Body>
-                {accounts.length === 0 ? (
-                  <p>No accounts found.</p>
+                {posts.length === 0 ? (
+                  <p>No posts found.</p>
                 ) : (
-                  accounts.map((account, index) => (
+                  posts.map((post, index) => (
                     <Card key={index} className="mb-3">
                       <Card.Body>
-                        <Card.Title>{account.iban}</Card.Title>
+                        <Card.Title>{post.title}</Card.Title>
                         <Card.Subtitle className="mb-2 text-muted">
-                          {account.currency}
+                          {post.category}
                         </Card.Subtitle>
-                        <Card.Text>{account.type}</Card.Text>
-                        <Card.Text>Balance: {account.balance}</Card.Text>
+                        <Card.Text>{post.content}</Card.Text>
                       </Card.Body>
                     </Card>
                   ))
                 )}
               </Card.Body>
               <Card.Footer>
-                <Button variant="primary" href="/accounts">
-                  View All Accounts
+                <Button variant="primary" href="/posts">
+                  View All Posts
                 </Button>
               </Card.Footer>
             </Card>

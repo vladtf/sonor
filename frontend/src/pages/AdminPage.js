@@ -10,26 +10,24 @@ function AdminPage() {
   const [email, setEmail] = useState("");
   const [role, setRole] = useState("");
   const [emails, setEmails] = useState([]);
-  const [accounts, setAccounts] = useState([]);
+  const [posts, setPosts] = useState([]);
   const [updatedBalances, setUpdatedBalances] = useState({});
 
   const token = localStorage.getItem("jwtToken");
-
   const navigate = useNavigate();
-
   useEffect(() => {
     if (!token) {
+      delete axios.defaults.headers.common["Authorization"];
       navigate("/login");
+    } else {
+      axios.defaults.headers.common["Authorization"] = token;
     }
   }, [token, navigate]);
 
-  const getMyRoles = () => {
-    const headers = {
-      Authorization: token,
-    };
 
+  const getMyRoles = () => {
     axios
-      .get(BACKEND_URL + "/roles/my-roles", { headers: headers })
+      .get(BACKEND_URL + "/roles/my-roles")
       .then((response) => {
         console.log(response.data);
         setRoles(response.data);
@@ -41,17 +39,13 @@ function AdminPage() {
   };
 
   const addRoleToUser = () => {
-    const headers = {
-      Authorization: token,
-    };
-
     const request = {
       email: email,
       action: role,
     };
 
     axios
-      .post(BACKEND_URL + "/roles/add-role", request, { headers })
+      .post(BACKEND_URL + "/roles/add-role", request)
       .then((response) => {
         console.log(response.data);
         alert("Role added successfully!");
@@ -63,35 +57,25 @@ function AdminPage() {
       });
   };
 
-  const fetchAccounts = async () => {
+  const fetchPosts = async () => {
     try {
-      const headers = {
-        Authorization: token,
-      };
-      const response = await axios.get(BACKEND_URL + "/api/accounts", {
-        headers,
-      });
+      const response = await axios.get(BACKEND_URL + "/api/posts/all");
       const responseData = response.data;
-      setAccounts(responseData);
+      setPosts(responseData);
     } catch (error) {
-      console.error("Error fetching accounts:", error);
+      console.error("Error fetching posts:", error);
     }
   };
 
   const updateAccountBalance = async (accountId) => {
     try {
-      const headers = {
-        Authorization: token,
-      };
       const request = {
         balance: updatedBalances[accountId],
         iban: accountId,
       };
-      await axios.put(BACKEND_URL + "/api/accounts", request, {
-        headers,
-      });
+      await axios.put(BACKEND_URL + "/api/accounts", request);
       alert("Account balance updated successfully!");
-      fetchAccounts(); // Fetch accounts again after updating balance
+      fetchPosts(); // Fetch accounts again after updating balance
     } catch (error) {
       console.error("Error updating account balance:", error);
       alert("Error updating account balance!");
@@ -100,21 +84,14 @@ function AdminPage() {
 
   const deleteAccount = async (iban) => {
     try {
-      const headers = {
-        Authorization: token,
-      };
-
       const deleteRequest = {
         iban: iban,
       };
 
-      await axios.delete(`${BACKEND_URL}/api/accounts`, {
-        headers,
-        data: deleteRequest,
-      });
+      await axios.delete(`${BACKEND_URL}/api/accounts`, deleteRequest);
 
       alert("Account deleted successfully!");
-      fetchAccounts(); // Fetch accounts again after deleting
+      fetchPosts(); // Fetch accounts again after deleting
     } catch (error) {
       console.error("Error deleting account:", error);
       alert("Error deleting account!");
@@ -124,12 +101,7 @@ function AdminPage() {
   useEffect(() => {
     const fetchEmails = async () => {
       try {
-        const headers = {
-          Authorization: token,
-        };
-        const response = await axios.get(BACKEND_URL + "/api/emails", {
-          headers,
-        });
+        const response = await axios.get(BACKEND_URL + "/api/emails");
         const responseData = response.data;
         setEmails(responseData);
       } catch (error) {
@@ -139,12 +111,7 @@ function AdminPage() {
 
     const fetchMyRoles = async () => {
       try {
-        const headers = {
-          Authorization: token,
-        };
-        const response = await axios.get(BACKEND_URL + "/roles/my-roles", {
-          headers,
-        });
+        const response = await axios.get(BACKEND_URL + "/roles/my-roles");
         const responseData = response.data;
         setRoles(responseData);
       } catch (error) {
@@ -154,7 +121,7 @@ function AdminPage() {
 
     fetchEmails();
     fetchMyRoles();
-    fetchAccounts();
+    fetchPosts();
   }, []);
 
   const handleBalanceChange = (accountId, amount) => {
@@ -243,7 +210,7 @@ function AdminPage() {
         <Row>
           <Col>
             <h3>Accounts</h3>
-            {accounts.length > 0 ? (
+            {posts.length > 0 ? (
               <Table striped bordered hover>
                 <thead>
                   <tr>
@@ -253,7 +220,7 @@ function AdminPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {accounts.map((account) => (
+                  {posts.map((account) => (
                     <tr key={account.iban}>
                       <td>{account.iban}</td>
                       <td>{account.balance}</td>

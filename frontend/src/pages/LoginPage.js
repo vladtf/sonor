@@ -29,9 +29,9 @@ function LoginPage() {
         const data = response.data
         const token = data.token;
         const roles = data.roles;
-        localStorage.setItem("jwtToken", "Bearer " + token); // Store the token in the local storage
-        localStorage.setItem("roles", roles); // Store the roles in the local storage
-        axios.defaults.headers.common["Authorization"] = "Bearer " + token; // Set the default Authorization header
+        localStorage.setItem("jwtToken", "Bearer " + token);
+        localStorage.setItem("roles", roles);
+        axios.defaults.headers.common["Authorization"] = "Bearer " + token;
         navigate("/home");
       })
       .catch((error) => {

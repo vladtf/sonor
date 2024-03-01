@@ -7,7 +7,7 @@ import LoginPage from "./pages/LoginPage";
 import RegistrationPage from "./pages/RegistrationPage";
 import HomePage from "./pages/HomePage";
 import { Navigate } from "react-router-dom";
-import AccountsPage from "./pages/AccountsPage";
+import PostPage from "./pages/PostPage.js";
 import TransactionPage from "./pages/TransactionPage";
 import AdminPage from "./pages/AdminPage.js";
 
@@ -28,7 +28,7 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/registration" element={<RegistrationPage />} />
         <Route path="/home" element={<HomePage />} />
-        <Route path="/accounts" element={<AccountsPage />} />
+        <Route path="/posts" element={<PostPage />} />
         <Route path="/transactions" element={<TransactionPage />} />
         <Route path="/admin" element={<AdminPage />} />
 

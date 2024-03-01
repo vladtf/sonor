@@ -15,12 +15,13 @@ function TransactionPage() {
   const [selectedAccount, setSelectedAccount] = useState("");
 
   const token = localStorage.getItem("jwtToken");
-
   const navigate = useNavigate();
-
   useEffect(() => {
     if (!token) {
+      delete axios.defaults.headers.common["Authorization"];
       navigate("/login");
+    } else {
+      axios.defaults.headers.common["Authorization"] = token;
     }
   }, [token, navigate]);
 
@@ -30,12 +31,9 @@ function TransactionPage() {
   }, []);
 
   const getMyAccounts = () => {
-    const headers = {
-      Authorization: token,
-    };
 
     axios
-      .get(BACKEND_URL + "/api/accounts", { headers: headers })
+      .get(BACKEND_URL + "/api/accounts")
       .then((response) => {
         console.log(response.data);
         setAccounts(response.data);
@@ -48,13 +46,7 @@ function TransactionPage() {
 
   const fetchTransactions = async () => {
     try {
-      const headers = {
-        Authorization: token,
-      };
-
-      const response = await axios.get(BACKEND_URL + "/api/transactions", {
-        headers: headers,
-      });
+      const response = await axios.get(BACKEND_URL + "/api/transactions");
 
       console.log(response.data);
       setTransactions(response.data);
@@ -68,13 +60,8 @@ function TransactionPage() {
     setSelectedAccount(iban);
 
     try {
-      const headers = {
-        Authorization: token,
-      };
-
       const response = await axios.get(
-        BACKEND_URL + `/api/transactions${iban ? `?iban=${iban}` : ""}`,
-        { headers: headers }
+        BACKEND_URL + `/api/transactions${iban ? `?iban=${iban}` : ""}`
       );
       console.log(response.data);
       setTransactions(response.data);
@@ -100,14 +87,8 @@ function TransactionPage() {
 
     console.log("Sending transaction data: ", transactionRequest);
 
-    const headers = {
-      Authorization: token,
-    };
-
     axios
-      .post(BACKEND_URL + "/api/transaction", transactionRequest, {
-        headers,
-      })
+      .post(BACKEND_URL + "/api/transaction", transactionRequest)
       .then((response) => {
         console.log(response.data);
         alert("Transaction successful!");
