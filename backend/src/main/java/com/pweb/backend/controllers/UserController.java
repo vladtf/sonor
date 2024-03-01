@@ -1,11 +1,8 @@
 
 package com.pweb.backend.controllers;
 
-import com.pweb.backend.dao.entities.Account;
-import com.pweb.backend.dao.entities.User;
 import com.pweb.backend.requests.TransactionRequest;
-import com.pweb.backend.services.AccountService;
-import com.pweb.backend.services.TransactionService;
+import com.pweb.backend.services.PostService;
 import com.pweb.backend.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -20,55 +17,49 @@ public class UserController {
 
     private final UserService userService;
 
-    private final TransactionService transactionService;
-
-    private final AccountService accountService;
-
 
     @Autowired
-    public UserController(UserService userService, TransactionService transactionService, AccountService accountService) {
+    public UserController(UserService userService) {
         this.userService = userService;
-        this.transactionService = transactionService;
-        this.accountService = accountService;
     }
 
 
-    @PostMapping("/accounts")
-    public List<Account> createAccountForUserByToken(@RequestHeader("Authorization") String token, @RequestBody Account account) {
-        if (account.getIban() == null || account.getIban().equals("")) {
-            throw new RuntimeException("iban not provided");
-        }
-        return accountService.createAccountForUserByToken(token, account);
-    }
+//    @PostMapping("/accounts")
+//    public List<Post> createAccountForUserByToken(@RequestHeader("Authorization") String token, @RequestBody Post post) {
+//        if (post.getIban() == null || post.getIban().equals("")) {
+//            throw new RuntimeException("iban not provided");
+//        }
+//        return postService.createAccountForUserByToken(token, post);
+//    }
 
-    @DeleteMapping("/accounts")
-    public List<Account> deleteAccountForUserByToken(@RequestHeader("Authorization") String token, @RequestBody Account account) {
-        if (account.getIban() == null || account.getIban().equals("")) {
-            throw new RuntimeException("iban not provided");
-        }
-        return accountService.deleteAccountForUserByToken(token, account);
-    }
+//    @DeleteMapping("/accounts")
+//    public List<Post> deleteAccountForUserByToken(@RequestHeader("Authorization") String token, @RequestBody Post post) {
+//        if (post.getIban() == null || post.getIban().equals("")) {
+//            throw new RuntimeException("iban not provided");
+//        }
+//        return postService.deleteAccountForUserByToken(token, post);
+//    }
 
-    @GetMapping("/accounts")
-    public List<Account> getUserAccountsByToken(@RequestHeader("Authorization") String token) {
-        if (token == null || token.equals(""))
-            throw new RuntimeException("token doesn t exist");
-        return accountService.getUserAccountsByToken(token);
-    }
+//    @GetMapping("/accounts")
+//    public List<Post> getUserAccountsByToken(@RequestHeader("Authorization") String token) {
+//        if (token == null || token.equals(""))
+//            throw new RuntimeException("token doesn t exist");
+//        return postService.getUserAccountsByToken(token);
+//    }
 
-    @GetMapping("/accounts/all")
-    public List<Account> getAllAccounts() {
-        return accountService.getAllAccounts();
-    }
+//    @GetMapping("/accounts/all")
+//    public List<Post> getAllAccounts() {
+//        return postService.getAllAccounts();
+//    }
 
-    @PutMapping("/accounts")
-    public Boolean updateAccount(@RequestHeader("Authorization") String token, @RequestBody Account account) {
-        if (account.getIban() == null || account.getIban().equals("")) {
-            throw new RuntimeException("iban not provided");
-        }
-
-        return accountService.updateAccount(token, account);
-    }
+//    @PutMapping("/accounts")
+//    public Boolean updateAccount(@RequestHeader("Authorization") String token, @RequestBody Post post) {
+//        if (post.getIban() == null || post.getIban().equals("")) {
+//            throw new RuntimeException("iban not provided");
+//        }
+//
+//        return postService.updateAccount(token, post);
+//    }
 
     @PostMapping("/transaction")
     public String makeTransaction(@RequestBody TransactionRequest transactionRequest, @RequestHeader("Authorization") String token) {
@@ -76,7 +67,7 @@ public class UserController {
         if (token == null || token.equals(""))
             throw new RuntimeException("token doesn t exist");
 
-        transactionService.makeTransaction(transactionRequest);
+//        transactionService.makeTransaction(transactionRequest);
         return "succes";
     }
 
@@ -85,19 +76,19 @@ public class UserController {
         return userService.getAllEmails(token);
     }
 
-    @GetMapping("/transactions")
-    public List<TransactionResponse> getAllTransactions(
-            @RequestHeader("Authorization") String token,
-            @RequestParam(value = "iban", required = false) String iban
-    ) {
-        if (token == null || token.equals("")) {
-            throw new RuntimeException("User not logged in");
-        }
-
-        User user = userService.getUserByToken(token);
-
-        return accountService.findTransactionsByIban(iban, user);
-    }
+//    @GetMapping("/transactions")
+//    public List<TransactionResponse> getAllTransactions(
+//            @RequestHeader("Authorization") String token,
+//            @RequestParam(value = "iban", required = false) String iban
+//    ) {
+//        if (token == null || token.equals("")) {
+//            throw new RuntimeException("User not logged in");
+//        }
+//
+//        User user = userService.getUserByToken(token);
+//
+//        return postService.findTransactionsByIban(iban, user);
+//    }
 
     public static class TransactionResponse {
         private final Double sum;

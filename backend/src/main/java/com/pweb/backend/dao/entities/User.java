@@ -20,14 +20,14 @@ public class User {
     private String password;
 
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
-    @Cascade(org.hibernate.annotations.CascadeType.ALL)
-    private List<Token> tokens;
+//    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+//    @Cascade(org.hibernate.annotations.CascadeType.ALL)
+//    private List<Token> tokens;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     //@OneToMany(mappedBy = "user")
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
-    private List<Account> accounts;
+    private List<Post> posts;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     @Cascade(org.hibernate.annotations.CascadeType.ALL)
@@ -58,16 +58,8 @@ public class User {
         this.password = password;
     }
 
-    public List<Token> getTokens() {
-        return tokens;
-    }
-
-    public void setTokens(List<Token> tokens) {
-        this.tokens = tokens;
-    }
-
-    public List<Account> getAccounts() {
-        return accounts;
+    public List<Post> getAccounts() {
+        return posts;
     }
 
     public List<Role> getRoles() {
@@ -78,8 +70,8 @@ public class User {
         this.roles = roles;
     }
 
-    public void setAccounts(List<Account> accounts) {
-        this.accounts = accounts;
+    public void setAccounts(List<Post> posts) {
+        this.posts = posts;
     }
 
     public String getUsername() {

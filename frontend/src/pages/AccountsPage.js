@@ -6,8 +6,8 @@ import BackendConfig, { BACKEND_URL } from "../configuration/BackendConfig";
 import { useNavigate } from "react-router-dom";
 
 
-function AccountsPage() {
-  const [accounts, setAccounts] = useState([]);
+function PostPage() {
+  const [posts, setPosts] = useState([]);
   const [currency, setCurrency] = useState("EUR");
   const [type, setType] = useState("SAVINGS");
 
@@ -21,24 +21,13 @@ function AccountsPage() {
       }
     }, [token, navigate]);
 
-  const generateIBAN = () => {
-    const randomNumber =
-      Math.floor(Math.random() * 9000000000000000) + 1000000000000000;
-    const iban = "IBAN" + randomNumber;
-    return iban;
-  };
-
   useEffect(() => {
     getAccounts();
   }, []);
 
-  const getAccounts = () => {
-    const headers = {
-      Authorization: token,
-    };
-
+  const getPosts = () => {
     axios
-      .get(BACKEND_URL + "/api/accounts", { headers: headers })
+      .get(BACKEND_URL + "/api/posts")
       .then((response) => {
         console.log(response.data);
         setAccounts(response.data);
@@ -58,7 +47,6 @@ function AccountsPage() {
     }
 
     const accountRequest = {
-      iban: generateIBAN(),
       currency: currency,
       balance: 100,
       type: type,
