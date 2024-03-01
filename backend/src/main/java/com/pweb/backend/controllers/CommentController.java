@@ -76,7 +76,7 @@ public class CommentController {
         public String author;
 
         public Date createdAt;
-        
+
         public Integer postId;
     }
 

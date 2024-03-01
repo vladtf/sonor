@@ -5,14 +5,14 @@ import axios from "axios";
 import { BACKEND_URL } from "../configuration/BackendConfig";
 import { useNavigate } from "react-router-dom";
 
-function TransactionPage() {
+function CommentsPage() {
   const [ibanSource, setIbanSource] = useState("");
   const [ibanDest, setIbanDest] = useState("");
   const [amount, setAmount] = useState("");
-  const [accounts, setAccounts] = useState([]);
+  const [posts, setPosts] = useState([]);
 
-  const [transactions, setTransactions] = useState([]);
-  const [selectedAccount, setSelectedAccount] = useState("");
+  const [comments, setComments] = useState([]);
+  const [selectedAuthor, setSelectedAuthor] = useState("");
 
   const token = localStorage.getItem("jwtToken");
   const navigate = useNavigate();
@@ -26,51 +26,51 @@ function TransactionPage() {
   }, [token, navigate]);
 
   useEffect(() => {
-    getMyAccounts();
-    fetchTransactions();
+    fetchPosts();
+    fetchComments();
   }, []);
 
-  const getMyAccounts = () => {
+  const fetchPosts = () => {
 
     axios
-      .get(BACKEND_URL + "/api/accounts")
+      .get(BACKEND_URL + "/api/posts/all")
       .then((response) => {
         console.log(response.data);
-        setAccounts(response.data);
+        setPosts(response.data);
       })
       .catch((error) => {
-        alert("Error retrieving accounts!");
+        alert("Error retrieving posts!");
         console.error(error.response.data);
       });
   };
 
-  const fetchTransactions = async () => {
+  const fetchComments = async () => {
     try {
-      const response = await axios.get(BACKEND_URL + "/api/transactions");
+      const response = await axios.get(BACKEND_URL + "/api/comments/all");
 
       console.log(response.data);
-      setTransactions(response.data);
+      setComments(response.data);
     } catch (error) {
       console.error(error.response.data);
     }
   };
 
-  const updateTransactions = async (event) => {
+  const updateComment = async (event) => {
     const iban = event.target.value;
-    setSelectedAccount(iban);
+    setSelectedAuthor(iban);
 
     try {
       const response = await axios.get(
         BACKEND_URL + `/api/transactions${iban ? `?iban=${iban}` : ""}`
       );
       console.log(response.data);
-      setTransactions(response.data);
+      setComments(response.data);
     } catch (error) {
       console.error(error.response.data);
     }
   };
 
-  const sendTransaction = () => {
+  const addComment = () => {
     const transactionRequest = {
       ibanSource: ibanSource,
       ibanDest: ibanDest,
@@ -85,19 +85,23 @@ function TransactionPage() {
       return;
     }
 
-    console.log("Sending transaction data: ", transactionRequest);
+    console.log("Add comment: ", transactionRequest);
 
     axios
       .post(BACKEND_URL + "/api/transaction", transactionRequest)
       .then((response) => {
         console.log(response.data);
-        alert("Transaction successful!");
-        fetchTransactions(); // Fetch transactions again after successful transaction
+        alert("Comment successful!");
+        fetchComments(); // Fetch transactions again after successful transaction
       })
       .catch((error) => {
         alert("Error sending transaction!");
         console.error(error.response.data);
       });
+  };
+
+  const getShortContent = (content) => {
+    return content.length > 10 ? content.substring(0, 10) + "..." : content;
   };
 
   return (
@@ -117,7 +121,7 @@ function TransactionPage() {
                 value={ibanSource}
               >
                 <option value="">Select an account</option>
-                {accounts.map((account) => (
+                {posts.map((account) => (
                   <option key={account.iban} value={account.iban}>
                     {account.iban}
                   </option>
@@ -135,7 +139,7 @@ function TransactionPage() {
                 value={ibanDest}
               >
                 <option value="">Select an account</option>
-                {accounts.map((account) => (
+                {posts.map((account) => (
                   <option key={account.iban} value={account.iban}>
                     {account.iban}
                   </option>
@@ -156,7 +160,7 @@ function TransactionPage() {
               />
             </div>
             <div className="mb-3">
-              <button className="btn btn-primary" onClick={sendTransaction}>
+              <button className="btn btn-primary" onClick={addComment}>
                 Send Transaction
               </button>
             </div>
@@ -167,17 +171,17 @@ function TransactionPage() {
 
         <Row className="mb-3">
           <Col md={6}>
-            <h3>My Transactions</h3>
+            <h3>My Comments</h3>
             <div className="form-group">
-              <label htmlFor="ibanSource">IBAN Source</label>
+              <label htmlFor="author">Author:</label>
               <select
                 className="form-select"
                 id="ibanSource"
-                onChange={(e) => updateTransactions(e)}
-                value={selectedAccount}
+                onChange={(e) => updateComment(e)}
+                value={selectedAuthor}
               >
-                <option value="">All Accounts</option>
-                {accounts.map((account) => (
+                <option value="">All Authors</option>
+                {posts.map((account) => (
                   <option key={account.id} value={account.iban}>
                     {account.iban}
                   </option>
@@ -192,28 +196,21 @@ function TransactionPage() {
             <table className="table table-striped">
               <thead>
                 <tr>
-                  <th scope="col">IBAN Source</th>
-                  <th scope="col">IBAN Dest</th>
-                  <th scope="col">Amount</th>
-                  <th scope="col">Transaction Type</th>
+                  <th scope="col">Author</th>
+                  <th scope="col">Post</th>
+                  <th scope="col">Content</th>
                   <th scope="col">Date</th>
                 </tr>
               </thead>
               <tbody>
-                {transactions.map((transaction) => (
+                {comments.map((comment) => (
                   <tr
-                    key={transaction.id}
-                    className={
-                      transaction.transactionType === "INCOME"
-                        ? "table-success"
-                        : "table-danger"
-                    }
+                    key={comment.id}
                   >
-                    <td>{transaction.sourceAccount}</td>
-                    <td>{transaction.destAccount}</td>
-                    <td>{transaction.sum}</td>
-                    <td>{transaction.transactionType}</td>
-                    <td>{transaction.createdAt}</td>
+                    <td>{comment.author}</td>
+                    <td><a href={`/post/${comment.postId}`}>Post {comment.postId}</a></td>
+                    <td>{comment.content}</td>
+                    <td>{comment.createdAt}</td>
                   </tr>
                 ))}
               </tbody>
@@ -225,4 +222,4 @@ function TransactionPage() {
   );
 }
 
-export default TransactionPage;
+export default CommentsPage;

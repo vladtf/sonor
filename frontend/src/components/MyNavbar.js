@@ -1,6 +1,6 @@
 import React from "react";
 import { Nav, Navbar, NavDropdown } from "react-bootstrap";
-import { FaCloud, FaHome, FaTeamspeak } from "react-icons/fa"; // Import the piggy bank icon from react-icons
+import { FaCloud, FaHome, FaTeamspeak, FaFacebookMessenger } from "react-icons/fa"; // Import the piggy bank icon from react-icons
 import axios from "axios";
 import { BACKEND_URL } from "../configuration/BackendConfig";
 import { useNavigate } from "react-router-dom";
@@ -62,9 +62,9 @@ const MyNavbar = () => {
       className="mb-4"
     >
       <Navbar.Brand href="/home" style={brandStyle} className="px-2">
-        <FaTeamspeak style={{ marginRight: "5px"}} /> Sonor
+        <FaTeamspeak style={{ marginRight: "5px" }} /> Sonor
       </Navbar.Brand>
-      <Navbar.Toggle aria-controls="basic-navbar-nav" className="mx-2"/>
+      <Navbar.Toggle aria-controls="basic-navbar-nav" className="mx-2" />
       <Navbar.Collapse id="basic-navbar-nav" >
         <Nav className="me-auto">
           {!jwtToken ? (
@@ -84,8 +84,8 @@ const MyNavbar = () => {
               <Nav.Link href="/posts" style={{ ...navLinkStyle, fontWeight: currentPage === "/posts" ? "bold" : "normal" }} className="px-2">
                 <FaCloud style={{ marginRight: "5px" }} /> Posts
               </Nav.Link>
-              <Nav.Link href="/transactions" style={{ ...navLinkStyle, fontWeight: currentPage === "/transactions" ? "bold" : "normal" }} className="px-2">
-                Transactions
+              <Nav.Link href="/comments" style={{ ...navLinkStyle, fontWeight: currentPage === "/comments" ? "bold" : "normal" }} className="px-2">
+                <FaFacebookMessenger style={{ marginRight: "5px" }} /> Comments
               </Nav.Link>
             </>
           )}

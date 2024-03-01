@@ -116,10 +116,20 @@ function HomePage() {
                           {comment.createdAt}
                         </Card.Text>
                       </Card.Body>
+                      <Card.Footer>
+                        <small className="text-muted">
+                          Post ID: {comment.postId}
+                        </small>
+                      </Card.Footer>
                     </Card>
                   ))
                 )}
               </Card.Body>
+              <Card.Footer>
+                <Button variant="primary" href="/comments">
+                  View All Comments
+                </Button>
+              </Card.Footer>
             </Card>
 
             <Card className="mt-4">

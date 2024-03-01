@@ -110,10 +110,9 @@ function PostPage() {
 
   return (
     <>
-      <Container>
-        
+      <Container className="w-50">
         <Row className="mb-3">
-          <Col md={6}>
+          <Col md={12}>
             <form onSubmit={(e) => e.preventDefault()}>
               <div className="form-group mb-3">
                 <label htmlFor="title">Title:</label>
@@ -166,7 +165,7 @@ function PostPage() {
           ) : (
             posts.map((post, index) => {
               return (
-                <Col md="3" key={index} className="p-2">
+                <Col md="12" key={index} className="p-2">
                   <Card  className="card-hover-effect" onClick={() => navigate(`/post/${post.id}`)}>
                     <Card.Body>
                       <Card.Title>{post.title}</Card.Title>
