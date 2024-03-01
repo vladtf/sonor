@@ -18,6 +18,6 @@ code {
 }
 
 .card-hover-effect:hover {
-  transform: scale(1.05); /* Slightly increase the size of the card on hover */
+  transform: scale(1.01); /* Slightly increase the size of the card on hover */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add shadow for depth effect on hover */
 }

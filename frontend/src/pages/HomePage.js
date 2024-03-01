@@ -19,14 +19,14 @@ function HomePage() {
   }, [token, navigate]);
 
   const [posts, setPosts] = useState([]);
-  const [transactions, setTransactions] = useState([]);
+  const [comments, setComments] = useState([]);
   const [exchangeResults, setExchangeResults] = useState([]);
   const [news, setNews] = useState([]);
 
 
   useEffect(() => {
     getPosts();
-    // getTransactions();
+    fetchComments();
     getExchangeResults();
     getNews();
   }, []);
@@ -44,15 +44,15 @@ function HomePage() {
       });
   };
 
-  const getTransactions = () => {
+  const fetchComments = () => {
     axios
-      .get(BACKEND_URL + "/api/transactions")
+      .get(BACKEND_URL + "/api/comments/all")
       .then((response) => {
         console.log(response.data);
-        setTransactions(response.data);
+        setComments(response.data);
       })
       .catch((error) => {
-        alert("Error retrieving transactions!");
+        alert("Error retrieving comments!");
         console.error(error.response.data);
       });
   };
@@ -84,41 +84,42 @@ function HomePage() {
       });
   };
 
+  const getShortenedContent = (content) => {
+    if (content.length > 10) {
+      return content.substring(0, 10) + "...";
+    } else {
+      return content;
+    }
+  };
+
   return (
     <>
       <Container>
-        
         <Row className="mt-4">
           <Col>
             <Card>
-              <Card.Header>Recent Transactions</Card.Header>
+              <Card.Header>Recent Comments</Card.Header>
               <Card.Body>
-                {transactions.length === 0 ? (
-                  <p>No recent transactions found.</p>
+                {comments.length === 0 ? (
+                  <p>No recent comments found.</p>
                 ) : (
-                  transactions.slice(0, 5).map((transaction, index) => (
+                  comments.slice(0, 5).map((comment, index) => (
                     <Card
                       key={index}
-                      className={
-                        transaction.transactionType === "INCOME"
-                          ? "bg-success text-white mb-3"
-                          : "bg-danger text-white mb-3"
-                      }
-                      style={{ height: "5rem" }}
+                      className="card-hover-effect"
+                      onClick={() => navigate(`/post/${comment.postId}`)}
                     >
                       <Card.Body>
-                        <Card.Title>Amount: {transaction.sum}</Card.Title>
-                        <Card.Text>Date: {transaction.createdAt}</Card.Text>
+                        <Card.Title className="mb-0">{comment.author}</Card.Title>
+                        <Card.Text className="mb-0">{getShortenedContent(comment.content)}</Card.Text>
+                        <Card.Text className="text-muted">
+                          {comment.createdAt}
+                        </Card.Text>
                       </Card.Body>
                     </Card>
                   ))
                 )}
               </Card.Body>
-              <Card.Footer>
-                <Button variant="primary" href="/transactions">
-                  View All Transactions
-                </Button>
-              </Card.Footer>
             </Card>
 
             <Card className="mt-4">
@@ -159,7 +160,8 @@ function HomePage() {
                   <p>No posts found.</p>
                 ) : (
                   posts.map((post, index) => (
-                    <Card key={index} className="mb-3">
+                    <Card key={index} className="m-3 card-hover-effect"
+                      onClick={() => navigate(`/post/${post.id}`)}>
                       <Card.Body>
                         <Card.Title>{post.title}</Card.Title>
                         <Card.Subtitle className="mb-2 text-muted">

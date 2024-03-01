@@ -21,6 +21,21 @@ public class CommentController {
         this.commentService = commentService;
     }
 
+    @GetMapping("/all")
+    @Secured("ROLE_USER")
+    public ResponseEntity<List<CommentResponse>> getAllComments() {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return new ResponseEntity<>(commentService.getAllComments(user).stream().map(comment -> {
+            CommentResponse commentResponse = new CommentResponse();
+            commentResponse.id = comment.getId();
+            commentResponse.content = comment.getContent();
+            commentResponse.author = comment.getUser().getUsername();
+            commentResponse.createdAt = comment.getCreatedAt();
+            commentResponse.postId = comment.getPost().getId();
+            return commentResponse;
+        }).toList(), HttpStatus.OK);
+    }
+
     @GetMapping("/post/{postId}")
     @Secured("ROLE_USER")
     public ResponseEntity<List<CommentResponse>> getAllComments(@PathVariable Integer postId) {
@@ -30,6 +45,8 @@ public class CommentController {
             commentResponse.content = comment.getContent();
             commentResponse.author = comment.getUser().getUsername();
             commentResponse.createdAt = comment.getCreatedAt();
+            commentResponse.postId = comment.getPost().getId();
+
             return commentResponse;
         }).toList(), HttpStatus.OK);
     }
@@ -59,6 +76,8 @@ public class CommentController {
         public String author;
 
         public Date createdAt;
+        
+        public Integer postId;
     }
 
     public static class AddCommentRequest {

@@ -76,4 +76,9 @@ public class CommentService {
 
         commentRepository.deleteById(id);
     }
+
+    public Collection<Comment> getAllComments(org.springframework.security.core.userdetails.User user) {
+        return commentRepository.findAllByUserUsername(user.getUsername());
+
+    }
 }
