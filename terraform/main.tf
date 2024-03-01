@@ -1,6 +1,6 @@
 terraform {
   backend "s3" {
-    bucket = "terraform-state-bucket-vta-project"
+    bucket = "terraform-state-bucket-pweb-project"
     key    = "terraform.tfstate"
     region = "eu-central-1"
   }
@@ -95,15 +95,15 @@ resource "aws_route_table_association" "public_route_association_2" {
   depends_on = [aws_subnet.subnet_2, aws_route_table.public_route_table]
 }
 
-resource "aws_lb" "vta_load_balancer" {
-  name               = "vta-load-balancer"
+resource "aws_lb" "pweb_load_balancer" {
+  name               = "pweb-load-balancer"
   internal           = false
   load_balancer_type = "network"
   subnets            = [aws_subnet.subnet_1.id, aws_subnet.subnet_2.id]
   idle_timeout       = 300
 
   tags = {
-    Name = "vta_load_balancer"
+    Name = "pweb_load_balancer"
   }
 
   depends_on = [aws_subnet.subnet_1, aws_subnet.subnet_2]
@@ -149,7 +149,7 @@ resource "aws_lb_target_group" "backend_lb_tg" {
 
 
 resource "aws_lb_listener" "frontend_lb_listener" {
-  load_balancer_arn = aws_lb.vta_load_balancer.arn
+  load_balancer_arn = aws_lb.pweb_load_balancer.arn
   port              = 80
   protocol          = "TCP"
 
@@ -158,11 +158,11 @@ resource "aws_lb_listener" "frontend_lb_listener" {
     target_group_arn = aws_lb_target_group.frontend_lb_tg.arn
   }
 
-  depends_on = [aws_lb.vta_load_balancer, aws_lb_target_group.frontend_lb_tg]
+  depends_on = [aws_lb.pweb_load_balancer, aws_lb_target_group.frontend_lb_tg]
 }
 
 resource "aws_lb_listener" "backend_lb_listener" {
-  load_balancer_arn = aws_lb.vta_load_balancer.arn
+  load_balancer_arn = aws_lb.pweb_load_balancer.arn
   port              = 8090
   protocol          = "TCP"
 
@@ -171,7 +171,7 @@ resource "aws_lb_listener" "backend_lb_listener" {
     target_group_arn = aws_lb_target_group.backend_lb_tg.arn
   }
 
-  depends_on = [aws_lb.vta_load_balancer, aws_lb_target_group.backend_lb_tg]
+  depends_on = [aws_lb.pweb_load_balancer, aws_lb_target_group.backend_lb_tg]
 }
 
 resource "aws_iam_role" "ecs_task_execution_role" {
@@ -210,7 +210,7 @@ resource "aws_ecs_task_definition" "frontend_task" {
       extra_hosts = [
         {
           hostname = "backend"
-          ip       = aws_lb.vta_load_balancer.dns_name
+          ip       = aws_lb.pweb_load_balancer.dns_name
         }
       ]
 
@@ -269,7 +269,7 @@ resource "aws_ecs_task_definition" "backend_task" {
       environment = [
         {
           name  = "SPRING_DATASOURCE_URL"
-          value = "jdbc:mariadb://mariadb-service.vta-namespace:3306/vta_database"
+          value = "jdbc:mariadb://mariadb-service.pweb-namespace:3306/pweb_database"
         },
         {
           name  = "SPRING_DATASOURCE_USERNAME"
@@ -328,7 +328,7 @@ resource "aws_ecs_task_definition" "mariadb_task" {
       ]
       environment = [{
         name  = "MARIADB_DATABASE"
-        value = "vta_database"
+        value = "pweb_database"
         }, {
         name  = "MARIADB_ROOT_PASSWORD"
         value = random_password.mariadb_password.result
@@ -364,13 +364,13 @@ resource "aws_ecs_task_definition" "mariadb_task" {
   depends_on = [aws_iam_role.ecs_task_execution_role]
 }
 
-resource "aws_ecs_cluster" "vta_cluster" {
-  name = "vta-cluster"
+resource "aws_ecs_cluster" "pweb_cluster" {
+  name = "pweb-cluster"
 }
 
 resource "aws_ecs_service" "frontend_service" {
   name            = "frontend-service"
-  cluster         = aws_ecs_cluster.vta_cluster.id
+  cluster         = aws_ecs_cluster.pweb_cluster.id
   task_definition = aws_ecs_task_definition.frontend_task.arn
 
   launch_type = "FARGATE"
@@ -400,14 +400,14 @@ resource "aws_ecs_service" "frontend_service" {
   scheduling_strategy = "REPLICA"
 
   depends_on = [
-    aws_ecs_cluster.vta_cluster, aws_ecs_task_definition.frontend_task, aws_lb_target_group.frontend_lb_tg,
+    aws_ecs_cluster.pweb_cluster, aws_ecs_task_definition.frontend_task, aws_lb_target_group.frontend_lb_tg,
     aws_security_group.frontend_sg
   ]
 }
 
 resource "aws_ecs_service" "backend_service" {
   name            = "backend-service"
-  cluster         = aws_ecs_cluster.vta_cluster.id
+  cluster         = aws_ecs_cluster.pweb_cluster.id
   task_definition = aws_ecs_task_definition.backend_task.arn
 
   launch_type = "FARGATE"
@@ -444,14 +444,14 @@ resource "aws_ecs_service" "backend_service" {
   }
 
   depends_on = [
-    aws_ecs_cluster.vta_cluster, aws_ecs_task_definition.backend_task, #aws_lb_target_group.backend_lb_tg,
+    aws_ecs_cluster.pweb_cluster, aws_ecs_task_definition.backend_task, #aws_lb_target_group.backend_lb_tg,
     aws_security_group.backend_sg
   ]
 }
 
 resource "aws_ecs_service" "mariadb_service" {
   name            = "mariadb-service"
-  cluster         = aws_ecs_cluster.vta_cluster.id
+  cluster         = aws_ecs_cluster.pweb_cluster.id
   task_definition = aws_ecs_task_definition.mariadb_task.arn
 
   launch_type = "FARGATE"
@@ -479,20 +479,20 @@ resource "aws_ecs_service" "mariadb_service" {
   }
 
   depends_on = [
-    aws_ecs_cluster.vta_cluster, aws_ecs_task_definition.mariadb_task,
+    aws_ecs_cluster.pweb_cluster, aws_ecs_task_definition.mariadb_task,
     aws_security_group.mariadb_sg
   ]
 }
 
-resource "aws_service_discovery_private_dns_namespace" "vta_private_dns_namespace" {
-  name = "vta-namespace"
+resource "aws_service_discovery_private_dns_namespace" "pweb_private_dns_namespace" {
+  name = "pweb-namespace"
   vpc  = aws_vpc.app_vpc.id
 }
 
 resource "aws_service_discovery_service" "mariadb_service" {
   name = "mariadb-service"
   dns_config {
-    namespace_id = aws_service_discovery_private_dns_namespace.vta_private_dns_namespace.id
+    namespace_id = aws_service_discovery_private_dns_namespace.pweb_private_dns_namespace.id
     dns_records {
       ttl  = 10
       type = "A"
@@ -509,7 +509,7 @@ resource "aws_service_discovery_service" "mariadb_service" {
 resource "aws_service_discovery_service" "backend_service" {
   name = "backend-service"
   dns_config {
-    namespace_id = aws_service_discovery_private_dns_namespace.vta_private_dns_namespace.id
+    namespace_id = aws_service_discovery_private_dns_namespace.pweb_private_dns_namespace.id
     dns_records {
       ttl  = 10
       type = "A"

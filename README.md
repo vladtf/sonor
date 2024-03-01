@@ -1,8 +1,8 @@
-# Program Engineering Project - VTA
+# Web Programming - Project
 
 ## Table of Contents
 
-- [Program Engineering Project - VTA](#program-engineering-project---vta)
+- [Web Programming - Project](#web-programming---project)
   - [Table of Contents](#table-of-contents)
   - [Deploy](#deploy)
   - [Local Environment](#local-environment)
@@ -84,10 +84,6 @@ CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
 # run docker-compose
 ❯ docker-compose up
 [+] Running 3/3
- ⠿ Network vta-ip-project_default        Created                                                                                                                                                             0.2s
- ⠿ Volume "vta-ip-project_mariadb-data"  Created                                                                                                                                                             0.0s
- ⠿ Container mariadb_container           Created                                                                                                                                                             0.1s
-Attaching to mariadb_container
 ...
 mariadb_container  | 2023-04-20  7:15:36 0 [Note] mariadbd: ready for connections.
 mariadb_container  | Version: '10.11.2-MariaDB-1:10.11.2+maria~ubu2204'  socket: '/run/mysqld/mysqld.sock'  port: 3306  mariadb.org binary distribution
