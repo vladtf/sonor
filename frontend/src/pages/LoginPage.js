@@ -3,6 +3,7 @@ import { Container, Row, Col, Form, Button, Spinner } from "react-bootstrap";
 import axios from "axios";
 import { BACKEND_URL } from "../configuration/BackendConfig";
 import { useNavigate } from "react-router-dom";
+import { getClaimFromToken } from "../token/TokeUtils";
 
 function LoginPage() {
   const [username, setUsername] = useState("");
@@ -26,12 +27,20 @@ function LoginPage() {
       .post(BACKEND_URL + "/login", postData)
       .then((response) => {
         console.log(response.data);
+
         const data = response.data
-        const token = data.token;
-        const roles = data.roles;
+        const token = data;
+
         localStorage.setItem("jwtToken", "Bearer " + token);
-        localStorage.setItem("roles", roles);
         axios.defaults.headers.common["Authorization"] = "Bearer " + token;
+
+        const user = getClaimFromToken(token, "sub");
+        localStorage.setItem("username", user);
+
+        const roles = getClaimFromToken(token, "roles");
+        localStorage.setItem("roles", roles);
+
+
         navigate("/home");
       })
       .catch((error) => {

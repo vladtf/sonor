@@ -20,7 +20,6 @@ public class Post {
 
     private PostCategory category;
 
-
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;

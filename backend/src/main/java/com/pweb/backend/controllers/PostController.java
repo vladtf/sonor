@@ -28,6 +28,19 @@ public class PostController {
         return new ResponseEntity<>(buildResponseBody(postService.getAllPosts(user)), HttpStatus.OK);
     }
 
+    @GetMapping("/{id}")
+    @Secured("ROLE_USER")
+    public ResponseEntity<PostResponse> getPost(@PathVariable Integer id) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Post post = postService.getPost(user, id);
+        PostResponse postResponse = new PostResponse();
+        postResponse.id = post.getId();
+        postResponse.title = post.getTitle();
+        postResponse.content = post.getContent();
+        postResponse.category = post.getCategory();
+        return new ResponseEntity<>(postResponse, HttpStatus.OK);
+    }
+
     @PostMapping("/create")
     @Secured("ROLE_USER")
     public ResponseEntity<List<PostResponse>> createPost(@RequestBody NewPostRequest newPostRequest) {

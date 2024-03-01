@@ -29,7 +29,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<String> login(@RequestBody LoginRequest request) {
         try {
             Authentication authenticate = authenticationManager
                     .authenticate(
@@ -43,7 +43,7 @@ public class AuthenticationController {
 
             List<String> roles = user.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList();
 
-            return ResponseEntity.ok(new LoginResponse(token, roles));
+            return ResponseEntity.ok(token);
         } catch (BadCredentialsException ex) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }

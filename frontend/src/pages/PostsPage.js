@@ -101,6 +101,13 @@ function PostPage() {
       });
   };
 
+  const getShortContent = (content) => {
+    if (content.length > 15) {
+      return content.substring(0, 15) + "...";
+    }
+    return content;
+  }
+
   return (
     <>
       <Container>
@@ -166,7 +173,7 @@ function PostPage() {
                       <Card.Subtitle className="mb-2 text-muted">
                         {post.category}
                       </Card.Subtitle>
-                      <Card.Text>{post.content}</Card.Text>
+                      <Card.Text>{getShortContent(post.content)}</Card.Text>
                       <Button
                         variant="danger"
                         onClick={() => deletePost(post.id)}

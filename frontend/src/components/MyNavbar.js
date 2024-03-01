@@ -6,7 +6,7 @@ import { BACKEND_URL } from "../configuration/BackendConfig";
 import { useNavigate } from "react-router-dom";
 
 const MyNavbar = () => {
-  const email = localStorage.getItem("email");
+  const username = localStorage.getItem("username");
   const jwtToken = localStorage.getItem("jwtToken");
   const roles = localStorage.getItem("roles");
 
@@ -33,6 +33,7 @@ const MyNavbar = () => {
 
   const dropdownContainerStyle = {
     marginLeft: "auto",
+    marginRight: "100px",
   };
 
   const brandStyle = {
@@ -65,7 +66,7 @@ const MyNavbar = () => {
       </Navbar.Brand>
       <Navbar.Toggle aria-controls="basic-navbar-nav" className="mx-2"/>
       <Navbar.Collapse id="basic-navbar-nav" >
-        <Nav className="ml-auto">
+        <Nav className="me-auto">
           {!jwtToken ? (
             <>
               <Nav.Link href="/registration" style={navLinkStyle} className="px-2">
@@ -96,9 +97,7 @@ const MyNavbar = () => {
             </Nav.Link>
           )}
           <NavDropdown
-            title="Profile"
-            id="profile-nav-dropdown"
-            style={navLinkStyle}
+            title={username}
             className="px-2"
           >
             <NavDropdown.Item onClick={() => { }} style={dropdownItemStyle}>

@@ -10,8 +10,9 @@ import { Navigate } from "react-router-dom";
 import PostsPage from "./pages/PostsPage.js";
 import TransactionPage from "./pages/TransactionPage";
 import AdminPage from "./pages/AdminPage.js";
-import PostPage from "./pages/PostPage";
+import PostPage from "./pages/PostDetailPage.js";
 import MyNavbar from "./components/MyNavbar";
+import PostDetailPage from "./pages/PostDetailPage.js";
 
 function App() {
   const [email, setEmail] = useState("");
@@ -32,7 +33,7 @@ function App() {
         <Route path="/registration" element={<RegistrationPage />} />
         <Route path="/home" element={<HomePage />} />
         <Route path="/posts" element={<PostsPage />} />
-        <Route path="/post/:postId" element={<PostPage />} />
+        <Route path="/post/:postId" element={<PostDetailPage />} />
         <Route path="/transactions" element={<TransactionPage />} />
         <Route path="/admin" element={<AdminPage />} />
         <Route path="/*" element={<h1>Not Found</h1>} />
