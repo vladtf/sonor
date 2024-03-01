@@ -49,8 +49,8 @@ function LoginPage() {
         <Row>
           <Col>
             <h2
+              className="text-primary"
               style={{
-                color: "#89CFF0",
                 fontSize: "24px",
                 textAlign: "center",
               }}
@@ -87,8 +87,6 @@ function LoginPage() {
                   style={{
                     width: "200px",
                     height: "50px",
-                    backgroundColor: "#89CFF0",
-                    borderColor: "#89CFF0",
                   }}
                   onClick={handleSubmit}
                   disabled={loading} // Disable the button when loading is true

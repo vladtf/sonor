@@ -18,7 +18,7 @@ function TransactionPage() {
 
   const navigate = useNavigate();
 
-      useEffect(() => {
+  useEffect(() => {
     if (!token) {
       navigate("/login");
     }
@@ -123,14 +123,6 @@ function TransactionPage() {
     <>
       <Container>
         <MyNavbar />
-
-        <Row>
-          <h2
-            style={{ color: "#89CFF0", fontSize: "24px", textAlign: "center" }}
-          >
-            Transaction Page
-          </h2>
-        </Row>
         <Row>
           <Col md={6}>
             <div className="mb-3">

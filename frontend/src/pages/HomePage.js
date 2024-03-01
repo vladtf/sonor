@@ -99,16 +99,6 @@ function HomePage() {
     <>
       <Container>
         <MyNavbar />
-        <Row>
-          <Col>
-            <h2
-              className="text-center"
-              style={{ color: "#89CFF0", fontSize: "24px" }}
-            >
-              Home Page
-            </h2>
-          </Col>
-        </Row>
         <Row className="mt-4">
           <Col>
             <Card>

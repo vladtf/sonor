@@ -177,14 +177,6 @@ function AdminPage() {
         <MyNavbar />
         <Row>
           <Col>
-            <h2 className="text-center" style={{ color: "#89CFF0" }}>
-              Admin Page
-            </h2>
-          </Col>
-        </Row>
-        <hr />
-        <Row>
-          <Col>
             <h3>My Roles</h3>
             {roles.length > 0 ? (
               <Table striped bordered hover>

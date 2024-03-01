@@ -119,15 +119,6 @@ function AccountsPage() {
     <>
       <Container>
         <MyNavbar />
-        <Row></Row>
-        <Row>
-          <h2
-            className="text-center"
-            style={{ color: "#89CFF0", fontSize: "24px" }}
-          >
-            Accounts Page
-          </h2>
-        </Row>
         <Row className="mb-3">
           <Col md={6}>
             <form onSubmit={(e) => e.preventDefault()}>

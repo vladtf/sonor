@@ -1,6 +1,6 @@
 import React from "react";
 import { Nav, Navbar, NavDropdown } from "react-bootstrap";
-import { FaPiggyBank } from "react-icons/fa"; // Import the piggy bank icon from react-icons
+import { FaCloud } from "react-icons/fa"; // Import the piggy bank icon from react-icons
 import axios from "axios";
 import { BACKEND_URL } from "../configuration/BackendConfig";
 import { useNavigate } from "react-router-dom";
@@ -50,21 +50,16 @@ const MyNavbar = () => {
   return (
     <Navbar
       expand="lg"
-      variant="light"
+      variant="dark"
+      bg="primary"
       style={{
-        backgroundColor: "#e3f2fd",
-        fontSize: "24px",
-        width: "100%",
-        left: 0,
-        right: 0,
         borderBottomLeftRadius: "5px",
         borderBottomRightRadius: "5px",
       }}
-      className="mb-4 navbar-full-width" // Added a custom class for full width
+      className="mb-4"
     >
       <Navbar.Brand href="/home" style={brandStyle}>
-        <FaPiggyBank style={{ marginRight: "5px", marginLeft: "10px" }} /> ATV
-        Bank
+        <FaCloud style={{ marginRight: "5px", marginLeft: "10px" }} /> Sonor
       </Navbar.Brand>
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">
