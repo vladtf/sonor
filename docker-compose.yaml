@@ -1,26 +1,31 @@
 version: '3.8'
 
 services:
-  # frontend:
-  #   image: frontend:latest
-  #   container_name: frontend_container
-  #   ports:
-  #     - "3000:3000"
-  # backend:
-  #   image: backend:latest
-  #   container_name: backend_container
-  #   environment:
-  #     SPRING_DATASOURCE_URL: jdbc:mariadb://db:3306/mydatabase
-  #     SPRING_DATASOURCE_USERNAME: myuser
-  #     SPRING_DATASOURCE_PASSWORD: mypassword
-  #     SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.mariadb.jdbc.Driver
-  #     SPRING_JPA_HIBERNATE_DDL_AUTO: create-drop
-  #   ports:
-  #     - "8090:8090"
-  #   networks:
-  #     - app_network
-  #   depends_on:
-  #     - db
+  frontend:
+    build:
+      context: frontend
+      dockerfile: Dockerfile
+    environment:
+      - REACT_APP_LOAD_BALANCER_DNS=localhost
+    container_name: frontend_container
+    ports:
+      - "3000:80"
+  backend:
+    build:
+      context: backend
+      dockerfile: Dockerfile
+    container_name: backend_container
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/mobylab-app
+      - SPRING_DATASOURCE_USERNAME=mobylab-app
+      - SPRING_DATASOURCE_PASSWORD=mobylab-app
+
+    ports:
+      - "8090:8090"
+    networks:
+      - app_network
+    depends_on:
+      - db
   db:
     build:
       context: database
