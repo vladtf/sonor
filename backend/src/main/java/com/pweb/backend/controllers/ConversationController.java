@@ -103,7 +103,14 @@ public class ConversationController {
     public static class ConversationResponse {
         public Integer id;
         public String name;
+        public Collection<MessageResponse> messages;
         public Collection<String> participants;
+
+        public static class MessageResponse {
+            public Integer id;
+            public String content;
+            public String author;
+        }
     }
 
     public static class CreateConversationRequest {

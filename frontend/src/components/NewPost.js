@@ -6,7 +6,7 @@ import { Button, Form, Modal } from "react-bootstrap";
 // modal form for new post
 export default function NewPost({ fetchPosts, show, setShow }) {
     const [title, setTitle] = useState("");
-    const [category, setCategory] = useState("");
+    const [category, setCategory] = useState("OTHER");
     const [content, setContent] = useState("");
 
 
@@ -78,7 +78,6 @@ export default function NewPost({ fetchPosts, show, setShow }) {
                         >
                             <option value="OTHER">Other</option>
                             <option value="TECHNOLOGY">Technology</option>
-                            <option value="SPORTS">Sports</option>
                         </Form.Control>
                     </Form.Group>
                     <Form.Group controlId="content">
@@ -105,44 +104,3 @@ export default function NewPost({ fetchPosts, show, setShow }) {
 
 }
 
-
-{/* <Row className="mb-3">
-          <Col md={12}>
-            <form onSubmit={(e) => e.preventDefault()}>
-              <div className="form-group mb-3">
-                <label htmlFor="title">Title:</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  id="title"
-                  placeholder="Enter title"
-                  value={title}
-                  onChange={(event) => setTitle(event.target.value)}
-                />
-              </div>
-              <div className="form-group mb-3">
-                <label htmlFor="content">Content:</label>
-                <textarea
-                  className="form-control"
-                  id="content"
-                  rows="3"
-                  value={content}
-                  onChange={(event) => setContent(event.target.value)}
-                ></textarea>
-              </div>
-              <div className="form-group mb-3">
-                <label htmlFor="category">Category:</label>
-                <select
-                  className="form-select"
-                  id="category"
-                  value={category}
-                  onChange={(event) => setCategory(event.target.value)}
-                >
-                  <option value="OTHER">Other</option>
-                  <option value="TECHNOLOGY">Technology</option>
-                  <option value="SPORTS">Sports</option>
-                </select>
-              </div>
-            </form>
-          </Col>
-        </Row> */}
