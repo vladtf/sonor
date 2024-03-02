@@ -62,6 +62,8 @@ public class ConversationService {
             throw new IllegalArgumentException("User is not a participant in the conversation");
         }
 
+        // delete messages from the conversation
+        messageRepository.deleteByConversationId(id);
         conversationRepository.deleteById(id);
     }
 
