@@ -1,8 +1,12 @@
 package com.pweb.backend.services;
 
+import com.pweb.backend.dao.entities.Conversation;
+import com.pweb.backend.dao.entities.Message;
 import com.pweb.backend.dao.repositories.MessageRepository;
 import com.pweb.backend.dao.repositories.UserRepository;
 import org.springframework.stereotype.Service;
+
+import java.util.Collection;
 
 @Service
 public class MessageService {
@@ -32,5 +36,20 @@ public class MessageService {
         }
 
         messageRepository.deleteById(id);
+    }
+
+    public Collection<Message> getRecentMessages(String username) {
+        var conversation = userRepository.findByUsername(username).get().getConversations();
+
+        if (conversation.isEmpty()) {
+            return new java.util.ArrayList<>();
+        }
+
+        return conversation.stream()
+                .map(Conversation::getMessages)
+                .flatMap(Collection::stream)
+                .sorted((m1, m2) -> m2.getCreatedAt().compareTo(m1.getCreatedAt()))
+//                .limit(10)
+                .toList();
     }
 }
