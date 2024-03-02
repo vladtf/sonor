@@ -6,7 +6,7 @@ import { BACKEND_URL } from "../configuration/BackendConfig";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import { FaRegNewspaper, FaRegClock, FaRegUser, FaRegCommentDots, FaRegComments } from 'react-icons/fa';
-
+import { WiDaySunny, WiDayCloudy, WiRain, WiSnow } from 'react-icons/wi';
 
 function HomePage() {
   const token = localStorage.getItem("jwtToken");
@@ -22,7 +22,7 @@ function HomePage() {
 
   const [posts, setPosts] = useState([{ content: [] }]);
   const [messages, setMessages] = useState([]);
-  const [exchangeResults, setExchangeResults] = useState([]);
+  const [weatherForecast, setWeatherForecast] = useState([]);
   const [news, setNews] = useState([]);
   const [conversations, setConversations] = useState([]);
 
@@ -33,7 +33,7 @@ function HomePage() {
   useEffect(() => {
     fetchPosts();
     fetchMessages();
-    fetchExchangeResults();
+    fetchWeatherForecast();
     fetchNews();
     fetchConversations();
   }, []);
@@ -93,16 +93,16 @@ function HomePage() {
       });
   }
 
-  const fetchExchangeResults = () => {
+  const fetchWeatherForecast = () => {
 
     axios
-      .get(BACKEND_URL + "/api/exchange")
+      .get(BACKEND_URL + "/api/weather/all")
       .then((response) => {
         console.log(response.data);
-        setExchangeResults(response.data);
+        setWeatherForecast(response.data);
       })
       .catch((error) => {
-        toast.error("Error retrieving exchange results!");
+        toast.error("Error retrieving weather forecast!");
         console.error(error.response.data);
       });
   };
@@ -159,7 +159,7 @@ function HomePage() {
   return (
     <>
       <ToastContainer />
-      <Container>
+      <Container className="mb-4">
         <Row className="mt-4">
           <Col>
             <Card>
@@ -308,44 +308,33 @@ function HomePage() {
             </Card>
 
             <Card className="mt-4">
-              <Card.Header>News</Card.Header>
+              <Card.Header>Weather Forecast</Card.Header>
               <Card.Body>
-                {news.length === 0 ? (
-                  <p>No news found.</p>
+                {weatherForecast.length === 0 ? (
+                  <p>No weather forecast data found.</p>
                 ) : (
-                  <ListGroup variant="flush">
-                    {news.map((item, index) => (
-                      <ListGroup.Item key={index}>
-                        <h5 className="card-title">{item.title}</h5>
-                        <p className="card-text">{item.description}</p>
-                      </ListGroup.Item>
-                    ))}
-                  </ListGroup>
-                )}
-              </Card.Body>
-            </Card>
-            <Card className="mt-4">
-              <Card.Header>Exchange Values</Card.Header>
-              <Card.Body>
-                {exchangeResults.length === 0 ? (
-                  <p>No exchange results found.</p>
-                ) : (
-                  <table className="table table-striped">
-                    <thead>
+                  <table className="table table-striped table-hover table-responsive-md">
+                    <thead >
                       <tr>
-                        <th>From</th>
-                        <th>To</th>
-                        <th>Amount</th>
-                        <th>Result</th>
+                        <th>Date</th>
+                        <th>Temperature</th>
+                        <th>Humidity</th>
+                        <th>Condition</th>
                       </tr>
                     </thead>
                     <tbody>
-                      {exchangeResults.map((result, index) => (
+                      {weatherForecast.map((forecast, index) => (
                         <tr key={index}>
-                          <td>{result.from}</td>
-                          <td>{result.to}</td>
-                          <td>{result.amount}</td>
-                          <td>{result.result}</td>
+                          <td>{forecast.date}</td>
+                          <td>{forecast.temperature}°C</td>
+                          <td>{forecast.humidity}%</td>
+                          <td>
+                            {forecast.condition === 'Sunny' && <WiDaySunny />}
+                            {forecast.condition === 'Cloudy' && <WiDayCloudy />}
+                            {forecast.condition === 'Rainy' && <WiRain />}
+                            {forecast.condition === 'Snowy' && <WiSnow />}
+                            {forecast.condition}
+                          </td>
                         </tr>
                       ))}
                     </tbody>

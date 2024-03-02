@@ -9,7 +9,6 @@ import HomePage from "./pages/HomePage";
 import { Navigate } from "react-router-dom";
 import PostsPage from "./pages/PostsPage.js";
 import ConversationsPage from "./pages/ConversationsPage.js";
-import AdminPage from "./pages/AdminPage.js";
 import PostPage from "./pages/PostDetailPage.js";
 import MyNavbar from "./components/MyNavbar";
 import PostDetailPage from "./pages/PostDetailPage.js";
