@@ -65,7 +65,6 @@ function ConversationsPage() {
     <>
       <ToastContainer />
       <Container>
-
         <Row>
           <Col>
             <Button variant="success" onClick={() => setShowNewConversationForm(true)}>
@@ -96,6 +95,7 @@ function ConversationsPage() {
             ))}
           </Col>
         </Row>
+        <hr />
       </Container>
     </>
   );

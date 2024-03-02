@@ -56,7 +56,7 @@ function HomePage() {
       });
   };
 
-  const fetchMessages = (pageNumber = 0, pageSize = 3) => {
+  const fetchMessages = (pageNumber = 0, pageSize = 2) => {
     axios
       .get(BACKEND_URL + "/api/messages/mine", {
         params: {
@@ -75,7 +75,7 @@ function HomePage() {
   };
 
 
-  const fetchConversations = (pageNumber = 0, pageSize = 3) => {
+  const fetchConversations = (pageNumber = 0, pageSize = 2) => {
     axios
       .get(BACKEND_URL + "/api/conversations/all", {
         params: {
@@ -159,7 +159,7 @@ function HomePage() {
   return (
     <>
       <ToastContainer />
-      <Container className="mb-4">
+      <Container>
         <Row className="mt-4">
           <Col>
             <Card>
@@ -344,6 +344,7 @@ function HomePage() {
             </Card>
           </Col>
         </Row>
+        <hr />
       </Container>
     </>
   );
