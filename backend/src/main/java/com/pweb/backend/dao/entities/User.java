@@ -31,8 +31,34 @@ public class User {
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private Collection<Message> messages;
 
-    @ManyToMany(mappedBy = "users", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "users", fetch = FetchType.EAGER)
     private Collection<Conversation> conversations;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Collection<Feedback> feedbacks;
+
+    @PreRemove
+    private void preRemove() {
+        for (Post post : posts) {
+            post.setUser(null);
+        }
+        for (Role role : roles) {
+            role.setUser(null);
+        }
+        for (Comment comment : comments) {
+            comment.setUser(null);
+        }
+        for (Message message : messages) {
+            message.setUser(null);
+        }
+        for (Conversation conversation : conversations) {
+            conversation.getUsers().remove(this);
+        }
+
+        for (Feedback feedback : feedbacks) {
+            feedback.setUser(null);
+        }
+    }
 
     public User() {
     }
@@ -104,5 +130,13 @@ public class User {
 
     public void setConversations(Collection<Conversation> conversations) {
         this.conversations = conversations;
+    }
+
+    public Collection<Feedback> getFeedbacks() {
+        return feedbacks;
+    }
+
+    public void setFeedbacks(Collection<Feedback> feedbacks) {
+        this.feedbacks = feedbacks;
     }
 }

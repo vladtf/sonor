@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,6 +25,7 @@ public class FeedbackController {
     }
 
     @GetMapping("/all")
+    @Secured("ROLE_USER")
     public ResponseEntity<Page<FeedbackResponse>> getAllFeedbacks(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
 
@@ -40,6 +42,7 @@ public class FeedbackController {
     }
 
     @PostMapping("/create")
+    @Secured("ROLE_USER")
     public ResponseEntity<FeedbackResponse> createFeedback(@RequestBody CreateFeedbackRequest request) {
         User user = (User) org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Feedback feedback = feedbackService.createFeedback(request, user.getUsername());
@@ -56,6 +59,7 @@ public class FeedbackController {
     }
 
     @DeleteMapping("/delete/{id}")
+    @Secured("ROLE_USER")
     public ResponseEntity<Void> deleteFeedback(@PathVariable Integer id) {
         User user = (User) org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         feedbackService.deleteFeedback(id, user.getUsername());

@@ -32,7 +32,9 @@ public class Message {
 
     @PreRemove
     public void preRemove() {
-        user.getMessages().remove(this);
+        if (user != null) {
+            user.getMessages().remove(this);
+        }
         conversation.getMessages().remove(this);
     }
 

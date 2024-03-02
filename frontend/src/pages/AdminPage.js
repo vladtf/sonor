@@ -1,15 +1,13 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Button, Card, Col, Container, Form, Pagination, Row } from "react-bootstrap";
-import { FaPlusCircle, FaRegClock, FaRegNewspaper } from "react-icons/fa";
+import { FaRegClock, FaRegNewspaper, FaRegUser } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
-import NewPost from "../components/NewPost";
 import { BACKEND_URL } from "../configuration/BackendConfig";
 
-function PostPage() {
-  const [posts, setPosts] = useState([]);
-  const [showNewPostForm, setShowNewPostForm] = useState(false);
+function AdminPage() {
+  const [users, setUsers] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -25,12 +23,12 @@ function PostPage() {
   }, [token, navigate]);
 
   useEffect(() => {
-    fetchPosts();
+    fetchData();
   }, []);
 
   const handleSearch = (pageNumber = 0, pageSize = 5) => {
     axios
-      .get(BACKEND_URL + "/api/posts/search", {
+      .get(`${BACKEND_URL}/api/users/search`, {
         params: {
           searchTerm: searchTerm,
           page: pageNumber,
@@ -39,17 +37,17 @@ function PostPage() {
       })
       .then((response) => {
         console.log(response.data);
-        setPosts(response.data);
+        setUsers(response.data);
       })
       .catch((error) => {
-        toast.error("Error retrieving posts!");
+        toast.error("Error retrieving users!");
         console.error(error.response.data);
       });
   };
 
-  const fetchPosts = (pageNumber = 0, pageSize = 5) => {
+  const fetchData = (pageNumber = 0, pageSize = 3) => {
     axios
-      .get(BACKEND_URL + "/api/posts/all", {
+      .get(`${BACKEND_URL}/api/users/all`, {
         params: {
           page: pageNumber,
           size: pageSize,
@@ -57,18 +55,18 @@ function PostPage() {
       })
       .then((response) => {
         console.log(response.data);
-        setPosts(response.data);
+        setUsers(response.data);
       })
       .catch((error) => {
-        toast.error("Error retrieving posts!");
+        toast.error("Error retrieving users!");
         console.error(error.response.data);
       });
   };
 
 
-  const deletePost = (id) => {
+  const handleDelete = (id) => {
     const confirmDelete = window.confirm(
-      "Are you sure you want to delete this post?"
+      "Are you sure you want to delete this user?"
     );
 
     if (!confirmDelete) {
@@ -80,52 +78,37 @@ function PostPage() {
     };
 
     axios
-      .delete(BACKEND_URL + "/api/posts/delete", { data: deleteRequest })
+      .delete(`${BACKEND_URL}/api/users/delete/${id}`, { data: deleteRequest })
       .then((response) => {
         console.log(response.data);
-        toast.success("Post deleted successfully!");
-        fetchPosts();
+        toast.success("User deleted successfully!");
+        fetchData();
       })
       .catch((error) => {
-        toast.error("Failed to delete post. Please try again.");
+        toast.error("Failed to delete user. Please try again.");
         console.error(error.response.data);
       });
   };
 
-  const getShortContent = (content) => {
-    if (content.length > 15) {
-      return content.substring(0, 15) + "...";
-    }
-    return content;
-  }
-
   const handlePageChange = (pageNumber) => {
-    if (pageNumber < 0 || pageNumber > posts.totalPages + 1) {
+    if (pageNumber < 0 || pageNumber > users.totalPages + 1) {
       return;
     }
 
     setCurrentPage(pageNumber);
-    fetchPosts(pageNumber - 1);
+    fetchData(pageNumber - 1);
   };
 
   return (
     <>
       <ToastContainer />
       <Container className="w-50">
-        <Row>
-          <Col>
-            <Button variant="success" onClick={() => setShowNewPostForm(true)}>
-              <FaPlusCircle /> New Post
-            </Button>
-            <NewPost show={showNewPostForm} setShow={setShowNewPostForm} fetchPosts={fetchPosts} />
-          </Col>
-        </Row>
         <hr />
         <Row>
           <Col md={6}>
             <Form.Control
               type="text"
-              placeholder="Search posts"
+              placeholder="Search users"
               value={searchTerm}
               onChange={(event) => setSearchTerm(event.target.value)}
               onKeyUp={(event) => {
@@ -142,49 +125,49 @@ function PostPage() {
             </Button>
           </Col>
           <Col md={1}>
-            <Button variant="secondary" onClick={() => { setSearchTerm(''); fetchPosts(0, 5) }}>
+            <Button variant="secondary" onClick={() => { setSearchTerm(''); fetchData(0, 5) }}>
               Reset
             </Button>
           </Col>
           <Col md={4} className="d-flex justify-content-end">
             <Pagination className="mb-0">
               <Pagination.Prev onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1} />
-              {[...Array(posts.totalPages).keys()].map(pageNumber => (
+              {[...Array(users.totalPages).keys()].map(pageNumber => (
                 <Pagination.Item key={pageNumber + 1} active={pageNumber + 1 === currentPage} onClick={() => handlePageChange(pageNumber + 1)}>
                   {pageNumber + 1}
                 </Pagination.Item>
               ))}
-              <Pagination.Next onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === posts.totalPages} />
+              <Pagination.Next onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === users.totalPages} />
             </Pagination>
           </Col>
         </Row>
         <hr />
         <Row>
-          {posts.content && posts.content.length === 0 ? (
-            <h2 className="text-center">No posts found</h2>
+          {users.content && users.content.length === 0 ? (
+            <h2 className="text-center">No users found</h2>
           ) : (
-            posts.content && posts.content.map((post, index) => {
+            users.content && users.content.map((user, index) => {
               return (
-
                 <Col md="12" key={index} className="p-2">
-                  <Card className="card-hover-effect" onClick={() => navigate(`/post/${post.id}`)}>
+                  <Card className="card-hover-effect">
                     <Card.Body>
-                      <Card.Title><FaRegNewspaper className="me-2" />{post.title}</Card.Title>
+                      <Card.Title><FaRegUser className="me-2" />{user.username}</Card.Title>
                       <Card.Subtitle className="mb-2 text-muted">
-                        {post.category}
+                        Roles: {user.roles.join(', ')}
                       </Card.Subtitle>
-                      <Card.Text>{getShortContent(post.content)}</Card.Text>
+                      <Card.Text>Posts: {user.postCount}</Card.Text>
+                      <Card.Text>Comments: {user.commentCount}</Card.Text>
+                      <Card.Text>Messages: {user.messageCount || 0}</Card.Text>
                     </Card.Body>
-                    <Card.Footer className="text-muted d-flex justify-content-between">
-                      <small><FaRegClock className="me-1" />{new Date(post.createdAt).toLocaleDateString()}</small>
+                    <Card.Footer className="text-muted d-flex justify-content-end">
                       <Button
                         variant="danger"
                         onClick={(event) => {
                           event.stopPropagation();
-                          deletePost(post.id);
+                          handleDelete(user.id);
                         }}
                       >
-                        Delete Post
+                        Delete User
                       </Button>
                     </Card.Footer>
                   </Card>
@@ -199,4 +182,4 @@ function PostPage() {
   );
 }
 
-export default PostPage;
+export default AdminPage;

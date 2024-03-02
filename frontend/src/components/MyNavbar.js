@@ -1,6 +1,6 @@
 import React from "react";
 import { Nav, Navbar, NavDropdown } from "react-bootstrap";
-import { FaCloud, FaHome, FaTeamspeak, FaFacebookMessenger, FaUserCircle } from "react-icons/fa"; // Import the piggy bank icon from react-icons
+import { FaCloud, FaHome, FaTeamspeak, FaFacebookMessenger, FaUserCircle, FaUserShield } from "react-icons/fa"; // Import the piggy bank icon from react-icons
 import axios from "axios";
 import { BACKEND_URL } from "../configuration/BackendConfig";
 import { useNavigate } from "react-router-dom";
@@ -88,9 +88,9 @@ const MyNavbar = () => {
           </Nav.Link>
         </Nav>
         <Nav style={dropdownContainerStyle}>
-          {roles.includes("ADMIN") && jwtToken && (
+          {roles.includes("ROLE_ADMIN") && jwtToken && (
             <Nav.Link href="/admin" style={navLinkStyle} className="px-2">
-              Admin
+              <FaUserShield style={{ marginRight: "5px" }} /> Admin
             </Nav.Link>
           )}
           <NavDropdown

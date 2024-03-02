@@ -71,6 +71,15 @@ public class DatabaseInitializer implements ApplicationListener<ContextRefreshed
 
         user = userRepository.findByUsername("user").orElseThrow();
         roleRepository.save(new Role(Role.RoleEnum.USER, user));
+
+        for (int i = 0; i < 5; i++) {
+            user = new User();
+            user.setUsername("user" + i);
+            user.setPassword(passwordEncoder.encode("user" + i));
+            userRepository.save(user);
+            user = userRepository.findByUsername("user" + i).orElseThrow();
+            roleRepository.save(new Role(Role.RoleEnum.USER, user));
+        }
     }
 
     private void provisionPostsToUser() {

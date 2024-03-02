@@ -6,8 +6,11 @@ import com.pweb.backend.dao.entities.User;
 import com.pweb.backend.dao.repositories.RoleRepository;
 import com.pweb.backend.dao.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -42,16 +45,21 @@ public class UserService {
         return user;
     }
 
-    public List<String> getRegisteredUsers() {
-        return userRepository.findAll().stream().map(User::getUsername).toList();
-    }
-
-    public List<String> getAllEmails(String token) {
-        List<User> all = userRepository.findAll();
-        return all.stream().map(User::getUsername).toList();
-    }
-
     public List<String> getAllUsernames() {
         return userRepository.findAll().stream().map(User::getUsername).toList();
+    }
+
+//    @Transactional
+    public void deleteUser(Integer id) {
+        userRepository.deleteById(id);
+    }
+
+
+    public Page<User> getAllUsers(Pageable pageable) {
+        return userRepository.findAll(pageable);
+    }
+
+    public Page<User> searchUsers(String query, Pageable pageable) {
+        return userRepository.findAllByUsernameContaining(query, pageable);
     }
 }

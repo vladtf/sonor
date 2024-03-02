@@ -25,7 +25,9 @@ public class Conversation {
     @PreRemove
     public void preRemove() {
         for (User user : users) {
-            user.getConversations().remove(this);
+            if (user != null){
+                user.getConversations().remove(this);
+            }
         }
     }
 

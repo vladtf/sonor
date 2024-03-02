@@ -15,6 +15,7 @@ import PostDetailPage from "./pages/PostDetailPage.js";
 import ConversationDetailPage from "./pages/ConversationDetailPage.js";
 import 'react-toastify/dist/ReactToastify.css';
 import FeedbackPage from "./pages/FeedbackPage.js";
+import AdminPage from "./pages/AdminPage.js";
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
         <Route path="/conversations" element={<ConversationsPage />} />
         <Route path="/conversation/:conversationId" element={<ConversationDetailPage />} />
         <Route path="/feedbacks" element={<FeedbackPage />} />
+        <Route path="/admin" element={<AdminPage />} />
         <Route path="/*" element={<h1>Not Found</h1>} />
       </Routes>
     </BrowserRouter>

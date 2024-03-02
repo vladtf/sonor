@@ -29,6 +29,13 @@ public class Feedback {
     @Column(name = "created_at", nullable = false, updatable = false)
     private Date createdAt;
 
+    @PreRemove
+    public void preRemove() {
+        if (user != null) {
+            user.getFeedbacks().remove(this);
+        }
+    }
+
     public Feedback() {
     }
 

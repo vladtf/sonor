@@ -30,7 +30,9 @@ public class Comment {
 
     @PreRemove
     public void preRemove() {
-        user.getComments().remove(this);
+        if (user != null) {
+            user.getComments().remove(this);
+        }
         post.getComments().remove(this);
     }
 

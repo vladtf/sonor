@@ -38,7 +38,9 @@ public class Post {
 
     @PreRemove
     public void preRemove() {
-        user.getPosts().remove(this);
+        if (user != null){
+            user.getPosts().remove(this);
+        }
     }
 
     public Post() {
