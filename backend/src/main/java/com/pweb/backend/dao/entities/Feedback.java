@@ -32,9 +32,11 @@ public class Feedback {
     public Feedback() {
     }
 
-    public Feedback(Integer id, String content) {
-        this.id = id;
+    public Feedback(String content, User user, String satisfaction, String feature) {
         this.content = content;
+        this.user = user;
+        this.satisfaction = satisfaction;
+        this.feature = feature;
     }
 
     public Integer getId() {

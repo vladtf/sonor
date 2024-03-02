@@ -40,6 +40,17 @@ public class DatabaseInitializer implements ApplicationListener<ContextRefreshed
         provisionUsers();
         provisionPostsToUser();
         provisionConversation();
+        provisionFeedback();
+    }
+
+    private void provisionFeedback() {
+        var user = userRepository.findByUsername("user").orElseThrow();
+        var feedbacks = List.of(
+                new Feedback("This is a great app", user, "5", "Feature 1"),
+                new Feedback("Feature 2 is not working", user, "3", "Feature 2")
+        );
+
+        feedbackRepository.saveAll(feedbacks);
     }
 
     private void provisionUsers() {

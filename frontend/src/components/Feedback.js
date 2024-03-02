@@ -13,6 +13,7 @@ export default function Feedback({ feedback, fetchFeedbacks }) {
     const handleDeleteFeedback = (feedbackId) => {
         axios.delete(`${BACKEND_URL}/api/feedbacks/delete/${feedbackId}`)
             .then(response => {
+                toast.success("Feedback deleted successfully");
                 fetchFeedbacks();
             })
             .catch(error => {
@@ -44,17 +45,3 @@ export default function Feedback({ feedback, fetchFeedbacks }) {
         </>
     );
 }
-
-{/* <Card className="card-hover-effect" onClick={() => navigate(`/post/${feedback.id}`)}>
-                    <Card.Header>
-                      <Card.Title>{feedback.satisfaction}</Card.Title>
-                      <Card.Subtitle>{feedback.feature}</Card.Subtitle>
-                      <Card.Subtitle>{feedback.username}</Card.Subtitle>
-                    </Card.Header>
-                    <Card.Body>
-                      <p>{feedback.content}</p>
-                    </Card.Body>
-                    <Card.Footer>
-                      {feedback.createdAt}
-                    </Card.Footer>
-                  </Card> */}

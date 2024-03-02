@@ -128,6 +128,12 @@ function PostPage() {
               placeholder="Search posts"
               value={searchTerm}
               onChange={(event) => setSearchTerm(event.target.value)}
+              onKeyUp={(event) => {
+                if (event.key === 'Enter') {
+                  handleSearch(0, 5);
+                }
+              }
+              }
             />
           </Col>
           <Col md={1}>
