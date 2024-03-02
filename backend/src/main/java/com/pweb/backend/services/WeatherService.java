@@ -18,7 +18,7 @@ public class WeatherService {
                 new WeatherForecastResponse("2021-01-07", "19", "78", "Sunny"),
                 new WeatherForecastResponse("2021-01-08", "21", "82", "Rainy"),
                 new WeatherForecastResponse("2021-01-09", "23", "87", "Sunny")
-                );
+        );
     }
 
     public static class WeatherForecastResponse {

@@ -16,7 +16,7 @@ public class Role {
 
     private RoleEnum name;
 
-    public static enum RoleEnum {
+    public enum RoleEnum {
         USER, ADMIN
     }
 
@@ -27,7 +27,8 @@ public class Role {
         this.name = name;
         this.user = user;
     }
-  public Role(RoleEnum name) {
+
+    public Role(RoleEnum name) {
         this.name = name;
     }
 

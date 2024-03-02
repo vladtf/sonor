@@ -20,7 +20,7 @@ public class Conversation {
     private Collection<Message> messages = new java.util.ArrayList<>();
 
     @ManyToMany(fetch = FetchType.EAGER)
-    private Collection <User> users = new java.util.ArrayList<>();
+    private Collection<User> users = new java.util.ArrayList<>();
 
     @PreRemove
     public void preRemove() {

@@ -78,7 +78,6 @@ public class CommentController {
     }
 
 
-
     public static class CommentResponse {
         public Integer id;
         public String content;

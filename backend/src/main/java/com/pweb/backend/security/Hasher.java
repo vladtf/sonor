@@ -1,7 +1,8 @@
 package com.pweb.backend.security;
+
 import org.mindrot.jbcrypt.BCrypt;
 
- public  class Hasher {
+public class Hasher {
     public static String hashPassword(String password) {
 
         String salt = BCrypt.gensalt();

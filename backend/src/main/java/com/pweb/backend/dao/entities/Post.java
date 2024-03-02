@@ -103,7 +103,7 @@ public class Post {
         return createdAt;
     }
 
-    public static enum PostCategory {
+    public enum PostCategory {
         SPORT, POLITICS, SCIENCE, TECHNOLOGY, ART, MUSIC, MOVIES, GAMES, TRAVEL, FOOD, FASHION, HEALTH, EDUCATION, BUSINESS, FINANCE, OTHER
     }
 
