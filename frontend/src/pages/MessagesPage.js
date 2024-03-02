@@ -36,6 +36,9 @@ function MessagesPage() {
         .then((response) => {
           console.log(response.data);
           setConversations(response.data);
+          if (response.data.length === 0) {
+            toast.warning("No conversation found!");
+          }
         })
         .catch((error) => {
           toast.error("Error retrieving conversations!");
@@ -64,7 +67,7 @@ function MessagesPage() {
           <Col md={6}>
             <h3>Conversations</h3>
             {conversations.map((conversation, index) => (
-              <ConversationListItem key={index} conversation={conversation} />
+              <ConversationListItem key={index} conversation={conversation} fetchConversations={fetchConversations} />
             ))}
           </Col>
         </Row>

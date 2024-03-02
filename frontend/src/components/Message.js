@@ -10,31 +10,19 @@ export default function Message({ message, fetchConversation }) {
     const [isEditing, setIsEditing] = useState(false);
     const [editedMessage, setEditedMessage] = useState(message.content);
 
-    const handleDeleteComment = (commentId) => {
-        // axios.delete(`${BACKEND_URL}/api/comments/delete/${commentId}`)
-        //     .then(response => {
-        //         fetchComments();
-        //     })
-        //     .catch(error => {
-        //         console.error("Error deleting comment:", error);
-        //         alert("Failed to delete message. Please try again.");
-        //     });
+    const handleDeleteMessage = (messageId) => {
+        axios.delete(`${BACKEND_URL}/api/messages/delete/${messageId}`)
+            .then(response => {
+                fetchConversation();
+            })
+            .catch(error => {
+                console.error("Error deleting message:", error);
+                alert("Failed to delete message. Please try again.");
+            });
     };
 
     const handleEditMessage = () => {
         setIsEditing(true);
-    };
-
-    const handleUpdateComment = (commentId) => {
-        // axios.put(`${BACKEND_URL}/api/comments/update/${commentId}`, { content: editedComment })
-        //     .then(response => {
-        //         fetchComments();
-        //         setIsEditing(false);
-        //     })
-        //     .catch(error => {
-        //         console.error("Error updating comment:", error);
-        //         alert("Failed to update message. Please try again.");
-        //     });
     };
 
     return (
@@ -50,12 +38,7 @@ export default function Message({ message, fetchConversation }) {
             </Card.Body>
             {message.author === username && (
                 <Card.Footer>
-                    <Button variant="danger" size="sm" onClick={() => handleDeleteComment(message.id)}>Delete</Button>
-                    {isEditing ? (
-                        <Button variant="success" size="sm" onClick={() => handleUpdateComment(message.id)} className="ms-2">Update</Button>
-                    ) : (
-                        <Button variant="primary" size="sm" onClick={handleEditMessage} className="ms-2">Edit</Button>
-                    )}
+                    <Button variant="danger" size="sm" onClick={() => handleDeleteMessage(message.id)}>Delete</Button>
                 </Card.Footer>
             )}
         </Card>
