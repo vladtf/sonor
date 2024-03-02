@@ -8,7 +8,7 @@ import RegistrationPage from "./pages/RegistrationPage";
 import HomePage from "./pages/HomePage";
 import { Navigate } from "react-router-dom";
 import PostsPage from "./pages/PostsPage.js";
-import CommentsPage from "./pages/CommentsPage";
+import MessagesPage from "./pages/MessagesPage.js";
 import AdminPage from "./pages/AdminPage.js";
 import PostPage from "./pages/PostDetailPage.js";
 import MyNavbar from "./components/MyNavbar";
@@ -34,7 +34,7 @@ function App() {
         <Route path="/home" element={<HomePage />} />
         <Route path="/posts" element={<PostsPage />} />
         <Route path="/post/:postId" element={<PostDetailPage />} />
-        <Route path="/comments" element={<CommentsPage />} />
+        <Route path="/messages" element={<MessagesPage />} />
         <Route path="/admin" element={<AdminPage />} />
         <Route path="/*" element={<h1>Not Found</h1>} />
       </Routes>

@@ -19,14 +19,13 @@ function HomePage() {
   }, [token, navigate]);
 
   const [posts, setPosts] = useState([]);
-  const [comments, setComments] = useState([]);
+  const [messages, setMessages] = useState([]);
   const [exchangeResults, setExchangeResults] = useState([]);
   const [news, setNews] = useState([]);
 
-
   useEffect(() => {
     getPosts();
-    fetchComments();
+    fetchMessages();
     getExchangeResults();
     getNews();
   }, []);
@@ -44,15 +43,15 @@ function HomePage() {
       });
   };
 
-  const fetchComments = () => {
+  const fetchMessages = () => {
     axios
-      .get(BACKEND_URL + "/api/comments/all")
+      .get(BACKEND_URL + "/api/messages/all")
       .then((response) => {
         console.log(response.data);
-        setComments(response.data);
+        setMessages(response.data);
       })
       .catch((error) => {
-        alert("Error retrieving comments!");
+        alert("Error retrieving messages!");
         console.error(error.response.data);
       });
   };
@@ -98,27 +97,27 @@ function HomePage() {
         <Row className="mt-4">
           <Col>
             <Card>
-              <Card.Header>Recent Comments</Card.Header>
+              <Card.Header>Recent Messages</Card.Header>
               <Card.Body>
-                {comments.length === 0 ? (
-                  <p>No recent comments found.</p>
+                {messages.length === 0 ? (
+                  <p>No recent messages found.</p>
                 ) : (
-                  comments.slice(0, 5).map((comment, index) => (
+                  messages.slice(0, 5).map((message, index) => (
                     <Card
                       key={index}
                       className="card-hover-effect"
-                      onClick={() => navigate(`/post/${comment.postId}`)}
+                      onClick={() => navigate(`/post/${message.postId}`)}
                     >
                       <Card.Body>
-                        <Card.Title className="mb-0">{comment.author}</Card.Title>
-                        <Card.Text className="mb-0">{getShortenedContent(comment.content)}</Card.Text>
+                        <Card.Title className="mb-0">{message.author}</Card.Title>
+                        <Card.Text className="mb-0">{getShortenedContent(message.content)}</Card.Text>
                         <Card.Text className="text-muted">
-                          {comment.createdAt}
+                          {message.createdAt}
                         </Card.Text>
                       </Card.Body>
                       <Card.Footer>
                         <small className="text-muted">
-                          Post ID: {comment.postId}
+                          Post ID: {message.postId}
                         </small>
                       </Card.Footer>
                     </Card>
@@ -126,8 +125,8 @@ function HomePage() {
                 )}
               </Card.Body>
               <Card.Footer>
-                <Button variant="primary" href="/comments">
-                  View All Comments
+                <Button variant="primary" href="/messages">
+                  View All Messages
                 </Button>
               </Card.Footer>
             </Card>

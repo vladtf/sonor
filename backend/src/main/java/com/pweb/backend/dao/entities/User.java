@@ -3,6 +3,7 @@ package com.pweb.backend.dao.entities;
 
 import jakarta.persistence.*;
 
+import java.util.Collection;
 import java.util.List;
 
 
@@ -27,6 +28,11 @@ public class User {
     @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments;
 
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    private Collection<Message> messages;
+
+    @ManyToMany(mappedBy = "users", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private Collection<Conversation> conversations;
 
     public User() {
     }
@@ -84,4 +90,19 @@ public class User {
         this.comments = comments;
     }
 
+    public Collection<Message> getMessages() {
+        return messages;
+    }
+
+    public void setMessages(Collection<Message> messages) {
+        this.messages = messages;
+    }
+
+    public Collection<Conversation> getConversations() {
+        return conversations;
+    }
+
+    public void setConversations(Collection<Conversation> conversations) {
+        this.conversations = conversations;
+    }
 }

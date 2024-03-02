@@ -1,6 +1,6 @@
 import React from "react";
 import { Nav, Navbar, NavDropdown } from "react-bootstrap";
-import { FaCloud, FaHome, FaTeamspeak, FaFacebookMessenger } from "react-icons/fa"; // Import the piggy bank icon from react-icons
+import { FaCloud, FaHome, FaTeamspeak, FaFacebookMessenger, FaUserCircle } from "react-icons/fa"; // Import the piggy bank icon from react-icons
 import axios from "axios";
 import { BACKEND_URL } from "../configuration/BackendConfig";
 import { useNavigate } from "react-router-dom";
@@ -84,8 +84,8 @@ const MyNavbar = () => {
               <Nav.Link href="/posts" style={{ ...navLinkStyle, fontWeight: currentPage === "/posts" ? "bold" : "normal" }} className="px-2">
                 <FaCloud style={{ marginRight: "5px" }} /> Posts
               </Nav.Link>
-              <Nav.Link href="/comments" style={{ ...navLinkStyle, fontWeight: currentPage === "/comments" ? "bold" : "normal" }} className="px-2">
-                <FaFacebookMessenger style={{ marginRight: "5px" }} /> Comments
+              <Nav.Link href="/messages" style={{ ...navLinkStyle, fontWeight: currentPage === "/messages" ? "bold" : "normal" }} className="px-2">
+                <FaFacebookMessenger style={{ marginRight: "5px" }} /> Messages
               </Nav.Link>
             </>
           )}
@@ -97,8 +97,7 @@ const MyNavbar = () => {
             </Nav.Link>
           )}
           <NavDropdown
-            title={username}
-            className="px-2"
+            title={<span><FaUserCircle style={{ marginRight: "5px" }} /> {username}</span>}
           >
             <NavDropdown.Item onClick={() => { }} style={dropdownItemStyle}>
               Change Password
