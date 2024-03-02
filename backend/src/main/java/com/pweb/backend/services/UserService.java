@@ -50,4 +50,8 @@ public class UserService {
         List<User> all = userRepository.findAll();
         return all.stream().map(User::getUsername).toList();
     }
+
+    public List<String> getAllUsernames() {
+        return userRepository.findAll().stream().map(User::getUsername).toList();
+    }
 }

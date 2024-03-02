@@ -6,9 +6,8 @@ import com.pweb.backend.dao.entities.Message;
 import com.pweb.backend.dao.repositories.ConversationRepository;
 import com.pweb.backend.dao.repositories.MessageRepository;
 import com.pweb.backend.dao.repositories.UserRepository;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 
@@ -46,8 +45,23 @@ public class ConversationService {
         return conversation;
     }
 
-    public void deleteConversation(Integer id) {
-        // delete the conversation with the given id
+    @Transactional
+    public void deleteConversation(Integer id, String username) {
+        var conversation = conversationRepository.findById(id);
+        if (conversation.isEmpty()) {
+            throw new IllegalArgumentException("Conversation not found");
+        }
+
+        var user = userRepository.findByUsername(username);
+        if (user.isEmpty()) {
+            throw new IllegalArgumentException("User not found");
+        }
+
+        // delete the conversation with the given id if the user with the given username is a participant in the conversation
+        if (!conversation.get().getUsers().contains(user.get())) {
+            throw new IllegalArgumentException("User is not a participant in the conversation");
+        }
+
         conversationRepository.deleteById(id);
     }
 
@@ -60,6 +74,11 @@ public class ConversationService {
         var user = userRepository.findByUsername(username);
         if (user.isEmpty()) {
             throw new IllegalArgumentException("User not found");
+        }
+
+        // check if user is already in the conversation
+        if (conversation.get().getUsers().contains(user.get())) {
+            throw new IllegalArgumentException("User is already in the conversation");
         }
 
         // add the user with the given username to the conversation with the given id

@@ -3,14 +3,16 @@ package com.pweb.backend.controllers;
 
 import com.pweb.backend.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Date;
 import java.util.List;
 
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/users")
 public class UserController {
 
     private final UserService userService;
@@ -21,10 +23,9 @@ public class UserController {
         this.userService = userService;
     }
 
-
-    @GetMapping("/emails")
-    public List<String> getAllEmails(@RequestHeader("Authorization") String token) {
-        return userService.getAllEmails(token);
+    @GetMapping("/usernames")
+    public ResponseEntity<List<String>> getAllUsers() {
+        return ResponseEntity.ok(userService.getAllUsernames());
     }
 
 }

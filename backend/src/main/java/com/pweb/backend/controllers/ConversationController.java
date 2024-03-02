@@ -33,6 +33,11 @@ public class ConversationController {
                     response.id = conversation.getId();
                     response.name = conversation.getName();
                     response.participants = conversation.getUsers().stream().map(com.pweb.backend.dao.entities.User::getUsername).collect(Collectors.toList());
+                    response.messages = conversation.getMessages().stream().map(message -> new ConversationResponse.MessageResponse() {
+                        {
+                            id = message.getId();
+                        }
+                    }).collect(Collectors.toList());
                     return response;
                 })
                 .collect(Collectors.toList()));
@@ -53,10 +58,11 @@ public class ConversationController {
         });
     }
 
-    @DeleteMapping("/delete")
+    @DeleteMapping("/delete/{id}")
     @Secured("ROLE_USER")
-    public ResponseEntity<Void> deleteConversation(Integer id) {
-        conversationService.deleteConversation(id);
+    public ResponseEntity<Void> deleteConversation(@PathVariable Integer id) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        conversationService.deleteConversation(id, user.getUsername());
         return ResponseEntity.ok().build();
     }
 

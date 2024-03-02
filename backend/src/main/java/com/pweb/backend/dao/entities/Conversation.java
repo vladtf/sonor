@@ -22,6 +22,13 @@ public class Conversation {
     @ManyToMany(fetch = FetchType.EAGER)
     private Collection <User> users = new java.util.ArrayList<>();
 
+    @PreRemove
+    public void preRemove() {
+        for (User user : users) {
+            user.getConversations().remove(this);
+        }
+    }
+
     public Collection<Message> getMessages() {
         return messages;
     }
