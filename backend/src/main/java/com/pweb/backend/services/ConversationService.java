@@ -6,6 +6,8 @@ import com.pweb.backend.dao.entities.Message;
 import com.pweb.backend.dao.repositories.ConversationRepository;
 import com.pweb.backend.dao.repositories.MessageRepository;
 import com.pweb.backend.dao.repositories.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,9 +27,9 @@ public class ConversationService {
     }
 
 
-    public Collection<Conversation> getAllConversations(String username) {
+    public Page<Conversation> getAllConversations(String username, Pageable pageable) {
         // get all conversations for the user with the given username
-        return conversationRepository.findAllByUsersUsername(username);
+        return conversationRepository.findAllByUsersUsername(username, pageable);
     }
 
     public Conversation createConversation(String username, String name) {

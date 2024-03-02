@@ -6,6 +6,8 @@ import com.pweb.backend.dao.entities.User;
 import com.pweb.backend.dao.repositories.PostRepository;
 import com.pweb.backend.dao.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,8 +34,8 @@ public class PostService {
         return postRepository.findAllByUser(userOptional.get());
     }
 
-    public List<Post> getAllPosts() {
-        return postRepository.findAll();
+    public Page<Post> getAllPosts(Pageable pageable) {
+        return postRepository.findAll(pageable);
     }
 
     public List<Post> createPost(org.springframework.security.core.userdetails.User user, PostController.NewPostRequest newPostRequest) {

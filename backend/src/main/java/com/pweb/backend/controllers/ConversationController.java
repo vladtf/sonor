@@ -2,6 +2,9 @@ package com.pweb.backend.controllers;
 
 import com.pweb.backend.dao.entities.Conversation;
 import com.pweb.backend.services.ConversationService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,23 +27,26 @@ public class ConversationController {
 
     @GetMapping("/all")
     @Secured("ROLE_USER")
-    public ResponseEntity<Collection<ConversationResponse>> getAllConversations() {
+    public ResponseEntity<Page<ConversationResponse>> getAllConversations(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return ResponseEntity.ok(conversationService.getAllConversations(user.getUsername())
-                .stream()
-                .map(conversation -> {
-                    ConversationResponse response = new ConversationResponse();
-                    response.id = conversation.getId();
-                    response.name = conversation.getName();
-                    response.participants = conversation.getUsers().stream().map(com.pweb.backend.dao.entities.User::getUsername).collect(Collectors.toList());
-                    response.messages = conversation.getMessages().stream().map(message -> new ConversationResponse.MessageResponse() {
-                        {
-                            id = message.getId();
-                        }
-                    }).collect(Collectors.toList());
-                    return response;
-                })
-                .collect(Collectors.toList()));
+        Pageable pageable = PageRequest.of(page, size);
+
+        return ResponseEntity.ok(conversationService.getAllConversations(user.getUsername(), pageable)
+                .map(conversation -> new ConversationResponse() {
+                    {
+                        id = conversation.getId();
+                        name = conversation.getName();
+                        participants = conversation.getUsers().stream().map(com.pweb.backend.dao.entities.User::getUsername).collect(Collectors.toList());
+                        messages = conversation.getMessages().stream().map(message -> new ConversationResponse.MessageResponse() {
+                            {
+                                id = message.getId();
+                                content = message.getContent();
+                                author = message.getUser().getUsername();
+                                createdAt = message.getCreatedAt();
+                            }
+                        }).collect(Collectors.toList());
+                    }
+                }));
     }
 
     @PostMapping("/create")

@@ -2,6 +2,8 @@ package com.pweb.backend.dao.repositories;
 
 import com.pweb.backend.dao.entities.Post;
 import com.pweb.backend.dao.entities.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.CrudRepository;
 
@@ -13,4 +15,6 @@ public interface PostRepository extends CrudRepository<Post, Integer> {
     List<Post> findAll();
 
     void deleteByIdAndUser(Integer id, User user);
+
+    Page<Post> findAll(Pageable pageable);
 }

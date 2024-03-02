@@ -2,6 +2,9 @@ package com.pweb.backend.controllers;
 
 import com.pweb.backend.dao.entities.Post;
 import com.pweb.backend.services.PostService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
@@ -24,8 +27,9 @@ public class PostController {
 
     @GetMapping("/all")
     @Secured("ROLE_USER")
-    public ResponseEntity<List<PostResponse>> getAllPosts() {
-        return new ResponseEntity<>(buildResponseBody(postService.getAllPosts()), HttpStatus.OK);
+    public ResponseEntity<Page<PostResponse>> getAllPosts(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return new ResponseEntity<>(buildResponseBody(postService.getAllPosts(pageable)), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
@@ -46,22 +50,22 @@ public class PostController {
 
     @PostMapping("/create")
     @Secured("ROLE_USER")
-    public ResponseEntity<List<PostResponse>> createPost(@RequestBody NewPostRequest newPostRequest) {
+    public ResponseEntity<Void> createPost(@RequestBody NewPostRequest newPostRequest) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         List<Post> posts = postService.createPost(user, newPostRequest);
-        return new ResponseEntity<>(buildResponseBody(posts), HttpStatus.CREATED);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @DeleteMapping("/delete")
     @Secured("ROLE_USER")
-    public ResponseEntity<List<PostResponse>> deletePost(@RequestBody DeletePostRequest deletePostRequest) {
+    public ResponseEntity<Void> deletePost(@RequestBody DeletePostRequest deletePostRequest) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         postService.deletePost(user, deletePostRequest.id);
-        return new ResponseEntity<>(buildResponseBody(postService.getAllPosts(user)), HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    private List<PostResponse> buildResponseBody(List<Post> posts) {
-        return posts.stream().map(post -> {
+    private Page<PostResponse> buildResponseBody(Page<Post> posts) {
+        return posts.map(post -> {
             PostResponse postResponse = new PostResponse();
             postResponse.id = post.getId();
             postResponse.title = post.getTitle();
@@ -71,7 +75,7 @@ public class PostController {
             postResponse.createdAt = post.getCreatedAt();
 
             return postResponse;
-        }).toList();
+        });
     }
 
 
