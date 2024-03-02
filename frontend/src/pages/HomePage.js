@@ -5,6 +5,7 @@ import axios from "axios";
 import { BACKEND_URL } from "../configuration/BackendConfig";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
+import { FaRegNewspaper, FaRegClock, FaRegUser, FaRegCommentDots, FaRegComments } from 'react-icons/fa';
 
 
 function HomePage() {
@@ -122,20 +123,16 @@ function HomePage() {
                   messages.slice(0, 5).map((message, index) => (
                     <Card
                       key={index}
-                      className="card-hover-effect"
+                      className="card-hover-effect mb-3"
                       onClick={() => navigate(`/conversation/${message.conversationId}`)}
                     >
                       <Card.Body>
-                        <Card.Title className="mb-0">{message.author}</Card.Title>
-                        <Card.Text className="mb-0">{getShortenedContent(message.content)}</Card.Text>
-                        <Card.Text className="text-muted">
-                          {message.createdAt}
-                        </Card.Text>
+                        <Card.Title><FaRegUser className="me-2" />{message.author}</Card.Title>
+                        <Card.Text><FaRegCommentDots className="me-2" />{getShortenedContent(message.content)}</Card.Text>
+                        <Card.Text className="text-muted"><FaRegClock className="me-2" />{new Date(message.createdAt).toLocaleDateString()}</Card.Text>
                       </Card.Body>
-                      <Card.Footer>
-                        <small className="text-muted">
-                          Conversation: {message.conversationName}
-                        </small>
+                      <Card.Footer className="text-muted">
+                        <small>Conversation: {message.conversationName}</small>
                       </Card.Footer>
                     </Card>
                   ))
@@ -157,16 +154,14 @@ function HomePage() {
                   conversations.map((conversation, index) => (
                     <Card
                       key={index}
-                      className="card-hover-effect"
+                      className="card-hover-effect mb-3"
                       onClick={() => navigate(`/conversation/${conversation.id}`)}
                     >
                       <Card.Body>
-                        <Card.Title className="mb-0">{conversation.name}</Card.Title>
+                        <Card.Title className="mb-0"><FaRegComments className="me-2" />{conversation.name}</Card.Title>
                       </Card.Body>
-                      <Card.Footer>
-                        <small className="text-muted">
-                          Participants: {conversation.participants.join(', ')}
-                        </small>
+                      <Card.Footer className="text-muted">
+                        <small><FaRegUser className="me-1" />Participants: {conversation.participants.join(', ')}</small>
                       </Card.Footer>
                     </Card>
                   ))
@@ -217,15 +212,18 @@ function HomePage() {
                   <p>No posts found.</p>
                 ) : (
                   posts.map((post, index) => (
-                    <Card key={index} className="m-3 card-hover-effect"
-                      onClick={() => navigate(`/post/${post.id}`)}>
+                    <Card key={index} className="mb-3 card-hover-effect" onClick={() => navigate(`/post/${post.id}`)}>
                       <Card.Body>
-                        <Card.Title>{post.title}</Card.Title>
+                        <Card.Title><FaRegNewspaper className="me-2" />{post.title}</Card.Title>
                         <Card.Subtitle className="mb-2 text-muted">
                           {post.category}
                         </Card.Subtitle>
                         <Card.Text>{post.content}</Card.Text>
                       </Card.Body>
+                      <Card.Footer className="text-muted">
+                        <small><FaRegClock className="me-1" />{new Date(post.createdAt).toLocaleDateString()}</small>
+                        <small className="ms-3"><FaRegUser className="me-1" />{post.author}</small>
+                      </Card.Footer>
                     </Card>
                   ))
                 )}
