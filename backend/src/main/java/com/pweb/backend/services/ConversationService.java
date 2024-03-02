@@ -6,6 +6,8 @@ import com.pweb.backend.dao.entities.Message;
 import com.pweb.backend.dao.repositories.ConversationRepository;
 import com.pweb.backend.dao.repositories.MessageRepository;
 import com.pweb.backend.dao.repositories.UserRepository;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
@@ -85,23 +87,42 @@ public class ConversationService {
         return conversation.get();
     }
 
-    public Conversation addMessageToConversation(ConversationController.AddMessageRequest request) {
+    public Conversation addMessageToConversation(ConversationController.AddMessageRequest request, String username) {
         var conversation = conversationRepository.findById(request.conversationId);
         if (conversation.isEmpty()) {
             throw new IllegalArgumentException("Conversation not found");
         }
 
-        var user = userRepository.findByUsername(request.username);
-        if (user.isEmpty()) {
+        var found = userRepository.findByUsername(username);
+        if (found.isEmpty()) {
             throw new IllegalArgumentException("User not found");
         }
 
         // create a new message with the given content and add it to the conversation with the given id
         var message = new Message();
         message.setContent(request.content);
-        message.setUser(user.get());
+        message.setUser(found.get());
         message.setConversation(conversation.get());
         messageRepository.save(message);
+
+        return conversation.get();
+    }
+
+    public Conversation getConversation(Integer id, String username) {
+        var conversation = conversationRepository.findById(id);
+        if (conversation.isEmpty()) {
+            throw new IllegalArgumentException("Conversation not found");
+        }
+
+        var user = userRepository.findByUsername(username);
+        if (user.isEmpty()) {
+            throw new IllegalArgumentException("User not found");
+        }
+
+        // check if the user with the given username is a participant in the conversation with the given id
+        if (!conversation.get().getUsers().contains(user.get())) {
+            throw new IllegalArgumentException("You are not a participant in this conversation");
+        }
 
         return conversation.get();
     }

@@ -6,11 +6,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.stream.Collectors;
 
 @RestController
@@ -23,7 +22,7 @@ public class ConversationController {
         this.conversationService = conversationService;
     }
 
-    @RequestMapping("/all")
+    @GetMapping("/all")
     @Secured("ROLE_USER")
     public ResponseEntity<Collection<ConversationResponse>> getAllConversations() {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -39,7 +38,7 @@ public class ConversationController {
                 .collect(Collectors.toList()));
     }
 
-    @RequestMapping("/create")
+    @PostMapping("/create")
     @Secured("ROLE_USER")
     public ResponseEntity<ConversationResponse> createConversation(@RequestBody CreateConversationRequest request) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -54,14 +53,14 @@ public class ConversationController {
         });
     }
 
-    @RequestMapping("/delete")
+    @DeleteMapping("/delete")
     @Secured("ROLE_USER")
     public ResponseEntity<Void> deleteConversation(Integer id) {
         conversationService.deleteConversation(id);
         return ResponseEntity.ok().build();
     }
 
-    @RequestMapping("/addUser")
+    @PostMapping("/addUser")
     @Secured("ROLE_USER")
     public ResponseEntity<ConversationResponse> addUserToConversation(@RequestBody ChangeUserConversationRequest request) {
         Conversation conversation = conversationService.addUserToConversation(request.conversationId, request.username);
@@ -74,7 +73,7 @@ public class ConversationController {
         });
     }
 
-    @RequestMapping("/removeUser")
+    @PostMapping("/removeUser")
     @Secured("ROLE_USER")
     public ResponseEntity<ConversationResponse> removeUserFromConversation(@RequestBody ChangeUserConversationRequest request) {
         Conversation conversation = conversationService.removeUserFromConversation(request.conversationId, request.username);
@@ -87,15 +86,38 @@ public class ConversationController {
         });
     }
 
-    @RequestMapping("/addMessage")
+    @PostMapping("/addMessage")
     @Secured("ROLE_USER")
     public ResponseEntity<ConversationResponse> addMessageToConversation(@RequestBody AddMessageRequest request) {
-        Conversation conversation = conversationService.addMessageToConversation(request);
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Conversation conversation = conversationService.addMessageToConversation(request, user.getUsername());
         return ResponseEntity.ok(new ConversationResponse() {
             {
                 id = conversation.getId();
                 name = conversation.getName();
                 participants = conversation.getUsers().stream().map(com.pweb.backend.dao.entities.User::getUsername).collect(Collectors.toList());
+            }
+        });
+    }
+
+    @GetMapping("/{id}")
+    @Secured("ROLE_USER")
+    public ResponseEntity<ConversationResponse> getConversation(@PathVariable Integer id) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Conversation conversation = conversationService.getConversation(id, user.getUsername());
+        return ResponseEntity.ok(new ConversationResponse() {
+            {
+                id = conversation.getId();
+                name = conversation.getName();
+                participants = conversation.getUsers().stream().map(com.pweb.backend.dao.entities.User::getUsername).collect(Collectors.toList());
+                messages = conversation.getMessages().stream().map(message -> new ConversationResponse.MessageResponse() {
+                    {
+                        id = message.getId();
+                        content = message.getContent();
+                        author = message.getUser().getUsername();
+                        createdAt = message.getCreatedAt();
+                    }
+                }).collect(Collectors.toList());
             }
         });
     }
@@ -110,6 +132,8 @@ public class ConversationController {
             public Integer id;
             public String content;
             public String author;
+
+            public Date createdAt;
         }
     }
 
@@ -120,7 +144,6 @@ public class ConversationController {
     public static class AddMessageRequest {
         public Integer conversationId;
         public String content;
-        public String username;
     }
 
     public static class ChangeUserConversationRequest {

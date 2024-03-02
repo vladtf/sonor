@@ -6,6 +6,8 @@ import { BACKEND_URL } from "../configuration/BackendConfig";
 import { useNavigate } from "react-router-dom";
 import NewConversation from "../components/NewConversation";
 import { FaPlusCircle } from "react-icons/fa";
+import ConversationListItem from "../components/ConversationListItem";
+import { ToastContainer, toast } from "react-toastify";
 
 function MessagesPage() {
   const [conversations, setConversations] = useState([]);
@@ -36,7 +38,7 @@ function MessagesPage() {
           setConversations(response.data);
         })
         .catch((error) => {
-          alert("Error retrieving conversations!");
+          toast.error("Error retrieving conversations!");
           console.error(error.response.data);
         });
     } catch (error) {
@@ -47,6 +49,7 @@ function MessagesPage() {
 
   return (
     <>
+      <ToastContainer />
       <Container>
         <Row>
           <Col>
@@ -61,11 +64,7 @@ function MessagesPage() {
           <Col md={6}>
             <h3>Conversations</h3>
             {conversations.map((conversation, index) => (
-              <Card key={index} className="mb-3">
-                <Card.Body>
-                  <Card.Title>{conversation.name}</Card.Title>
-                </Card.Body>
-              </Card>
+              <ConversationListItem key={index} conversation={conversation} />
             ))}
           </Col>
         </Row>

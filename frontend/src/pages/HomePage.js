@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { BACKEND_URL } from "../configuration/BackendConfig";
 import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
 
 
 function HomePage() {
@@ -38,7 +39,7 @@ function HomePage() {
         setPosts(response.data);
       })
       .catch((error) => {
-        alert("Error retrieving posts!");
+        toast.error("Error retrieving posts!");
         console.error(error.response.data);
       });
   };
@@ -51,7 +52,7 @@ function HomePage() {
         setMessages(response.data);
       })
       .catch((error) => {
-        alert("Error retrieving messages!");
+        toast.error("Error retrieving messages!");
         console.error(error.response.data);
       });
   };
@@ -65,7 +66,7 @@ function HomePage() {
         setExchangeResults(response.data);
       })
       .catch((error) => {
-        alert("Error retrieving exchange results!");
+        toast.error("Error retrieving exchange results!");
         console.error(error.response.data);
       });
   };
@@ -78,7 +79,7 @@ function HomePage() {
         setNews(response.data);
       })
       .catch((error) => {
-        alert("Error retrieving news!");
+        toast.error("Error retrieving news!");
         console.error(error.response.data);
       });
   };
@@ -93,6 +94,7 @@ function HomePage() {
 
   return (
     <>
+      <ToastContainer />
       <Container>
         <Row className="mt-4">
           <Col>

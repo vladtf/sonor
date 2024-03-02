@@ -77,4 +77,8 @@ public class Message {
     public void setConversation(Conversation conversation) {
         this.conversation = conversation;
     }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
 }
