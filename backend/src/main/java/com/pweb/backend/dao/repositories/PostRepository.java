@@ -17,4 +17,6 @@ public interface PostRepository extends CrudRepository<Post, Integer> {
     void deleteByIdAndUser(Integer id, User user);
 
     Page<Post> findAll(Pageable pageable);
+
+    Page<Post> findAllByTitleContainingOrContentContaining(String searchTerm, String searchTerm1, Pageable pageable);
 }

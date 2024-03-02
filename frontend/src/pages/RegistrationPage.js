@@ -35,11 +35,11 @@ function RegistrationPage() {
       .post(BACKEND_URL + "/register", postData)
       .then((response) => {
         console.log("Register response:", response.data);
-        alert("Registration successful!");
+        toast.success("User registered successfully!");
         navigate("/login");
       })
       .catch((error) => {
-        alert("Registration failed!");
+        toast.error("Error registering user!");
         console.error(error.response.data);
       })
       .finally(() => {

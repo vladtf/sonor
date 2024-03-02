@@ -1,8 +1,8 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { BACKEND_URL } from "../configuration/BackendConfig";
 import { Button, Form, Modal, Spinner } from "react-bootstrap";
 import { ToastContainer, toast } from "react-toastify";
+import { BACKEND_URL } from "../configuration/BackendConfig";
 
 export default function NewParticipant({ fetchConversation, conversationId, show, setShow }) {
 
@@ -55,7 +55,7 @@ export default function NewParticipant({ fetchConversation, conversationId, show
             })
             .catch((error) => {
                 console.error(error.response.data);
-                alert("Error adding participant!");
+                toast.error("Failed to add participant. Please try again.");
             });
 
         setUsername("");

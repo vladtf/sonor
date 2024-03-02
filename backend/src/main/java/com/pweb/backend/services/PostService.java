@@ -85,4 +85,8 @@ public class PostService {
         }
         return postOptional.get();
     }
+
+    public Page<Post> searchPosts(Pageable pageable, String searchTerm) {
+        return postRepository.findAllByTitleContainingOrContentContaining(searchTerm, searchTerm, pageable);
+    }
 }

@@ -65,13 +65,14 @@ public class DatabaseInitializer implements ApplicationListener<ContextRefreshed
     private void provisionPostsToUser() {
         var user = userRepository.findByUsername("user").orElseThrow();
         var posts = List.of(
+                new Post("My First Post", "This is my first post", Post.PostCategory.OTHER, user),
                 new Post("Title 1", "Content 1", Post.PostCategory.OTHER, user),
                 new Post("Title 2", "Content 2", Post.PostCategory.OTHER, user),
                 new Post("Title 3", "Content 3", Post.PostCategory.OTHER, user),
                 new Post("Title 4", "Content 4", Post.PostCategory.OTHER, user),
                 new Post("Title 5", "Content 5", Post.PostCategory.OTHER, user),
                 new Post("Title 6", "Content 6", Post.PostCategory.OTHER, user)
-                );
+        );
 
         postRepository.saveAll(posts);
     }

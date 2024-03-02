@@ -1,9 +1,8 @@
 import axios from "axios";
-import { BACKEND_URL } from "../configuration/BackendConfig";
-import { Button, Card } from "react-bootstrap";
-
-
 import { useState } from 'react';
+import { Button, Card } from "react-bootstrap";
+import { ToastContainer, toast } from "react-toastify";
+import { BACKEND_URL } from "../configuration/BackendConfig";
 
 export default function Message({ message, fetchConversation }) {
     const username = localStorage.getItem("username");
@@ -17,7 +16,7 @@ export default function Message({ message, fetchConversation }) {
             })
             .catch(error => {
                 console.error("Error deleting message:", error);
-                alert("Failed to delete message. Please try again.");
+                toast.error("Failed to delete message. Please try again.");
             });
     };
 
@@ -26,21 +25,25 @@ export default function Message({ message, fetchConversation }) {
     };
 
     return (
-        <Card key={message.id} className="mb-2">
-            <Card.Body>
-                {isEditing ? (
-                    <textarea value={editedMessage} onChange={(e) => setEditedMessage(e.target.value)} />
-                ) : (
-                    <Card.Text>{message.content}</Card.Text>
+        <>
+            <ToastContainer />
+            <Card key={message.id} className="mb-2">
+                <Card.Body>
+                    {isEditing ? (
+                        <textarea value={editedMessage} onChange={(e) => setEditedMessage(e.target.value)} />
+                    ) : (
+                        <Card.Text>{message.content}</Card.Text>
+                    )}
+                    <Card.Text className="text-muted">Created at: {message.createdAt}</Card.Text>
+                    <Card.Text className="text-muted">Author: {message.author}</Card.Text>
+                </Card.Body>
+                {message.author === username && (
+                    <Card.Footer>
+                        <Button variant="danger" size="sm" onClick={() => handleDeleteMessage(message.id)}>Delete</Button>
+                    </Card.Footer>
                 )}
-                <Card.Text className="text-muted">Created at: {message.createdAt}</Card.Text>
-                <Card.Text className="text-muted">Author: {message.author}</Card.Text>
-            </Card.Body>
-            {message.author === username && (
-                <Card.Footer>
-                    <Button variant="danger" size="sm" onClick={() => handleDeleteMessage(message.id)}>Delete</Button>
-                </Card.Footer>
-            )}
-        </Card>
+            </Card>
+        </>
+
     );
 }

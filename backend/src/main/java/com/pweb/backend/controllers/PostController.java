@@ -32,6 +32,14 @@ public class PostController {
         return new ResponseEntity<>(buildResponseBody(postService.getAllPosts(pageable)), HttpStatus.OK);
     }
 
+    @GetMapping("/search")
+    @Secured("ROLE_USER")
+    public ResponseEntity<Page<PostResponse>> searchPosts(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, @RequestParam String searchTerm) {
+        Pageable pageable = PageRequest.of(page, size);
+        return new ResponseEntity<>(buildResponseBody(postService.searchPosts(pageable, searchTerm)), HttpStatus.OK);
+    }
+
+
     @GetMapping("/{id}")
     @Secured("ROLE_USER")
     public ResponseEntity<PostResponse> getPost(@PathVariable Integer id) {

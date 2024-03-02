@@ -1,17 +1,17 @@
-import { Col, Container, Row, Button, Card, Pagination } from "react-bootstrap";
-import MyNavbar from "../components/MyNavbar";
 import axios from "axios";
-import { useState, useEffect } from "react";
-import BackendConfig, { BACKEND_URL } from "../configuration/BackendConfig";
+import { useEffect, useState } from "react";
+import { Button, Card, Col, Container, Form, Pagination, Row } from "react-bootstrap";
+import { FaPlusCircle, FaRegClock, FaRegNewspaper } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
 import NewPost from "../components/NewPost";
-import { FaPlusCircle } from "react-icons/fa";
-import { FaRegNewspaper, FaRegClock, FaRegUser } from 'react-icons/fa';
+import { BACKEND_URL } from "../configuration/BackendConfig";
 
 function PostPage() {
   const [posts, setPosts] = useState([]);
   const [showNewPostForm, setShowNewPostForm] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
+  const [searchTerm, setSearchTerm] = useState('');
 
   const token = localStorage.getItem("jwtToken");
   const navigate = useNavigate();
@@ -28,6 +28,25 @@ function PostPage() {
     fetchPosts();
   }, []);
 
+  const handleSearch = (pageNumber = 0, pageSize = 5) => {
+    axios
+      .get(BACKEND_URL + "/api/posts/search", {
+        params: {
+          searchTerm: searchTerm,
+          page: pageNumber,
+          size: pageSize,
+        },
+      })
+      .then((response) => {
+        console.log(response.data);
+        setPosts(response.data);
+      })
+      .catch((error) => {
+        toast.error("Error retrieving posts!");
+        console.error(error.response.data);
+      });
+  };
+
   const fetchPosts = (pageNumber = 0, pageSize = 5) => {
     axios
       .get(BACKEND_URL + "/api/posts/all", {
@@ -41,7 +60,7 @@ function PostPage() {
         setPosts(response.data);
       })
       .catch((error) => {
-        alert("Error retrieving posts!");
+        toast.error("Error retrieving posts!");
         console.error(error.response.data);
       });
   };
@@ -64,11 +83,11 @@ function PostPage() {
       .delete(BACKEND_URL + "/api/posts/delete", { data: deleteRequest })
       .then((response) => {
         console.log(response.data);
-        alert("Post deleted successfully!");
+        toast.success("Post deleted successfully!");
         fetchPosts();
       })
       .catch((error) => {
-        alert("Error deleting post!");
+        toast.error("Failed to delete post. Please try again.");
         console.error(error.response.data);
       });
   };
@@ -91,6 +110,7 @@ function PostPage() {
 
   return (
     <>
+      <ToastContainer />
       <Container className="w-50">
         <Row>
           <Col>
@@ -102,7 +122,25 @@ function PostPage() {
         </Row>
         <hr />
         <Row>
-          <Col>
+          <Col md={6}>
+            <Form.Control
+              type="text"
+              placeholder="Search posts"
+              value={searchTerm}
+              onChange={(event) => setSearchTerm(event.target.value)}
+            />
+          </Col>
+          <Col md={1}>
+            <Button variant="primary" onClick={() => handleSearch(0, 5)} disabled={searchTerm.length === 0}>
+              Search
+            </Button>
+          </Col>
+          <Col md={1}>
+            <Button variant="secondary" onClick={() => { setSearchTerm(''); fetchPosts(0, 5) }}>
+              Reset
+            </Button>
+          </Col>
+          <Col md={4} className="d-flex justify-content-end">
             <Pagination className="mb-0">
               <Pagination.Prev onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1} />
               {[...Array(posts.totalPages).keys()].map(pageNumber => (

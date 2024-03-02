@@ -1,8 +1,9 @@
-import React, { useState } from "react";
-import { Container, Row, Col, Form, Button, Spinner } from "react-bootstrap";
 import axios from "axios";
-import { BACKEND_URL } from "../configuration/BackendConfig";
+import React, { useState } from "react";
+import { Button, Col, Container, Form, Row, Spinner } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import { BACKEND_URL } from "../configuration/BackendConfig";
 import { getClaimFromToken } from "../token/TokeUtils";
 
 function LoginPage() {
@@ -44,7 +45,7 @@ function LoginPage() {
         navigate("/home");
       })
       .catch((error) => {
-        alert("Login failed!");
+        toast.error("Error logging in!");
         console.error(error.response.data);
       })
       .finally(() => {
@@ -54,6 +55,7 @@ function LoginPage() {
 
   return (
     <>
+      <ToastContainer />
       <Container style={{ marginTop: "250px" }}>
         <Row>
           <Col>

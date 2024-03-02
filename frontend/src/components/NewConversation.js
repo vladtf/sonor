@@ -1,8 +1,8 @@
 import axios from "axios";
 import { useState } from "react";
-import { BACKEND_URL } from "../configuration/BackendConfig";
 import { Button, Form, Modal } from "react-bootstrap";
 import { ToastContainer, toast } from "react-toastify";
+import { BACKEND_URL } from "../configuration/BackendConfig";
 
 export default function NewConversation({ fetchConversations, show, setShow }) {
 
@@ -25,7 +25,7 @@ export default function NewConversation({ fetchConversations, show, setShow }) {
             })
             .catch((error) => {
                 console.error(error.response.data);
-                alert("Error creating conversation!");
+                toast.error("Failed to create conversation. Please try again.");
             });
 
         setName("");

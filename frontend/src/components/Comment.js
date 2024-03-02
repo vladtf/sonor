@@ -1,9 +1,8 @@
 import axios from "axios";
-import { BACKEND_URL } from "../configuration/BackendConfig";
-import { Button, Card } from "react-bootstrap";
-
-
 import { useState } from 'react';
+import { Button, Card } from "react-bootstrap";
+import { ToastContainer, toast } from "react-toastify";
+import { BACKEND_URL } from "../configuration/BackendConfig";
 
 export default Comment = ({ comment, fetchComments }) => {
     const username = localStorage.getItem("username");
@@ -17,7 +16,7 @@ export default Comment = ({ comment, fetchComments }) => {
             })
             .catch(error => {
                 console.error("Error deleting comment:", error);
-                alert("Failed to delete comment. Please try again.");
+                toast.error("Failed to delete comment. Please try again.");
             });
     };
 
@@ -33,31 +32,35 @@ export default Comment = ({ comment, fetchComments }) => {
             })
             .catch(error => {
                 console.error("Error updating comment:", error);
-                alert("Failed to update comment. Please try again.");
+                toast.error("Failed to update comment. Please try again.");
             });
     };
 
     return (
-        <Card key={comment.id} className="mb-2">
-            <Card.Body>
-                {isEditing ? (
-                    <textarea value={editedComment} onChange={(e) => setEditedComment(e.target.value)} />
-                ) : (
-                    <Card.Text>{comment.content}</Card.Text>
-                )}
-                <Card.Text className="text-muted">Created at: {comment.createdAt}</Card.Text>
-                <Card.Text className="text-muted">Author: {comment.author}</Card.Text>
-            </Card.Body>
-            {comment.author === username && (
-                <Card.Footer>
-                    <Button variant="danger" size="sm" onClick={() => handleDeleteComment(comment.id)}>Delete</Button>
+        <>
+            <ToastContainer />
+            <Card key={comment.id} className="mb-2">
+                <Card.Body>
                     {isEditing ? (
-                        <Button variant="success" size="sm" onClick={() => handleUpdateComment(comment.id)} className="ms-2">Update</Button>
+                        <textarea value={editedComment} onChange={(e) => setEditedComment(e.target.value)} />
                     ) : (
-                        <Button variant="primary" size="sm" onClick={handleEditComment} className="ms-2">Edit</Button>
+                        <Card.Text>{comment.content}</Card.Text>
                     )}
-                </Card.Footer>
-            )}
-        </Card>
+                    <Card.Text className="text-muted">Created at: {comment.createdAt}</Card.Text>
+                    <Card.Text className="text-muted">Author: {comment.author}</Card.Text>
+                </Card.Body>
+                {comment.author === username && (
+                    <Card.Footer>
+                        <Button variant="danger" size="sm" onClick={() => handleDeleteComment(comment.id)}>Delete</Button>
+                        {isEditing ? (
+                            <Button variant="success" size="sm" onClick={() => handleUpdateComment(comment.id)} className="ms-2">Update</Button>
+                        ) : (
+                            <Button variant="primary" size="sm" onClick={handleEditComment} className="ms-2">Edit</Button>
+                        )}
+                    </Card.Footer>
+                )}
+            </Card>
+        </>
+
     );
 }

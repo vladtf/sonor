@@ -1,9 +1,9 @@
 import axios from "axios";
 import { useState } from "react";
-import { BACKEND_URL } from "../configuration/BackendConfig";
 import { Button, Form, Modal } from "react-bootstrap";
+import { ToastContainer, toast } from "react-toastify";
+import { BACKEND_URL } from "../configuration/BackendConfig";
 
-// modal form for new post
 export default function NewPost({ fetchPosts, show, setShow }) {
     const [title, setTitle] = useState("");
     const [category, setCategory] = useState("OTHER");
@@ -13,7 +13,7 @@ export default function NewPost({ fetchPosts, show, setShow }) {
     const handleNewPost = (e) => {
         // check if the title and content are empty
         if (title === "" || content === "") {
-            alert("Title and content cannot be empty!");
+            toast.warning("Title and content are required!");
             return;
         }
 
@@ -41,7 +41,7 @@ export default function NewPost({ fetchPosts, show, setShow }) {
                 fetchPosts();
             })
             .catch((error) => {
-                alert("Error adding post!");
+                toast.error("Failed to create post. Please try again.");
                 console.error(error.response.data);
             });
 
@@ -53,53 +53,56 @@ export default function NewPost({ fetchPosts, show, setShow }) {
     };
 
     return (
-        // <Modal show={show} onHide={() => setShow(false)}>
-        <Modal show={show} onHide={() => setShow(false)}>
-            <Modal.Header closeButton>
-                <Modal.Title>New Post</Modal.Title>
-            </Modal.Header>
-            <Modal.Body>
-                <Form>
-                    <Form.Group controlId="title">
-                        <Form.Label>Title</Form.Label>
-                        <Form.Control
-                            type="text"
-                            placeholder="Enter title"
-                            value={title}
-                            onChange={(e) => setTitle(e.target.value)}
-                        />
-                    </Form.Group>
-                    <Form.Group controlId="category">
-                        <Form.Label>Category</Form.Label>
-                        <Form.Control
-                            as="select"
-                            value={category}
-                            onChange={(e) => setCategory(e.target.value)}
-                        >
-                            <option value="OTHER">Other</option>
-                            <option value="TECHNOLOGY">Technology</option>
-                        </Form.Control>
-                    </Form.Group>
-                    <Form.Group controlId="content">
-                        <Form.Label>Content</Form.Label>
-                        <Form.Control
-                            as="textarea"
-                            rows={3}
-                            value={content}
-                            onChange={(e) => setContent(e.target.value)}
-                        />
-                    </Form.Group>
-                </Form>
-            </Modal.Body>
-            <Modal.Footer>
-                <Button variant="secondary" onClick={() => setShow(false)}>
-                    Close
-                </Button>
-                <Button variant="primary" onClick={() => handleNewPost()}>
-                    Save
-                </Button>
-            </Modal.Footer>
-        </Modal>
+        <>
+            <ToastContainer />
+            <Modal show={show} onHide={() => setShow(false)}>
+                <Modal.Header closeButton>
+                    <Modal.Title>New Post</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    <Form>
+                        <Form.Group controlId="title">
+                            <Form.Label>Title</Form.Label>
+                            <Form.Control
+                                type="text"
+                                placeholder="Enter title"
+                                value={title}
+                                onChange={(e) => setTitle(e.target.value)}
+                            />
+                        </Form.Group>
+                        <Form.Group controlId="category">
+                            <Form.Label>Category</Form.Label>
+                            <Form.Control
+                                as="select"
+                                value={category}
+                                onChange={(e) => setCategory(e.target.value)}
+                            >
+                                <option value="OTHER">Other</option>
+                                <option value="TECHNOLOGY">Technology</option>
+                            </Form.Control>
+                        </Form.Group>
+                        <Form.Group controlId="content">
+                            <Form.Label>Content</Form.Label>
+                            <Form.Control
+                                as="textarea"
+                                rows={3}
+                                value={content}
+                                onChange={(e) => setContent(e.target.value)}
+                            />
+                        </Form.Group>
+                    </Form>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button variant="secondary" onClick={() => setShow(false)}>
+                        Close
+                    </Button>
+                    <Button variant="primary" onClick={() => handleNewPost()}>
+                        Save
+                    </Button>
+                </Modal.Footer>
+            </Modal>
+        </>
+
     );
 
 }
