@@ -1,4 +1,4 @@
-import { Col, Container, Row, Button, Card } from "react-bootstrap";
+import { Col, Container, Row, Button, Card, Pagination } from "react-bootstrap";
 import MyNavbar from "../components/MyNavbar";
 import axios from "axios";
 import { useState, useEffect } from "react";
@@ -6,10 +6,12 @@ import BackendConfig, { BACKEND_URL } from "../configuration/BackendConfig";
 import { useNavigate } from "react-router-dom";
 import NewPost from "../components/NewPost";
 import { FaPlusCircle } from "react-icons/fa";
+import { FaRegNewspaper, FaRegClock, FaRegUser } from 'react-icons/fa';
 
 function PostPage() {
   const [posts, setPosts] = useState([]);
   const [showNewPostForm, setShowNewPostForm] = useState(false);
+  const [currentPage, setCurrentPage] = useState(0);
 
   const token = localStorage.getItem("jwtToken");
   const navigate = useNavigate();
@@ -26,9 +28,14 @@ function PostPage() {
     fetchPosts();
   }, []);
 
-  const fetchPosts = () => {
+  const fetchPosts = (pageNumber = 0, pageSize = 5) => {
     axios
-      .get(BACKEND_URL + "/api/posts/all")
+      .get(BACKEND_URL + "/api/posts/all", {
+        params: {
+          page: pageNumber,
+          size: pageSize,
+        },
+      })
       .then((response) => {
         console.log(response.data);
         setPosts(response.data);
@@ -73,6 +80,15 @@ function PostPage() {
     return content;
   }
 
+  const handlePageChange = (pageNumber) => {
+    if (pageNumber < 0 || pageNumber > posts.totalPages + 1) {
+      return;
+    }
+
+    setCurrentPage(pageNumber);
+    fetchPosts(pageNumber - 1);
+  };
+
   return (
     <>
       <Container className="w-50">
@@ -86,32 +102,54 @@ function PostPage() {
         </Row>
         <hr />
         <Row>
+          <Col>
+            <Pagination className="mb-0">
+              <Pagination.Prev onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1} />
+              {[...Array(posts.totalPages).keys()].map(pageNumber => (
+                <Pagination.Item key={pageNumber + 1} active={pageNumber + 1 === currentPage} onClick={() => handlePageChange(pageNumber + 1)}>
+                  {pageNumber + 1}
+                </Pagination.Item>
+              ))}
+              <Pagination.Next onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === posts.totalPages} />
+            </Pagination>
+          </Col>
+        </Row>
+        <hr />
+        <Row>
           {posts.length === 0 ? (
             <h2 className="text-center">No posts found</h2>
           ) : (
-            posts.map((post, index) => {
+            posts.content.map((post, index) => {
               return (
+
                 <Col md="12" key={index} className="p-2">
                   <Card className="card-hover-effect" onClick={() => navigate(`/post/${post.id}`)}>
                     <Card.Body>
-                      <Card.Title>{post.title}</Card.Title>
+                      <Card.Title><FaRegNewspaper className="me-2" />{post.title}</Card.Title>
                       <Card.Subtitle className="mb-2 text-muted">
                         {post.category}
                       </Card.Subtitle>
                       <Card.Text>{getShortContent(post.content)}</Card.Text>
+                    </Card.Body>
+                    <Card.Footer className="text-muted d-flex justify-content-between">
+                      <small><FaRegClock className="me-1" />{new Date(post.createdAt).toLocaleDateString()}</small>
                       <Button
                         variant="danger"
-                        onClick={() => deletePost(post.id)}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          deletePost(post.id);
+                        }}
                       >
                         Delete Post
                       </Button>
-                    </Card.Body>
+                    </Card.Footer>
                   </Card>
                 </Col>
               );
             })
           )}
         </Row>
+        
       </Container>
     </>
   );

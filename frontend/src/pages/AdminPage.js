@@ -220,7 +220,7 @@ function AdminPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {posts.map((account) => (
+                  {posts.content && posts.content.map((account) => (
                     <tr key={account.iban}>
                       <td>{account.iban}</td>
                       <td>{account.balance}</td>

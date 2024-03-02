@@ -3,6 +3,7 @@ import { Card, Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { BACKEND_URL } from '../configuration/BackendConfig';
 import { ToastContainer, toast } from 'react-toastify';
+import { FaRegComments, FaRegUser, FaRegEnvelope } from 'react-icons/fa';
 
 export default function ConversationListItem({ conversation, fetchConversations }) {
 
@@ -29,18 +30,14 @@ export default function ConversationListItem({ conversation, fetchConversations 
             <ToastContainer />
             <Card className="mb-3 card-hover-effect" onClick={() => navigate(`/conversation/${conversation.id}`)}>
                 <Card.Body>
-                    <Card.Title>
-                        {conversation.name}
-                    </Card.Title>
+                    <Card.Title><FaRegComments className="me-2" />{conversation.name}</Card.Title>
                     <Card.Subtitle className="mb-2 text-muted">
-                        Participants: {conversation.participants.join(', ')}
+                        <FaRegUser className="me-1" />Participants: {conversation.participants.join(', ')}
                     </Card.Subtitle>
-                    <Card.Text>
-                        Messages: {conversation.messages ? conversation.messages.length : 0}
-                    </Card.Text>
+                    <Card.Text><FaRegEnvelope className="me-1" />Messages: {conversation.messages ? conversation.messages.length : 0}</Card.Text>
                 </Card.Body>
-                <Card.Footer>
-                    <Button variant="primary" className="me-2" onClick={() => navigate(`/conversation/${conversation.id}`)}>View</Button>
+                <Card.Footer className="d-flex justify-content-between">
+                    <Button variant="primary" className="me-2" onClick={(event) => { event.stopPropagation(); navigate(`/conversation/${conversation.id}`); }}>View</Button>
                     <Button
                         variant="danger"
                         onClick={(event) => {

@@ -8,12 +8,12 @@ import RegistrationPage from "./pages/RegistrationPage";
 import HomePage from "./pages/HomePage";
 import { Navigate } from "react-router-dom";
 import PostsPage from "./pages/PostsPage.js";
-import MessagesPage from "./pages/MessagesPage.js";
+import ConversationsPage from "./pages/ConversationsPage.js";
 import AdminPage from "./pages/AdminPage.js";
 import PostPage from "./pages/PostDetailPage.js";
 import MyNavbar from "./components/MyNavbar";
 import PostDetailPage from "./pages/PostDetailPage.js";
-import ConversationPage from "./pages/ConversationPage.js";
+import ConversationDetailPage from "./pages/ConversationDetailPage.js";
 import 'react-toastify/dist/ReactToastify.css';
 import FeedbackPage from "./pages/FeedbackPage.js";
 
@@ -37,8 +37,8 @@ function App() {
         <Route path="/home" element={<HomePage />} />
         <Route path="/posts" element={<PostsPage />} />
         <Route path="/post/:postId" element={<PostDetailPage />} />
-        <Route path="/conversations" element={<MessagesPage />} />
-        <Route path="/conversation/:conversationId" element={<ConversationPage />} />
+        <Route path="/conversations" element={<ConversationsPage />} />
+        <Route path="/conversation/:conversationId" element={<ConversationDetailPage />} />
         <Route path="/feedbacks" element={<FeedbackPage />} />
         <Route path="/*" element={<h1>Not Found</h1>} />
       </Routes>

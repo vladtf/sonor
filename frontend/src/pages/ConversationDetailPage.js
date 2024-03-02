@@ -13,7 +13,7 @@ import { toast } from "react-toastify";
 import NewParticipant from "../components/NewParticipant";
 import { FaUserCircle } from "react-icons/fa";
 
-function ConversationPage() {
+function ConversationDetailPage() {
   const { conversationId } = useParams();
   const [conversation, setConversation] = useState([]);
   const [message, setMessage] = useState("");
@@ -100,70 +100,72 @@ function ConversationPage() {
     <>
       <ToastContainer />
       <Container className="w-50">
-        <Col md={12}>
-          <Card>
-            <Card.Body>
-              <Card.Title>{conversation.name}</Card.Title>
-              <Card.Text>
-                {conversation.participants && conversation.participants.length > 0 ? (
-                  <ListGroup variant="flush">
-                    {conversation.participants.map((participant, index) => (
-                      <ListGroup.Item key={index}><FaUserCircle /> {participant}
-                        <Button
-                          variant="danger"
-                          size="sm"
-                          onClick={() => handleDeleteParticipant(conversation.id, participant)}
-                          style={{ float: 'right' }}
-                        >
-                          Delete
-                        </Button></ListGroup.Item>
-                    ))}
-                  </ListGroup>
-                ) : (
-                  <p>No participants yet.</p>
-                )}
-              </Card.Text>
-            </Card.Body>
-            <Card.Footer>
-              <Button variant="success" onClick={() => setShowAddParticipantForm(true)}>
-                <FaPlusCircle /> Add Participant
-              </Button>
-              <NewParticipant show={showAddParticipantForm} setShow={setShowAddParticipantForm} fetchConversation={fetchConversation} conversationId={conversationId} />
-            </Card.Footer>
-          </Card>
-          <hr />
-          <Card>
-            <Card.Body>
-              <Card.Title>Messsages</Card.Title>
-              {conversation.messages ? conversation.messages.map((message, index) => <Message key={index} message={message} fetchConversation={fetchConversation} />) : <p>No messages yet.</p>}
-            </Card.Body>
-          </Card>
-          <hr />
-          <Card>
-            <Card.Body>
-              <Form onSubmit={handleMessageSubmit}>
-                <Form.Group className="mb-3" controlId="message">
-                  <Form.Label>New message:</Form.Label>
-                  <Form.Control 
-                    as="textarea" 
-                    rows={3} 
-                    value={message} 
-                    onChange={(e) => setMessage(e.target.value)} 
-                    disabled={submitting} 
-                    required
-                  />
-                </Form.Group>
-                {error && <Alert variant="danger">{error}</Alert>}
-                <Button variant="primary" type="submit" disabled={submitting}>
-                  {submitting ? 'Submitting...' : 'Submit Message'}
+        <Row>
+          <Col md={12}>
+            <Card>
+              <Card.Body>
+                <Card.Title>{conversation.name}</Card.Title>
+                <Card.Text>
+                  {conversation.participants && conversation.participants.length > 0 ? (
+                    <ListGroup variant="flush">
+                      {conversation.participants.map((participant, index) => (
+                        <ListGroup.Item key={index}><FaUserCircle /> {participant}
+                          <Button
+                            variant="danger"
+                            size="sm"
+                            onClick={() => handleDeleteParticipant(conversation.id, participant)}
+                            style={{ float: 'right' }}
+                          >
+                            Delete
+                          </Button></ListGroup.Item>
+                      ))}
+                    </ListGroup>
+                  ) : (
+                    <p>No participants yet.</p>
+                  )}
+                </Card.Text>
+              </Card.Body>
+              <Card.Footer>
+                <Button variant="success" onClick={() => setShowAddParticipantForm(true)}>
+                  <FaPlusCircle /> Add Participant
                 </Button>
-              </Form>
-            </Card.Body>
-          </Card>
-        </Col>
+                <NewParticipant show={showAddParticipantForm} setShow={setShowAddParticipantForm} fetchConversation={fetchConversation} conversationId={conversationId} />
+              </Card.Footer>
+            </Card>
+            <hr />
+            <Card>
+              <Card.Body>
+                <Card.Title>Messsages</Card.Title>
+                {conversation.messages ? conversation.messages.map((message, index) => <Message key={index} message={message} fetchConversation={fetchConversation} />) : <p>No messages yet.</p>}
+              </Card.Body>
+            </Card>
+            <hr />
+            <Card>
+              <Card.Body>
+                <Form onSubmit={handleMessageSubmit}>
+                  <Form.Group className="mb-3" controlId="message">
+                    <Form.Label>New message:</Form.Label>
+                    <Form.Control
+                      as="textarea"
+                      rows={3}
+                      value={message}
+                      onChange={(e) => setMessage(e.target.value)}
+                      disabled={submitting}
+                      required
+                    />
+                  </Form.Group>
+                  {error && <Alert variant="danger">{error}</Alert>}
+                  <Button variant="primary" type="submit" disabled={submitting}>
+                    {submitting ? 'Submitting...' : 'Submit Message'}
+                  </Button>
+                </Form>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
       </Container>
     </>
   );
 }
 
-export default ConversationPage;
+export default ConversationDetailPage;
