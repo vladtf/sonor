@@ -56,8 +56,9 @@ public class Conversation {
     public Conversation() {
     }
 
-    public Conversation(Collection<Message> messages) {
-        this.messages = messages;
+    public Conversation(Collection<User> users, String name) {
+        this.users = users;
+        this.name = name;
     }
 
     public String getName() {

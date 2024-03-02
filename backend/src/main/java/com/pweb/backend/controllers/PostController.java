@@ -9,6 +9,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -37,6 +38,9 @@ public class PostController {
         postResponse.title = post.getTitle();
         postResponse.content = post.getContent();
         postResponse.category = post.getCategory();
+        postResponse.author = post.getUser().getUsername();
+        postResponse.createdAt = post.getCreatedAt();
+
         return new ResponseEntity<>(postResponse, HttpStatus.OK);
     }
 
@@ -63,6 +67,9 @@ public class PostController {
             postResponse.title = post.getTitle();
             postResponse.content = post.getContent();
             postResponse.category = post.getCategory();
+            postResponse.author = post.getUser().getUsername();
+            postResponse.createdAt = post.getCreatedAt();
+
             return postResponse;
         }).toList();
     }
@@ -82,6 +89,8 @@ public class PostController {
         public Integer id;
         public String title;
         public String content;
+        public String author;
+        public Date createdAt;
         public Post.PostCategory category;
     }
 

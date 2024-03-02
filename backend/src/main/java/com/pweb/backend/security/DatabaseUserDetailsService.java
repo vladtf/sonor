@@ -41,32 +41,4 @@ public class DatabaseUserDetailsService implements UserDetailsService {
                 .map(role -> new SimpleGrantedAuthority("ROLE_" + role.getName()))
                 .collect(Collectors.toList());
     }
-
-    @PostConstruct
-    @Transactional
-    public void init() {
-        // delete admin user if exists
-        userRepository.findByUsername("admin").ifPresent(userRepository::delete);
-
-        com.pweb.backend.dao.entities.User user = new com.pweb.backend.dao.entities.User();
-        user.setUsername("admin");
-        user.setPassword(passwordEncoder.encode("admin"));
-        userRepository.save(user);
-
-        user = userRepository.findByUsername("admin").orElseThrow();
-        roleRepository.save(new Role(Role.RoleEnum.USER, user));
-        roleRepository.save(new Role(Role.RoleEnum.ADMIN, user));
-
-
-        // delete user user if exists
-        userRepository.findByUsername("user").ifPresent(userRepository::delete);
-
-        com.pweb.backend.dao.entities.User user2 = new com.pweb.backend.dao.entities.User();
-        user2.setUsername("user");
-        user2.setPassword(passwordEncoder.encode("user"));
-        userRepository.save(user2);
-
-        user2 = userRepository.findByUsername("user").orElseThrow();
-        roleRepository.save(new Role(Role.RoleEnum.USER, user2));
-    }
 }
