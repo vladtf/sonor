@@ -5,6 +5,8 @@ import com.pweb.backend.dao.entities.Feedback;
 import com.pweb.backend.dao.entities.User;
 import com.pweb.backend.dao.repositories.FeedbackRepository;
 import com.pweb.backend.dao.repositories.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
@@ -22,8 +24,8 @@ public class FeedbackService {
     }
 
 
-    public Collection<Feedback> getAllFeedbacks() {
-        return (Collection<Feedback>) feedbackRepository.findAll();
+    public Page<Feedback> getAllFeedbacks(Pageable pageable) {
+        return feedbackRepository.findAll(pageable);
     }
 
     public Feedback createFeedback(FeedbackController.CreateFeedbackRequest feedback, String username) {

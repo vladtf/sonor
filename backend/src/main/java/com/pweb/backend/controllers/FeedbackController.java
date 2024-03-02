@@ -3,12 +3,14 @@ package com.pweb.backend.controllers;
 
 import com.pweb.backend.dao.entities.Feedback;
 import com.pweb.backend.services.FeedbackService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
-import java.util.List;
 
 
 @RestController
@@ -23,20 +25,19 @@ public class FeedbackController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<FeedbackResponse>> getAllFeedbacks() {
-        return ResponseEntity.ok(feedbackService.getAllFeedbacks()
-                .stream()
-                .map(feedback -> {
-                    FeedbackResponse response = new FeedbackResponse();
-                    response.id = feedback.getId();
-                    response.content = feedback.getContent();
-                    response.username = feedback.getUser().getUsername();
-                    response.createdAt = feedback.getCreatedAt();
-                    response.satisfaction = feedback.getSatisfaction();
-                    response.feature = feedback.getFeature();
-                    return response;
-                })
-                .collect(java.util.stream.Collectors.toList()));
+    public ResponseEntity<Page<FeedbackResponse>> getAllFeedbacks(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+
+        return ResponseEntity.ok(feedbackService.getAllFeedbacks(pageable).map(feedback -> new FeedbackResponse() {
+            {
+                id = feedback.getId();
+                content = feedback.getContent();
+                username = feedback.getUser().getUsername();
+                satisfaction = feedback.getSatisfaction();
+                feature = feedback.getFeature();
+                createdAt = feedback.getCreatedAt();
+            }
+        }));
     }
 
     @PostMapping("/create")

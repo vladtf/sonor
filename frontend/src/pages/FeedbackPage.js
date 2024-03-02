@@ -1,4 +1,4 @@
-import { Col, Container, Row, Button, Card, Form } from "react-bootstrap";
+import { Col, Container, Row, Button, Card, Form, Pagination } from "react-bootstrap";
 import MyNavbar from "../components/MyNavbar";
 import axios from "axios";
 import { useState, useEffect } from "react";
@@ -15,6 +15,7 @@ function FeedbackPage() {
   const [satisfaction, setSatisfaction] = useState("neutral")
   const [content, setContent] = useState("");
   const [selectedFeature, setSelectedFeature] = useState("All");
+  const [currentPage, setCurrentPage] = useState(0);
 
 
   const token = localStorage.getItem("jwtToken");
@@ -32,9 +33,14 @@ function FeedbackPage() {
     fetchFeedbacks();
   }, []);
 
-  const fetchFeedbacks = () => {
+  const fetchFeedbacks = (pageNumber = 0, pageSize = 2) => {
     axios
-      .get(BACKEND_URL + "/api/feedbacks/all")
+      .get(BACKEND_URL + "/api/feedbacks/all", {
+        params: {
+          page: pageNumber,
+          size: pageSize,
+        },
+      })
       .then((response) => {
         console.log(response.data);
         setFeedbacks(response.data);
@@ -68,6 +74,16 @@ function FeedbackPage() {
         toast.error("Error submitting feedback!");
       });
   }
+
+
+  const handlePageChange = (pageNumber) => {
+    if (pageNumber < 0 || pageNumber > feedbacks.totalPages + 1) {
+      return;
+    }
+
+    setCurrentPage(pageNumber);
+    fetchFeedbacks(pageNumber - 1);
+  };
 
   return (
     <>
@@ -147,13 +163,28 @@ function FeedbackPage() {
         <hr />
         <Row>
           <Col>
-          {feedbacks.length === 0 ? (
-            <h2 className="text-center">No feedbacks found</h2>
-          ) : (
-            feedbacks.map((feedback, index) => <Feedback key={index} feedback={feedback} fetchFeedbacks={fetchFeedbacks} />)
-          )}
+            <Pagination className="mb-0">
+              <Pagination.Prev onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1} />
+              {[...Array(feedbacks.totalPages).keys()].map(pageNumber => (
+                <Pagination.Item key={pageNumber + 1} active={pageNumber + 1 === currentPage} onClick={() => handlePageChange(pageNumber + 1)}>
+                  {pageNumber + 1}
+                </Pagination.Item>
+              ))}
+              <Pagination.Next onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === feedbacks.totalPages} />
+            </Pagination>
           </Col>
         </Row>
+        <hr />
+        <Row>
+          <Col>
+            {feedbacks.content && feedbacks.content.length === 0 ? (
+              <h2 className="text-center">No feedbacks found</h2>
+            ) : (
+              feedbacks.content && feedbacks.content.map((feedback, index) => <Feedback key={index} feedback={feedback} fetchFeedbacks={fetchFeedbacks} />)
+            )}
+          </Col>
+        </Row>
+        <hr />
       </Container>
     </>
   );
