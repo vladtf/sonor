@@ -15,6 +15,7 @@ import MyNavbar from "./components/MyNavbar";
 import PostDetailPage from "./pages/PostDetailPage.js";
 import ConversationPage from "./pages/ConversationPage.js";
 import 'react-toastify/dist/ReactToastify.css';
+import FeedbackPage from "./pages/FeedbackPage.js";
 
 function App() {
   const [email, setEmail] = useState("");
@@ -38,7 +39,7 @@ function App() {
         <Route path="/post/:postId" element={<PostDetailPage />} />
         <Route path="/conversations" element={<MessagesPage />} />
         <Route path="/conversation/:conversationId" element={<ConversationPage />} />
-        <Route path="/admin" element={<AdminPage />} />
+        <Route path="/feedbacks" element={<FeedbackPage />} />
         <Route path="/*" element={<h1>Not Found</h1>} />
       </Routes>
     </BrowserRouter>

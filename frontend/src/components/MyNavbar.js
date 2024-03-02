@@ -4,6 +4,8 @@ import { FaCloud, FaHome, FaTeamspeak, FaFacebookMessenger, FaUserCircle } from 
 import axios from "axios";
 import { BACKEND_URL } from "../configuration/BackendConfig";
 import { useNavigate } from "react-router-dom";
+import { MdOutlineFeedback } from "react-icons/md";
+
 
 const MyNavbar = () => {
   const username = localStorage.getItem("username");
@@ -86,6 +88,9 @@ const MyNavbar = () => {
               </Nav.Link>
               <Nav.Link href="/conversations" style={{ ...navLinkStyle, fontWeight: currentPage === "/conversations" ? "bold" : "normal" }} className="px-2">
                 <FaFacebookMessenger style={{ marginRight: "5px" }} /> Conversations
+              </Nav.Link>
+              <Nav.Link href="/feedbacks" style={{ ...navLinkStyle, fontWeight: currentPage === "/feedbacks" ? "bold" : "normal" }} className="px-2">
+                <MdOutlineFeedback style={{ marginRight: "5px" }} /> Feedbacks
               </Nav.Link>
             </>
           )}
