@@ -17,14 +17,6 @@ import 'react-toastify/dist/ReactToastify.css';
 import FeedbackPage from "./pages/FeedbackPage.js";
 
 function App() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    console.log("Email:", email, "Password:", password);
-  };
-
   return (
     <BrowserRouter>
       <MyNavbar />

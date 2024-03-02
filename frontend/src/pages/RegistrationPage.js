@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { Container, Row, Col, Form, Button, Spinner } from "react-bootstrap";
+import { Container, Row, Col, Form, Button, Spinner, Toast } from "react-bootstrap";
 import axios from "axios";
 import { BACKEND_URL } from "../configuration/BackendConfig";
 import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
 
 function RegistrationPage() {
   const [username, setUsername] = useState("");
@@ -14,6 +15,12 @@ function RegistrationPage() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
+
+    if (password !== passwordConfirmation) {
+      toast.warning("Passwords do not match!");
+      return;
+    }
+
 
     const postData = {
       password: password,
@@ -42,6 +49,7 @@ function RegistrationPage() {
 
   return (
     <>
+      <ToastContainer />
       <Container style={{ marginTop: "250px" }}>
         <Row>
           <Col>

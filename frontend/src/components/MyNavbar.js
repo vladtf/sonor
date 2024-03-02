@@ -5,12 +5,15 @@ import axios from "axios";
 import { BACKEND_URL } from "../configuration/BackendConfig";
 import { useNavigate } from "react-router-dom";
 import { MdOutlineFeedback } from "react-icons/md";
+import { useLocation } from "react-router-dom";
 
 
 const MyNavbar = () => {
   const username = localStorage.getItem("username");
   const jwtToken = localStorage.getItem("jwtToken");
   const roles = localStorage.getItem("roles");
+  const location = useLocation();
+  const hideOnRoutes = ['/login', '/registration'];
 
   const currentPage = window.location.pathname;
 
@@ -20,17 +23,15 @@ const MyNavbar = () => {
     localStorage.removeItem("jwtToken");
     localStorage.removeItem("email");
 
-    // send a get request to the server to invalidate the token
     axios
       .get(BACKEND_URL + "/logout")
       .then((response) => {
         console.log(response.data);
-        navigate("/login");
       })
       .catch((error) => {
         console.log(error);
-      }
-      );
+      });
+    navigate("/login");
   };
 
   const dropdownContainerStyle = {
@@ -52,6 +53,10 @@ const MyNavbar = () => {
     fontSize: "14px",
   };
 
+  if (hideOnRoutes.includes(location.pathname)) {
+    return null;
+  }
+
   return (
     <Navbar
       expand="lg"
@@ -69,31 +74,18 @@ const MyNavbar = () => {
       <Navbar.Toggle aria-controls="basic-navbar-nav" className="mx-2" />
       <Navbar.Collapse id="basic-navbar-nav" >
         <Nav className="me-auto">
-          {!jwtToken ? (
-            <>
-              <Nav.Link href="/registration" style={navLinkStyle} className="px-2">
-                Registration
-              </Nav.Link>
-              <Nav.Link href="/login" style={navLinkStyle} className="px-2">
-                Login
-              </Nav.Link>
-            </>
-          ) : (
-            <>
-              <Nav.Link href="/home" style={{ ...navLinkStyle, fontWeight: currentPage === "/home" ? "bold" : "normal" }} className="px-2">
-                <FaHome style={{ marginRight: "5px" }} /> Home
-              </Nav.Link>
-              <Nav.Link href="/posts" style={{ ...navLinkStyle, fontWeight: currentPage === "/posts" ? "bold" : "normal" }} className="px-2">
-                <FaCloud style={{ marginRight: "5px" }} /> Posts
-              </Nav.Link>
-              <Nav.Link href="/conversations" style={{ ...navLinkStyle, fontWeight: currentPage === "/conversations" ? "bold" : "normal" }} className="px-2">
-                <FaFacebookMessenger style={{ marginRight: "5px" }} /> Conversations
-              </Nav.Link>
-              <Nav.Link href="/feedbacks" style={{ ...navLinkStyle, fontWeight: currentPage === "/feedbacks" ? "bold" : "normal" }} className="px-2">
-                <MdOutlineFeedback style={{ marginRight: "5px" }} /> Feedbacks
-              </Nav.Link>
-            </>
-          )}
+          <Nav.Link href="/home" style={{ ...navLinkStyle, fontWeight: currentPage === "/home" ? "bold" : "normal" }} className="px-2">
+            <FaHome style={{ marginRight: "5px" }} /> Home
+          </Nav.Link>
+          <Nav.Link href="/posts" style={{ ...navLinkStyle, fontWeight: currentPage === "/posts" ? "bold" : "normal" }} className="px-2">
+            <FaCloud style={{ marginRight: "5px" }} /> Posts
+          </Nav.Link>
+          <Nav.Link href="/conversations" style={{ ...navLinkStyle, fontWeight: currentPage === "/conversations" ? "bold" : "normal" }} className="px-2">
+            <FaFacebookMessenger style={{ marginRight: "5px" }} /> Conversations
+          </Nav.Link>
+          <Nav.Link href="/feedbacks" style={{ ...navLinkStyle, fontWeight: currentPage === "/feedbacks" ? "bold" : "normal" }} className="px-2">
+            <MdOutlineFeedback style={{ marginRight: "5px" }} /> Feedbacks
+          </Nav.Link>
         </Nav>
         <Nav style={dropdownContainerStyle}>
           {roles.includes("ADMIN") && jwtToken && (

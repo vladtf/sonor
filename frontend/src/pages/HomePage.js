@@ -23,7 +23,6 @@ function HomePage() {
   const [posts, setPosts] = useState([{ content: [] }]);
   const [messages, setMessages] = useState([]);
   const [weatherForecast, setWeatherForecast] = useState([]);
-  const [news, setNews] = useState([]);
   const [conversations, setConversations] = useState([]);
 
   const [currentPagePosts, setCurrentPagePosts] = useState(1);
@@ -34,7 +33,6 @@ function HomePage() {
     fetchPosts();
     fetchMessages();
     fetchWeatherForecast();
-    fetchNews();
     fetchConversations();
   }, []);
 
@@ -106,20 +104,6 @@ function HomePage() {
         console.error(error.response.data);
       });
   };
-
-  const fetchNews = () => {
-    axios
-      .get(BACKEND_URL + "/api/news")
-      .then((response) => {
-        console.log(response.data);
-        setNews(response.data);
-      })
-      .catch((error) => {
-        toast.error("Error retrieving news!");
-        console.error(error.response.data);
-      });
-  };
-
 
   const handlePageChangePosts = (pageNumber) => {
     if (pageNumber < 0 || pageNumber > posts.totalPages + 1) {
