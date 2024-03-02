@@ -81,4 +81,31 @@ public class CommentService {
         return commentRepository.findAllByUserUsername(user.getUsername());
 
     }
+
+    public void updateComment(org.springframework.security.core.userdetails.User user, Integer id, CommentController.UpdateCommentRequest request) {
+        // check if comment exists
+        // if not, throw exception
+        if (!commentRepository.existsById(id)) {
+            throw new IllegalArgumentException("Comment with id " + id + " does not exist");
+        }
+
+        Optional<User> found = userRepository.findByUsername(user.getUsername());
+
+        if (found.isEmpty()) {
+            throw new IllegalArgumentException("User with username " + user.getUsername() + " does not exist");
+        }
+
+        Optional<Comment> comment = commentRepository.findById(id);
+
+        if (comment.isEmpty()) {
+            throw new IllegalArgumentException("Comment with id " + id + " does not exist");
+        }
+
+        if (!comment.get().getUser().equals(found.get())) {
+            throw new IllegalArgumentException("You are not the author of this comment");
+        }
+
+        comment.get().setContent(request.content);
+        commentRepository.save(comment.get());
+    }
 }

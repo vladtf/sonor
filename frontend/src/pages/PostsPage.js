@@ -4,12 +4,12 @@ import axios from "axios";
 import { useState, useEffect } from "react";
 import BackendConfig, { BACKEND_URL } from "../configuration/BackendConfig";
 import { useNavigate } from "react-router-dom";
+import NewPost from "../components/NewPost";
+import { FaPlusCircle } from "react-icons/fa";
 
 function PostPage() {
   const [posts, setPosts] = useState([]);
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
-  const [category, setCategory] = useState("OTHER");
+  const [showNewPostForm, setShowNewPostForm] = useState(false);
 
   const token = localStorage.getItem("jwtToken");
   const navigate = useNavigate();
@@ -23,10 +23,10 @@ function PostPage() {
   }, [token, navigate]);
 
   useEffect(() => {
-    getPosts();
+    fetchPosts();
   }, []);
 
-  const getPosts = () => {
+  const fetchPosts = () => {
     axios
       .get(BACKEND_URL + "/api/posts/all")
       .then((response) => {
@@ -39,41 +39,6 @@ function PostPage() {
       });
   };
 
-  const addPost = (e) => {
-    // check if the title and content are empty
-    if (title === "" || content === "") {
-      alert("Title and content cannot be empty!");
-      return;
-    }
-
-    const confirmAdd = window.confirm(
-      "Are you sure you want to add this post?"
-    );
-    if (!confirmAdd) {
-      return;
-    }
-
-
-    const newPostRequest = {
-      title: title,
-      category: category,
-      content: content,
-    };
-
-    console.log("Sending post data: ", newPostRequest);
-
-
-    axios
-      .post(BACKEND_URL + "/api/posts/create", newPostRequest)
-      .then((response) => {
-        console.log(response.data);
-        setPosts(response.data);
-      })
-      .catch((error) => {
-        alert("Error adding post!");
-        console.error(error.response.data);
-      });
-  };
 
   const deletePost = (id) => {
     const confirmDelete = window.confirm(
@@ -93,7 +58,7 @@ function PostPage() {
       .then((response) => {
         console.log(response.data);
         alert("Post deleted successfully!");
-        getPosts();
+        fetchPosts();
       })
       .catch((error) => {
         alert("Error deleting post!");
@@ -111,51 +76,12 @@ function PostPage() {
   return (
     <>
       <Container className="w-50">
-        <Row className="mb-3">
-          <Col md={12}>
-            <form onSubmit={(e) => e.preventDefault()}>
-              <div className="form-group mb-3">
-                <label htmlFor="title">Title:</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  id="title"
-                  placeholder="Enter title"
-                  value={title}
-                  onChange={(event) => setTitle(event.target.value)}
-                />
-              </div>
-              <div className="form-group mb-3">
-                <label htmlFor="content">Content:</label>
-                <textarea
-                  className="form-control"
-                  id="content"
-                  rows="3"
-                  value={content}
-                  onChange={(event) => setContent(event.target.value)}
-                ></textarea>
-              </div>
-              <div className="form-group mb-3">
-                <label htmlFor="category">Category:</label>
-                <select
-                  className="form-select"
-                  id="category"
-                  value={category}
-                  onChange={(event) => setCategory(event.target.value)}
-                >
-                  <option value="OTHER">Other</option>
-                  <option value="TECHNOLOGY">Technology</option>
-                  <option value="SPORTS">Sports</option>
-                </select>
-              </div>
-            </form>
-          </Col>
-        </Row>
         <Row>
           <Col>
-            <Button variant="success" onClick={addPost}>
-              Add Post
+            <Button variant="success" onClick={() => setShowNewPostForm(true)}>
+              <FaPlusCircle /> New Post
             </Button>
+            <NewPost show={showNewPostForm} setShow={setShowNewPostForm} fetchPosts={fetchPosts} />
           </Col>
         </Row>
         <hr />
@@ -166,7 +92,7 @@ function PostPage() {
             posts.map((post, index) => {
               return (
                 <Col md="12" key={index} className="p-2">
-                  <Card  className="card-hover-effect" onClick={() => navigate(`/post/${post.id}`)}>
+                  <Card className="card-hover-effect" onClick={() => navigate(`/post/${post.id}`)}>
                     <Card.Body>
                       <Card.Title>{post.title}</Card.Title>
                       <Card.Subtitle className="mb-2 text-muted">

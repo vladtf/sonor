@@ -24,8 +24,7 @@ public class PostController {
     @GetMapping("/all")
     @Secured("ROLE_USER")
     public ResponseEntity<List<PostResponse>> getAllPosts() {
-        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return new ResponseEntity<>(buildResponseBody(postService.getAllPosts(user)), HttpStatus.OK);
+        return new ResponseEntity<>(buildResponseBody(postService.getAllPosts()), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")

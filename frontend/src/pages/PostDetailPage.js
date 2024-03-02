@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Container, Row, Col, Card, Form, Button, Spinner, Alert } from 'react-bootstrap';
 import axios from 'axios';
 import { BACKEND_URL } from '../configuration/BackendConfig';
+import Comment from '../components/Comment';
 
 function PostDetailPage() {
   const [post, setPost] = useState(null);
@@ -30,6 +31,7 @@ function PostDetailPage() {
       })
       .catch(error => {
         console.error("Error fetching post details:", error);
+        navigate("/posts");
       });
 
     fetchComments();
@@ -62,15 +64,7 @@ function PostDetailPage() {
       });
   };
 
-  const handleDeleteComment = (commentId) => {
-    axios.delete(`${BACKEND_URL}/api/comments/delete/${commentId}`)
-      .then(response => {
-        fetchComments();
-      })
-      .catch(error => {
-        console.error("Error deleting comment:", error);
-      });
-  }
+
 
 
   const fetchComments = () => {
@@ -113,21 +107,7 @@ function PostDetailPage() {
           <Card>
             <Card.Body>
               <Card.Title>Comments</Card.Title>
-              {comments.map(comment => (
-                <Card key={comment.id} className="mb-2">
-                  <Card.Body>
-                    <Card.Text>{comment.content}</Card.Text>
-                    <Card.Text className="text-muted">Created at: {comment.createdAt}</Card.Text>
-                    <Card.Text className="text-muted">Author: {comment.author}</Card.Text>
-                  </Card.Body>
-                  {/* add delete button if the comment is created by the current user */}
-                  {comment.author === localStorage.getItem("username") && (
-                    <Card.Footer>
-                      <Button variant="danger" size="sm" onClick={() => handleDeleteComment(comment.id)}>Delete</Button>
-                    </Card.Footer>
-                  )}
-                </Card>
-              ))}
+              {comments.map(comment => <Comment key={comment.id} comment={comment} fetchComments={fetchComments} />)}
             </Card.Body>
           </Card>
           <hr />

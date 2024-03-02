@@ -10,5 +10,7 @@ import java.util.List;
 public interface PostRepository extends CrudRepository<Post, Integer> {
     List<Post> findAllByUser(User user);
 
+    List<Post> findAll();
+
     void deleteByIdAndUser(Integer id, User user);
 }

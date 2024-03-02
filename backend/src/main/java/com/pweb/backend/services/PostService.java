@@ -32,6 +32,10 @@ public class PostService {
         return postRepository.findAllByUser(userOptional.get());
     }
 
+    public List<Post> getAllPosts() {
+        return postRepository.findAll();
+    }
+
     public List<Post> createPost(org.springframework.security.core.userdetails.User user, PostController.NewPostRequest newPostRequest) {
         Optional<User> userOptional = userRepository.findByUsername(user.getUsername());
         if (userOptional.isEmpty()) {

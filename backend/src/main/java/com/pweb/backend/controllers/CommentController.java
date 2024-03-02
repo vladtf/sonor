@@ -69,6 +69,15 @@ public class CommentController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    @PutMapping("/update/{id}")
+    @Secured("ROLE_USER")
+    public ResponseEntity<Void> updateComment(@PathVariable Integer id, @RequestBody UpdateCommentRequest request) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        commentService.updateComment(user, id, request);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+
 
     public static class CommentResponse {
         public Integer id;
@@ -82,6 +91,10 @@ public class CommentController {
 
     public static class AddCommentRequest {
         public Integer postId;
+        public String content;
+    }
+
+    public static class UpdateCommentRequest {
         public String content;
     }
 }
