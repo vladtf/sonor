@@ -23,15 +23,17 @@ function HomePage() {
   const [messages, setMessages] = useState([]);
   const [exchangeResults, setExchangeResults] = useState([]);
   const [news, setNews] = useState([]);
+  const [conversations, setConversations] = useState([]);
 
   useEffect(() => {
-    getPosts();
+    fetchPosts();
     fetchMessages();
-    getExchangeResults();
-    getNews();
+    fetchExchangeResults();
+    fetchNews();
+    fetchConversations();
   }, []);
 
-  const getPosts = () => {
+  const fetchPosts = () => {
     axios
       .get(BACKEND_URL + "/api/posts/all")
       .then((response) => {
@@ -46,7 +48,7 @@ function HomePage() {
 
   const fetchMessages = () => {
     axios
-      .get(BACKEND_URL + "/api/messages/all")
+      .get(BACKEND_URL + "/api/messages/mine")
       .then((response) => {
         console.log(response.data);
         setMessages(response.data);
@@ -57,7 +59,7 @@ function HomePage() {
       });
   };
 
-  const getExchangeResults = () => {
+  const fetchExchangeResults = () => {
 
     axios
       .get(BACKEND_URL + "/api/exchange")
@@ -71,7 +73,7 @@ function HomePage() {
       });
   };
 
-  const getNews = () => {
+  const fetchNews = () => {
     axios
       .get(BACKEND_URL + "/api/news")
       .then((response) => {
@@ -83,6 +85,19 @@ function HomePage() {
         console.error(error.response.data);
       });
   };
+
+  const fetchConversations = () => {
+    axios
+      .get(BACKEND_URL + "/api/conversations/all")
+      .then((response) => {
+        console.log(response.data);
+        setConversations(response.data);
+      })
+      .catch((error) => {
+        toast.error("Error retrieving conversations!");
+        console.error(error.response.data);
+      });
+  }
 
   const getShortenedContent = (content) => {
     if (content.length > 10) {
@@ -108,7 +123,7 @@ function HomePage() {
                     <Card
                       key={index}
                       className="card-hover-effect"
-                      onClick={() => navigate(`/post/${message.postId}`)}
+                      onClick={() => navigate(`/conversation/${message.conversationId}`)}
                     >
                       <Card.Body>
                         <Card.Title className="mb-0">{message.author}</Card.Title>
@@ -119,7 +134,7 @@ function HomePage() {
                       </Card.Body>
                       <Card.Footer>
                         <small className="text-muted">
-                          Post ID: {message.postId}
+                          Conversation: {message.conversationName}
                         </small>
                       </Card.Footer>
                     </Card>
@@ -129,6 +144,37 @@ function HomePage() {
               <Card.Footer>
                 <Button variant="primary" href="/messages">
                   View All Messages
+                </Button>
+              </Card.Footer>
+            </Card>
+
+            <Card className="mt-4">
+              <Card.Header>All Conversations</Card.Header>
+              <Card.Body>
+                {conversations.length === 0 ? (
+                  <p>No conversations found.</p>
+                ) : (
+                  conversations.map((conversation, index) => (
+                    <Card
+                      key={index}
+                      className="card-hover-effect"
+                      onClick={() => navigate(`/conversation/${conversation.id}`)}
+                    >
+                      <Card.Body>
+                        <Card.Title className="mb-0">{conversation.name}</Card.Title>
+                      </Card.Body>
+                      <Card.Footer>
+                        <small className="text-muted">
+                          Participants: {conversation.participants.join(', ')}
+                        </small>
+                      </Card.Footer>
+                    </Card>
+                  ))
+                )}
+              </Card.Body>
+              <Card.Footer>
+                <Button variant="primary" href="/conversations">
+                  View All Conversations
                 </Button>
               </Card.Footer>
             </Card>

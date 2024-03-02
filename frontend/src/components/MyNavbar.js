@@ -84,8 +84,8 @@ const MyNavbar = () => {
               <Nav.Link href="/posts" style={{ ...navLinkStyle, fontWeight: currentPage === "/posts" ? "bold" : "normal" }} className="px-2">
                 <FaCloud style={{ marginRight: "5px" }} /> Posts
               </Nav.Link>
-              <Nav.Link href="/messages" style={{ ...navLinkStyle, fontWeight: currentPage === "/messages" ? "bold" : "normal" }} className="px-2">
-                <FaFacebookMessenger style={{ marginRight: "5px" }} /> Messages
+              <Nav.Link href="/conversations" style={{ ...navLinkStyle, fontWeight: currentPage === "/conversations" ? "bold" : "normal" }} className="px-2">
+                <FaFacebookMessenger style={{ marginRight: "5px" }} /> Conversations
               </Nav.Link>
             </>
           )}

@@ -36,7 +36,7 @@ function App() {
         <Route path="/home" element={<HomePage />} />
         <Route path="/posts" element={<PostsPage />} />
         <Route path="/post/:postId" element={<PostDetailPage />} />
-        <Route path="/messages" element={<MessagesPage />} />
+        <Route path="/conversations" element={<MessagesPage />} />
         <Route path="/conversation/:conversationId" element={<ConversationPage />} />
         <Route path="/admin" element={<AdminPage />} />
         <Route path="/*" element={<h1>Not Found</h1>} />
