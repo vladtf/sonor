@@ -9,4 +9,6 @@ import java.util.Collection;
 
 public interface ConversationRepository extends CrudRepository<Conversation, Integer> {
     Page<Conversation> findAllByUsersUsername(String username, Pageable pageable);
+
+    Page<Conversation> findAllByNameContainingAndUsersUsername(String searchTerm, String username, Pageable pageable);
 }

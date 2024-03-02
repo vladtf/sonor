@@ -49,6 +49,30 @@ public class ConversationController {
                 }));
     }
 
+    @GetMapping("/search")
+    @Secured("ROLE_USER")
+    public ResponseEntity<Page<ConversationResponse>> searchConversations(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size, @RequestParam String searchTerm) {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Pageable pageable = PageRequest.of(page, size);
+
+        return ResponseEntity.ok(conversationService.searchConversations(user.getUsername(), pageable, searchTerm)
+                .map(conversation -> new ConversationResponse() {
+                    {
+                        id = conversation.getId();
+                        name = conversation.getName();
+                        participants = conversation.getUsers().stream().map(com.pweb.backend.dao.entities.User::getUsername).collect(Collectors.toList());
+                        messages = conversation.getMessages().stream().map(message -> new ConversationResponse.MessageResponse() {
+                            {
+                                id = message.getId();
+                                content = message.getContent();
+                                author = message.getUser().getUsername();
+                                createdAt = message.getCreatedAt();
+                            }
+                        }).collect(Collectors.toList());
+                    }
+                }));
+    }
+
     @PostMapping("/create")
     @Secured("ROLE_USER")
     public ResponseEntity<ConversationResponse> createConversation(@RequestBody CreateConversationRequest request) {

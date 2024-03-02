@@ -1,4 +1,4 @@
-import { Button, Card, Col, Container, Pagination, Row } from "react-bootstrap";
+import { Button, Card, Col, Container, Form, Pagination, Row } from "react-bootstrap";
 import MyNavbar from "../components/MyNavbar";
 import { useState, useEffect } from "react";
 import axios from "axios";
@@ -12,7 +12,7 @@ import { ToastContainer, toast } from "react-toastify";
 function ConversationsPage() {
   const [conversations, setConversations] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
-
+  const [searchTerm, setSearchTerm] = useState('');
 
   const [showNewConversationForm, setShowNewConversationForm] = useState(false);
 
@@ -51,6 +51,27 @@ function ConversationsPage() {
         console.error(error.response.data);
       });
   };
+
+  const handleSearch = (pageNumber = 0, pageSize = 3) => {
+    axios
+      .get(BACKEND_URL + "/api/conversations/search", {
+        params: {
+          searchTerm: searchTerm,
+          page: pageNumber,
+          size: pageSize,
+        },
+      })
+      .then((response) => {
+        console.log(response.data);
+        setConversations(response.data);
+      })
+      .catch((error) => {
+        toast.error("Error retrieving conversations!");
+        console.error(error.response.data);
+      });
+  }
+
+
   const handlePageChange = (pageNumber) => {
     if (pageNumber < 0 || pageNumber > conversations.totalPages + 1) {
       return;
@@ -75,7 +96,25 @@ function ConversationsPage() {
         </Row>
         <hr />
         <Row>
-          <Col>
+          <Col md={6}>
+            <Form.Control
+              type="text"
+              placeholder="Search posts"
+              value={searchTerm}
+              onChange={(event) => setSearchTerm(event.target.value)}
+            />
+          </Col>
+          <Col md={1}>
+            <Button variant="primary" onClick={() => handleSearch(0, 5)} disabled={searchTerm.length === 0}>
+              Search
+            </Button>
+          </Col>
+          <Col md={1}>
+            <Button variant="secondary" onClick={() => { setSearchTerm(''); fetchConversations(0, 5) }}>
+              Reset
+            </Button>
+          </Col>
+          <Col md={4} className="d-flex justify-content-end">
             <Pagination className="mb-0">
               <Pagination.Prev onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1} />
               {[...Array(conversations.totalPages).keys()].map(pageNumber => (

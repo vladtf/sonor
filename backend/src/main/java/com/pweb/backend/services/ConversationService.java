@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
+import java.util.stream.DoubleStream;
 
 @Service
 public class ConversationService {
@@ -30,6 +31,11 @@ public class ConversationService {
     public Page<Conversation> getAllConversations(String username, Pageable pageable) {
         // get all conversations for the user with the given username
         return conversationRepository.findAllByUsersUsername(username, pageable);
+    }
+
+    public Page<Conversation> searchConversations(String username, Pageable pageable, String searchTerm) {
+        // search for conversations with the given search term
+        return conversationRepository.findAllByNameContainingAndUsersUsername(searchTerm, username, pageable);
     }
 
     public Conversation createConversation(String username, String name) {
@@ -149,4 +155,6 @@ public class ConversationService {
 
         return conversation.get();
     }
+
+
 }
