@@ -1,82 +1,76 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { Container, Row, Col, Card, Form, Button, Spinner, Alert } from 'react-bootstrap';
-import axios from 'axios';
-import { BACKEND_URL } from '../configuration/BackendConfig';
-import Comment from '../components/Comment';
+import axios from 'axios'
+import { useEffect, useState } from 'react'
+import { Alert, Button, Card, Col, Container, Form, Row, Spinner } from 'react-bootstrap'
+import { useNavigate, useParams } from 'react-router-dom'
+import Comment from '../components/Comment'
+import { BACKEND_URL } from '../configuration/BackendConfig'
 
 function PostDetailPage() {
-  const [post, setPost] = useState(null);
-  const [comment, setComment] = useState('');
-  const [comments, setComments] = useState([]);
-  const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState('');
-  const { postId } = useParams();
+  const [post, setPost] = useState(null)
+  const [comment, setComment] = useState('')
+  const [comments, setComments] = useState([])
+  const [submitting, setSubmitting] = useState(false)
+  const [error, setError] = useState('')
+  const { postId } = useParams()
 
-  const token = localStorage.getItem("jwtToken");
-  const navigate = useNavigate();
+  const token = localStorage.getItem('jwtToken')
+  const navigate = useNavigate()
   useEffect(() => {
     if (!token) {
-      delete axios.defaults.headers.common["Authorization"];
-      navigate("/login");
+      delete axios.defaults.headers.common.Authorization
+      navigate('/login')
     } else {
-      axios.defaults.headers.common["Authorization"] = token;
+      axios.defaults.headers.common.Authorization = token
     }
-  }, [token, navigate]);
+  }, [token, navigate])
 
   useEffect(() => {
     axios.get(`${BACKEND_URL}/api/posts/${postId}`)
       .then(response => {
-        setPost(response.data);
+        setPost(response.data)
       })
       .catch(error => {
-        console.error("Error fetching post details:", error);
-        navigate("/posts");
-      });
+        console.error('Error fetching post details:', error)
+        navigate('/posts')
+      })
 
-    fetchComments();
-  }, [postId]);
-
-
+    fetchComments()
+  })
 
   const handleCommentSubmit = (e) => {
-    e.preventDefault();
+    e.preventDefault()
     if (!comment.trim()) {
-      setError("Comment cannot be empty.");
-      return;
+      setError('Comment cannot be empty.')
+      return
     }
-    setSubmitting(true);
+    setSubmitting(true)
     axios.post(`${BACKEND_URL}/api/comments/create`, {
-      postId: postId,
-      content: comment,
+      postId,
+      content: comment
     })
       .then(response => {
-        setComment('');
-        setError('');
-        fetchComments();
+        setComment('')
+        setError('')
+        fetchComments()
       })
       .catch(error => {
-        console.error("Error posting comment:", error);
-        setError('Failed to post comment. Please try again.');
+        console.error('Error posting comment:', error)
+        setError('Failed to post comment. Please try again.')
       })
       .finally(() => {
-        setSubmitting(false);
-      });
-  };
-
-
-
+        setSubmitting(false)
+      })
+  }
 
   const fetchComments = () => {
     axios.get(`${BACKEND_URL}/api/comments/post/${postId}`)
       .then(response => {
-        setComments(response.data);
+        setComments(response.data)
       })
       .catch(error => {
-        console.error("Error fetching comments:", error);
-      });
+        console.error('Error fetching comments:', error)
+      })
   }
-
 
   if (!post) {
     return (
@@ -89,7 +83,7 @@ function PostDetailPage() {
           </Col>
         </Row>
       </Container>
-    );
+    )
   }
 
   return (
@@ -128,7 +122,7 @@ function PostDetailPage() {
         </Col>
       </Row>
     </Container>
-  );
+  )
 }
 
-export default PostDetailPage;
+export default PostDetailPage

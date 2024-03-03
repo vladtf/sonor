@@ -1,95 +1,87 @@
-import { Alert, Button, Card, Col, Container, Form, ListGroup, Row, ToastContainer } from "react-bootstrap";
-import MyNavbar from "../components/MyNavbar";
-import { useState, useEffect } from "react";
-import axios from "axios";
-import { BACKEND_URL } from "../configuration/BackendConfig";
-import { useNavigate } from "react-router-dom";
-import NewConversation from "../components/NewConversation";
-import { FaPlusCircle, FaMinusCircle } from "react-icons/fa";
-import ConversationListItem from "../components/ConversationListItem";
-import { useParams } from "react-router-dom";
-import Message from "../components/Message";
-import { toast } from "react-toastify";
-import NewParticipant from "../components/NewParticipant";
-import { FaUserCircle } from "react-icons/fa";
-import ShowErrorToast from "../exception/ToastUtils";
+import axios from 'axios'
+import { useEffect, useState } from 'react'
+import { Alert, Button, Card, Col, Container, Form, ListGroup, Row, ToastContainer } from 'react-bootstrap'
+import { FaPlusCircle, FaUserCircle } from 'react-icons/fa'
+import { useNavigate, useParams } from 'react-router-dom'
+import { toast } from 'react-toastify'
+import Message from '../components/Message'
+import NewParticipant from '../components/NewParticipant'
+import { BACKEND_URL } from '../configuration/BackendConfig'
+import ShowErrorToast from '../exception/ToastUtils'
 
-function ConversationDetailPage() {
-  const { conversationId } = useParams();
-  const [conversation, setConversation] = useState([]);
-  const [message, setMessage] = useState("");
-  const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState("");
-  const [showAddParticipantForm, setShowAddParticipantForm] = useState(false);
-  const [showRemoveParticipantForm, setShowRemoveParticipantForm] = useState(false);
+function ConversationDetailPage () {
+  const { conversationId } = useParams()
+  const [conversation, setConversation] = useState([])
+  const [message, setMessage] = useState('')
+  const [submitting, setSubmitting] = useState(false)
+  const [error, setError] = useState('')
+  const [showAddParticipantForm, setShowAddParticipantForm] = useState(false)
 
-  const token = localStorage.getItem("jwtToken");
-  const navigate = useNavigate();
+  const token = localStorage.getItem('jwtToken')
+  const navigate = useNavigate()
   useEffect(() => {
     if (!token) {
-      delete axios.defaults.headers.common["Authorization"];
-      navigate("/login");
+      delete axios.defaults.headers.common.Authorization
+      navigate('/login')
     } else {
-      axios.defaults.headers.common["Authorization"] = token;
+      axios.defaults.headers.common.Authorization = token
     }
-  }, [token, navigate]);
+  }, [token, navigate])
 
   useEffect(() => {
-    fetchConversation();
-  }, [conversationId]);
+    fetchConversation()
+  })
 
   const fetchConversation = () => {
-      axios
-        .get(BACKEND_URL + "/api/conversations/" + conversationId)
-        .then((response) => {
-          console.log(response.data);
-          setConversation(response.data);
-        })
-        .catch((error) => {
-          ShowErrorToast(error, "Error retrieving conversation!");
-          navigate("/conversations");
-        });
-  };
+    axios
+      .get(BACKEND_URL + '/api/conversations/' + conversationId)
+      .then((response) => {
+        console.log(response.data)
+        setConversation(response.data)
+      })
+      .catch((error) => {
+        ShowErrorToast(error, 'Error retrieving conversation!')
+        navigate('/conversations')
+      })
+  }
 
   const handleMessageSubmit = async (event) => {
-    event.preventDefault();
+    event.preventDefault()
+    setSubmitting(true)
     try {
-      const response = await axios.post(BACKEND_URL + "/api/conversations/addMessage", {
-        conversationId: conversationId,
-        content: message,
-      });
-      console.log(response.data);
-      setMessage("");
-      fetchConversation();
+      const response = await axios.post(BACKEND_URL + '/api/conversations/addMessage', {
+        conversationId,
+        content: message
+      })
+      console.log(response.data)
+      setMessage('')
+      fetchConversation()
     } catch (error) {
-      console.error(error.response.data);
-      setError("Error submitting message!");
-      toast.error("Error submitting message!");
+      console.error(error.response.data)
+      setError('Error submitting message!')
+      toast.error('Error submitting message!')
     }
+    setSubmitting(false)
   }
 
   const handleDeleteParticipant = async (conversationId, username) => {
-    if (!window.confirm("Are you sure you want to remove " + username + " from this conversation?")) {
-      return;
+    if (!window.confirm('Are you sure you want to remove ' + username + ' from this conversation?')) {
+      return
     }
     try {
-      const response = await axios.post(BACKEND_URL + "/api/conversations/removeUser", {
-        conversationId: conversationId,
-        username: username,
-      });
-      console.log(response.data);
-      toast.success("Participant removed!");
-      fetchConversation();
+      const response = await axios.post(BACKEND_URL + '/api/conversations/removeUser', {
+        conversationId,
+        username
+      })
+      console.log(response.data)
+      toast.success('Participant removed!')
+      fetchConversation()
+    } catch (error) {
+      console.error(error.response.data)
+      setError('Error removing participant!')
+      toast.error('Error removing participant!')
     }
-    catch (error) {
-      console.error(error.response.data);
-      setError("Error removing participant!");
-      toast.error("Error removing participant!");
-    }
-
   }
-
-
 
   return (
     <>
@@ -101,7 +93,8 @@ function ConversationDetailPage() {
               <Card.Body>
                 <Card.Title>{conversation.name}</Card.Title>
                 <Card.Text>
-                  {conversation.participants && conversation.participants.length > 0 ? (
+                  {conversation.participants && conversation.participants.length > 0
+                    ? (
                     <ListGroup variant="flush">
                       {conversation.participants.map((participant, index) => (
                         <ListGroup.Item key={index}><FaUserCircle /> {participant}
@@ -115,9 +108,10 @@ function ConversationDetailPage() {
                           </Button></ListGroup.Item>
                       ))}
                     </ListGroup>
-                  ) : (
+                      )
+                    : (
                     <p>No participants yet.</p>
-                  )}
+                      )}
                 </Card.Text>
               </Card.Body>
               <Card.Footer>
@@ -160,7 +154,7 @@ function ConversationDetailPage() {
         </Row>
       </Container>
     </>
-  );
+  )
 }
 
-export default ConversationDetailPage;
+export default ConversationDetailPage

@@ -1,63 +1,62 @@
-import React, { useState } from "react";
-import { Container, Row, Col, Form, Button, Spinner, Toast } from "react-bootstrap";
-import axios from "axios";
-import { BACKEND_URL } from "../configuration/BackendConfig";
-import { useNavigate } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
+import axios from 'axios'
+import { useState } from 'react'
+import { Button, Col, Container, Form, Row, Spinner } from 'react-bootstrap'
+import { useNavigate } from 'react-router-dom'
+import { ToastContainer, toast } from 'react-toastify'
+import { BACKEND_URL } from '../configuration/BackendConfig'
 
-function RegistrationPage() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [passwordConfirmation, setPasswordConfirmation] = useState("");
-  const [loading, setLoading] = useState(false); // Added loading state
+function RegistrationPage () {
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+  const [passwordConfirmation, setPasswordConfirmation] = useState('')
+  const [loading, setLoading] = useState(false) // Added loading state
 
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   const handleSubmit = (event) => {
-    event.preventDefault();
+    event.preventDefault()
 
     if (password !== passwordConfirmation) {
-      toast.warning("Passwords do not match!");
-      return;
+      toast.warning('Passwords do not match!')
+      return
     }
 
-
     const postData = {
-      password: password,
-      username: username,
-    };
+      password,
+      username
+    }
 
-    setLoading(true); // Set loading state to true
+    setLoading(true) // Set loading state to true
 
-    console.log("Sending registration data: ", postData);
+    console.log('Sending registration data: ', postData)
 
     axios
-      .post(BACKEND_URL + "/register", postData)
+      .post(BACKEND_URL + '/register', postData)
       .then((response) => {
-        console.log("Register response:", response.data);
-        toast.success("User registered successfully!");
-        navigate("/login");
+        console.log('Register response:', response.data)
+        toast.success('User registered successfully!')
+        navigate('/login')
       })
       .catch((error) => {
-        toast.error("Error registering user!");
-        console.error(error.response.data);
+        toast.error('Error registering user!')
+        console.error(error.response.data)
       })
       .finally(() => {
-        setLoading(false); // Set loading state to false after the request completes
-      });
-  };
+        setLoading(false) // Set loading state to false after the request completes
+      })
+  }
 
   return (
     <>
       <ToastContainer />
-      <Container style={{ marginTop: "250px" }}>
+      <Container style={{ marginTop: '250px' }}>
         <Row>
           <Col>
             <h2
               className="text-primary"
               style={{
-                fontSize: "24px",
-                textAlign: "center",
+                fontSize: '24px',
+                textAlign: 'center'
               }}
             >
               Registration Page
@@ -110,8 +109,8 @@ function RegistrationPage() {
                   variant="primary"
                   type="submit"
                   style={{
-                    width: "200px",
-                    height: "50px",
+                    width: '200px',
+                    height: '50px'
                   }}
                   onClick={handleSubmit}
                   disabled={loading} // Disable the button when loading is true
@@ -121,17 +120,17 @@ function RegistrationPage() {
                       <span className="visually-hidden">Loading...</span>
                     </Spinner>
                   ) : (
-                    "Register Now"
+                    'Register Now'
                   )}
                 </Button>
               </div>
 
               <p
                 style={{
-                  color: "black",
-                  fontSize: "15px",
-                  textAlign: "center",
-                  marginTop: "20px",
+                  color: 'black',
+                  fontSize: '15px',
+                  textAlign: 'center',
+                  marginTop: '20px'
                 }}
               >
                 Already have an account? <a href="/login">Login</a>
@@ -141,7 +140,7 @@ function RegistrationPage() {
         </Row>
       </Container>
     </>
-  );
+  )
 }
 
-export default RegistrationPage;
+export default RegistrationPage

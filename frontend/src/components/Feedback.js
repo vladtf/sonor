@@ -1,29 +1,25 @@
-import axios from "axios";
-import { BACKEND_URL } from "../configuration/BackendConfig";
-import { Button, Card, Toast } from "react-bootstrap";
-import { useState } from 'react';
-import FeedbackPage from "../pages/FeedbackPage";
-import { ToastContainer, toast } from "react-toastify";
-import { FaStar, FaUser, FaClock } from 'react-icons/fa';
+import axios from 'axios'
+import { Button, Card } from 'react-bootstrap'
+import { FaClock, FaStar, FaUser } from 'react-icons/fa'
+import { ToastContainer, toast } from 'react-toastify'
+import { BACKEND_URL } from '../configuration/BackendConfig'
 
+export default function Feedback ({ feedback, fetchFeedbacks }) {
+  const username = localStorage.getItem('username')
 
-export default function Feedback({ feedback, fetchFeedbacks }) {
-    const username = localStorage.getItem("username");
+  const handleDeleteFeedback = (feedbackId) => {
+    axios.delete(`${BACKEND_URL}/api/feedbacks/delete/${feedbackId}`)
+      .then(response => {
+        toast.success('Feedback deleted successfully')
+        fetchFeedbacks()
+      })
+      .catch(error => {
+        console.error('Error deleting feedvack:', error)
+        toast.error('Failed to delete feedback. Please try again.')
+      })
+  }
 
-    const handleDeleteFeedback = (feedbackId) => {
-        axios.delete(`${BACKEND_URL}/api/feedbacks/delete/${feedbackId}`)
-            .then(response => {
-                toast.success("Feedback deleted successfully");
-                fetchFeedbacks();
-            })
-            .catch(error => {
-                console.error("Error deleting feedvack:", error);
-                toast.error("Failed to delete feedback. Please try again.");
-            });
-    };
-
-
-    return (
+  return (
         <>
             <ToastContainer />
             <Card key={feedback.id} className="mb-3">
@@ -43,5 +39,5 @@ export default function Feedback({ feedback, fetchFeedbacks }) {
                 )}
             </Card>
         </>
-    );
+  )
 }

@@ -1,85 +1,82 @@
-import { Button, Card, Col, Container, Form, Pagination, Row } from "react-bootstrap";
-import MyNavbar from "../components/MyNavbar";
-import { useState, useEffect } from "react";
-import axios from "axios";
-import { BACKEND_URL } from "../configuration/BackendConfig";
-import { useNavigate } from "react-router-dom";
-import NewConversation from "../components/NewConversation";
-import { FaPlusCircle } from "react-icons/fa";
-import ConversationListItem from "../components/ConversationListItem";
-import { ToastContainer, toast } from "react-toastify";
-import ShowErrorToast from "../exception/ToastUtils";
+import axios from 'axios'
+import { useEffect, useState } from 'react'
+import { Button, Col, Container, Form, Pagination, Row } from 'react-bootstrap'
+import { FaPlusCircle } from 'react-icons/fa'
+import { useNavigate } from 'react-router-dom'
+import { ToastContainer, toast } from 'react-toastify'
+import ConversationListItem from '../components/ConversationListItem'
+import NewConversation from '../components/NewConversation'
+import { BACKEND_URL } from '../configuration/BackendConfig'
+import ShowErrorToast from '../exception/ToastUtils'
 
-function ConversationsPage() {
-  const [conversations, setConversations] = useState([]);
-  const [currentPage, setCurrentPage] = useState(0);
-  const [searchTerm, setSearchTerm] = useState('');
+function ConversationsPage () {
+  const [conversations, setConversations] = useState([])
+  const [currentPage, setCurrentPage] = useState(0)
+  const [searchTerm, setSearchTerm] = useState('')
 
-  const [showNewConversationForm, setShowNewConversationForm] = useState(false);
+  const [showNewConversationForm, setShowNewConversationForm] = useState(false)
 
-  const token = localStorage.getItem("jwtToken");
-  const navigate = useNavigate();
+  const token = localStorage.getItem('jwtToken')
+  const navigate = useNavigate()
   useEffect(() => {
     if (!token) {
-      delete axios.defaults.headers.common["Authorization"];
-      navigate("/login");
+      delete axios.defaults.headers.common.Authorization
+      navigate('/login')
     } else {
-      axios.defaults.headers.common["Authorization"] = token;
+      axios.defaults.headers.common.Authorization = token
     }
-  }, [token, navigate]);
+  }, [token, navigate])
 
   useEffect(() => {
-    fetchConversations();
-  }, []);
+    fetchConversations()
+  }, [])
 
   const fetchConversations = (pageNumber = 0, pageSize = 3) => {
     axios
-      .get(BACKEND_URL + "/api/conversations/all", {
+      .get(BACKEND_URL + '/api/conversations/all', {
         params: {
           page: pageNumber,
-          size: pageSize,
-        },
+          size: pageSize
+        }
       })
       .then((response) => {
-        console.log(response.data);
-        setConversations(response.data);
+        console.log(response.data)
+        setConversations(response.data)
         if (response.data.length === 0) {
-          toast.warning("No conversation found!");
+          toast.warning('No conversation found!')
         }
       })
       .catch((error) => {
-        ShowErrorToast(error, "Error retrieving conversations!");
-      });
-  };
+        ShowErrorToast(error, 'Error retrieving conversations!')
+      })
+  }
 
   const handleSearch = (pageNumber = 0, pageSize = 3) => {
     axios
-      .get(BACKEND_URL + "/api/conversations/search", {
+      .get(BACKEND_URL + '/api/conversations/search', {
         params: {
-          searchTerm: searchTerm,
+          searchTerm,
           page: pageNumber,
-          size: pageSize,
-        },
+          size: pageSize
+        }
       })
       .then((response) => {
-        console.log(response.data);
-        setConversations(response.data);
+        console.log(response.data)
+        setConversations(response.data)
       })
       .catch((error) => {
-        ShowErrorToast(error, "Error retrieving conversations!");
-      });
+        ShowErrorToast(error, 'Error retrieving conversations!')
+      })
   }
-
 
   const handlePageChange = (pageNumber) => {
     if (pageNumber < 0 || pageNumber > conversations.totalPages + 1) {
-      return;
+      return
     }
 
-    setCurrentPage(pageNumber);
-    fetchConversations(pageNumber - 1);
-  };
-
+    setCurrentPage(pageNumber)
+    fetchConversations(pageNumber - 1)
+  }
 
   return (
     <>
@@ -103,7 +100,7 @@ function ConversationsPage() {
               onChange={(event) => setSearchTerm(event.target.value)}
               onKeyUp={(event) => {
                 if (event.key === 'Enter') {
-                  handleSearch(0, 5);
+                  handleSearch(0, 5)
                 }
               }
               }
@@ -142,7 +139,7 @@ function ConversationsPage() {
         <hr />
       </Container>
     </>
-  );
+  )
 }
 
-export default ConversationsPage;
+export default ConversationsPage

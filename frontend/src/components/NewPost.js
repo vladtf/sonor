@@ -1,58 +1,55 @@
-import axios from "axios";
-import { useState } from "react";
-import { Button, Form, Modal } from "react-bootstrap";
-import { ToastContainer, toast } from "react-toastify";
-import { BACKEND_URL } from "../configuration/BackendConfig";
-import ShowErrorToast from "../exception/ToastUtils";
+import axios from 'axios'
+import { useState } from 'react'
+import { Button, Form, Modal } from 'react-bootstrap'
+import { ToastContainer, toast } from 'react-toastify'
+import { BACKEND_URL } from '../configuration/BackendConfig'
+import ShowErrorToast from '../exception/ToastUtils'
 
-export default function NewPost({ fetchPosts, show, setShow }) {
-    const [title, setTitle] = useState("");
-    const [category, setCategory] = useState("OTHER");
-    const [content, setContent] = useState("");
+export default function NewPost ({ fetchPosts, show, setShow }) {
+  const [title, setTitle] = useState('')
+  const [category, setCategory] = useState('OTHER')
+  const [content, setContent] = useState('')
 
+  const handleNewPost = (e) => {
+    // check if the title and content are empty
+    if (title === '' || content === '') {
+      toast.warning('Title and content are required!')
+      return
+    }
 
-    const handleNewPost = (e) => {
-        // check if the title and content are empty
-        if (title === "" || content === "") {
-            toast.warning("Title and content are required!");
-            return;
-        }
+    const confirmAdd = window.confirm(
+      'Are you sure you want to add this post?'
+    )
+    if (!confirmAdd) {
+      return
+    }
 
-        const confirmAdd = window.confirm(
-            "Are you sure you want to add this post?"
-        );
-        if (!confirmAdd) {
-            return;
-        }
+    const newPostRequest = {
+      title,
+      category,
+      content
+    }
 
+    console.log('Sending post data: ', newPostRequest)
 
-        const newPostRequest = {
-            title: title,
-            category: category,
-            content: content,
-        };
+    axios
+      .post(BACKEND_URL + '/api/posts/create', newPostRequest)
+      .then((response) => {
+        console.log(response.data)
+        fetchPosts()
+      })
+      .catch((error) => {
+        ShowErrorToast(error, 'Error creating new post!')
+      })
 
-        console.log("Sending post data: ", newPostRequest);
+    // clear the form
+    setTitle('')
+    setCategory('')
+    setContent('')
+    setShow(false)
+  }
 
-
-        axios
-            .post(BACKEND_URL + "/api/posts/create", newPostRequest)
-            .then((response) => {
-                console.log(response.data);
-                fetchPosts();
-            })
-            .catch((error) => {
-                ShowErrorToast(error, "Error creating new post!");
-            });
-
-        // clear the form
-        setTitle("");
-        setCategory("");
-        setContent("");
-        setShow(false);
-    };
-
-    return (
+  return (
         <>
             <ToastContainer />
             <Modal show={show} onHide={() => setShow(false)}>
@@ -103,7 +100,5 @@ export default function NewPost({ fetchPosts, show, setShow }) {
             </Modal>
         </>
 
-    );
-
+  )
 }
-

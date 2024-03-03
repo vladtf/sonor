@@ -1,69 +1,68 @@
-import axios from "axios";
-import React, { useState } from "react";
-import { Button, Col, Container, Form, Row, Spinner } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
-import { BACKEND_URL } from "../configuration/BackendConfig";
-import { getClaimFromToken } from "../token/TokeUtils";
-import ShowErrorToast from "../exception/ToastUtils";
+import axios from 'axios'
+import React, { useState } from 'react'
+import { Button, Col, Container, Form, Row, Spinner } from 'react-bootstrap'
+import { useNavigate } from 'react-router-dom'
+import { ToastContainer } from 'react-toastify'
+import { BACKEND_URL } from '../configuration/BackendConfig'
+import ShowErrorToast from '../exception/ToastUtils'
+import { getClaimFromToken } from '../token/TokeUtils'
 
 function LoginPage() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [username, setUsername] = useState('')
+  const [password, setPassword] = useState('')
+  const [loading, setLoading] = useState(false)
 
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   const handleSubmit = (event) => {
-    event.preventDefault();
+    event.preventDefault()
 
     const postData = {
-      username: username,
-      password: password,
-    };
+      username,
+      password
+    }
 
-    setLoading(true); // Set loading state to true
+    setLoading(true) // Set loading state to true
 
-    console.log("Sending login data: ", postData);
+    console.log('Sending login data: ', postData)
     axios
-      .post(BACKEND_URL + "/login", postData)
+      .post(BACKEND_URL + '/login', postData)
       .then((response) => {
-        console.log(response.data);
+        console.log(response.data)
 
         const data = response.data
-        const token = data;
+        const token = data
 
-        localStorage.setItem("jwtToken", "Bearer " + token);
-        axios.defaults.headers.common["Authorization"] = "Bearer " + token;
+        localStorage.setItem('jwtToken', 'Bearer ' + token)
+        axios.defaults.headers.common.Authorization = 'Bearer ' + token
 
-        const user = getClaimFromToken(token, "sub");
-        localStorage.setItem("username", user);
+        const user = getClaimFromToken(token, 'sub')
+        localStorage.setItem('username', user)
 
-        const roles = getClaimFromToken(token, "roles");
-        localStorage.setItem("roles", roles);
+        const roles = getClaimFromToken(token, 'roles')
+        localStorage.setItem('roles', roles)
 
-
-        navigate("/home");
+        navigate('/home')
       })
       .catch((error) => {
-        ShowErrorToast(error, "Invalid username or password!");
+        ShowErrorToast(error, 'Invalid username or password!')
       })
       .finally(() => {
-        setLoading(false); // Set loading state to false after the request completes
-      });
-  };
+        setLoading(false) // Set loading state to false after the request completes
+      })
+  }
 
   return (
     <>
       <ToastContainer />
-      <Container style={{ marginTop: "250px" }}>
+      <Container style={{ marginTop: '250px' }}>
         <Row>
           <Col>
             <h2
               className="text-primary"
               style={{
-                fontSize: "24px",
-                textAlign: "center",
+                fontSize: '24px',
+                textAlign: 'center'
               }}
             >
               Login Page
@@ -96,8 +95,8 @@ function LoginPage() {
                   variant="primary"
                   type="submit"
                   style={{
-                    width: "200px",
-                    height: "50px",
+                    width: '200px',
+                    height: '50px'
                   }}
                   onClick={handleSubmit}
                   disabled={loading} // Disable the button when loading is true
@@ -107,7 +106,7 @@ function LoginPage() {
                       <span className="visually-hidden">Loading...</span>
                     </Spinner>
                   ) : (
-                    "Login"
+                    'Login'
                   )}
                 </Button>
               </div>
@@ -117,9 +116,9 @@ function LoginPage() {
               <Col>
                 <p
                   style={{
-                    color: "black",
-                    fontSize: "15px",
-                    textAlign: "center",
+                    color: 'black',
+                    fontSize: '15px',
+                    textAlign: 'center'
                   }}
                 >
                   Don't have an account? <a href="/registration">Register</a>
@@ -130,7 +129,7 @@ function LoginPage() {
         </Row>
       </Container>
     </>
-  );
+  )
 }
 
-export default LoginPage;
+export default LoginPage

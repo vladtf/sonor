@@ -1,113 +1,112 @@
-import axios from "axios";
-import { useEffect, useState } from "react";
-import { Button, Card, Col, Container, Form, Pagination, Row } from "react-bootstrap";
-import { FaPlusCircle, FaRegClock, FaRegNewspaper } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
-import NewPost from "../components/NewPost";
-import { BACKEND_URL } from "../configuration/BackendConfig";
-import ShowErrorToast from "../exception/ToastUtils";
+import axios from 'axios'
+import { useEffect, useState } from 'react'
+import { Button, Card, Col, Container, Form, Pagination, Row } from 'react-bootstrap'
+import { FaPlusCircle, FaRegClock, FaRegNewspaper } from 'react-icons/fa'
+import { useNavigate } from 'react-router-dom'
+import { ToastContainer, toast } from 'react-toastify'
+import NewPost from '../components/NewPost'
+import { BACKEND_URL } from '../configuration/BackendConfig'
+import ShowErrorToast from '../exception/ToastUtils'
 
-function PostPage() {
-  const [posts, setPosts] = useState([]);
-  const [showNewPostForm, setShowNewPostForm] = useState(false);
-  const [currentPage, setCurrentPage] = useState(0);
-  const [searchTerm, setSearchTerm] = useState('');
+function PostPage () {
+  const [posts, setPosts] = useState([])
+  const [showNewPostForm, setShowNewPostForm] = useState(false)
+  const [currentPage, setCurrentPage] = useState(0)
+  const [searchTerm, setSearchTerm] = useState('')
 
-  const token = localStorage.getItem("jwtToken");
-  const navigate = useNavigate();
+  const token = localStorage.getItem('jwtToken')
+  const navigate = useNavigate()
   useEffect(() => {
     if (!token) {
-      delete axios.defaults.headers.common["Authorization"];
-      navigate("/login");
+      delete axios.defaults.headers.common.Authorization
+      navigate('/login')
     } else {
-      axios.defaults.headers.common["Authorization"] = token;
+      axios.defaults.headers.common.Authorization = token
     }
-  }, [token, navigate]);
+  }, [token, navigate])
 
   useEffect(() => {
-    fetchPosts();
-  }, []);
+    fetchPosts()
+  }, [])
 
   const handleSearch = (pageNumber = 0, pageSize = 5) => {
     axios
-      .get(BACKEND_URL + "/api/posts/search", {
+      .get(BACKEND_URL + '/api/posts/search', {
         params: {
-          searchTerm: searchTerm,
+          searchTerm,
           page: pageNumber,
-          size: pageSize,
-        },
+          size: pageSize
+        }
       })
       .then((response) => {
-        console.log(response.data);
-        setPosts(response.data);
+        console.log(response.data)
+        setPosts(response.data)
       })
       .catch((error) => {
-        toast.error("Error retrieving posts!");
-        console.error(error.response.data);
-      });
-  };
+        toast.error('Error retrieving posts!')
+        console.error(error.response.data)
+      })
+  }
 
   const fetchPosts = (pageNumber = 0, pageSize = 5) => {
     axios
-      .get(BACKEND_URL + "/api/posts/all", {
+      .get(BACKEND_URL + '/api/posts/all', {
         params: {
           page: pageNumber,
-          size: pageSize,
-        },
+          size: pageSize
+        }
       })
       .then((response) => {
-        console.log(response.data);
-        setPosts(response.data);
+        console.log(response.data)
+        setPosts(response.data)
       })
       .catch((error) => {
-        toast.error("Error retrieving posts!");
-        console.error(error.response.data);
-      });
-  };
-
+        toast.error('Error retrieving posts!')
+        console.error(error.response.data)
+      })
+  }
 
   const deletePost = (id) => {
     const confirmDelete = window.confirm(
-      "Are you sure you want to delete this post?"
-    );
+      'Are you sure you want to delete this post?'
+    )
 
     if (!confirmDelete) {
-      return;
+      return
     }
 
     const deleteRequest = {
-      id: id,
-    };
+      id
+    }
 
     axios
-      .delete(BACKEND_URL + "/api/posts/delete", { data: deleteRequest })
+      .delete(BACKEND_URL + '/api/posts/delete', { data: deleteRequest })
       .then((response) => {
-        console.log(response.data);
-        toast.success("Post deleted successfully!");
-        fetchPosts();
+        console.log(response.data)
+        toast.success('Post deleted successfully!')
+        fetchPosts()
       })
       .catch((error) => {
-        ShowErrorToast(error, "Failed to delete post.");
-        console.error(error.response.data);
-      });
-  };
+        ShowErrorToast(error, 'Failed to delete post.')
+        console.error(error.response.data)
+      })
+  }
 
   const getShortContent = (content) => {
     if (content.length > 15) {
-      return content.substring(0, 15) + "...";
+      return content.substring(0, 15) + '...'
     }
-    return content;
+    return content
   }
 
   const handlePageChange = (pageNumber) => {
     if (pageNumber < 0 || pageNumber > posts.totalPages + 1) {
-      return;
+      return
     }
 
-    setCurrentPage(pageNumber);
-    fetchPosts(pageNumber - 1);
-  };
+    setCurrentPage(pageNumber)
+    fetchPosts(pageNumber - 1)
+  }
 
   return (
     <>
@@ -131,7 +130,7 @@ function PostPage() {
               onChange={(event) => setSearchTerm(event.target.value)}
               onKeyUp={(event) => {
                 if (event.key === 'Enter') {
-                  handleSearch(0, 5);
+                  handleSearch(0, 5)
                 }
               }
               }
@@ -161,11 +160,13 @@ function PostPage() {
         </Row>
         <hr />
         <Row>
-          {posts.content && posts.content.length === 0 ? (
+          {posts.content && posts.content.length === 0
+            ? (
             <h2 className="text-center">No posts found</h2>
-          ) : (
-            posts.content && posts.content.map((post, index) => {
-              return (
+              )
+            : (
+                posts.content && posts.content.map((post, index) => {
+                  return (
 
                 <Col md="12" key={index} className="p-2">
                   <Card className="card-hover-effect" onClick={() => navigate(`/post/${post.id}`)}>
@@ -181,8 +182,8 @@ function PostPage() {
                       <Button
                         variant="danger"
                         onClick={(event) => {
-                          event.stopPropagation();
-                          deletePost(post.id);
+                          event.stopPropagation()
+                          deletePost(post.id)
                         }}
                       >
                         Delete Post
@@ -190,14 +191,14 @@ function PostPage() {
                     </Card.Footer>
                   </Card>
                 </Col>
-              );
-            })
-          )}
+                  )
+                })
+              )}
         </Row>
         <hr />
       </Container>
     </>
-  );
+  )
 }
 
-export default PostPage;
+export default PostPage

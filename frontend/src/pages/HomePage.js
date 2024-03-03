@@ -1,141 +1,138 @@
-import { Container, Row, Col, Card, Button, ListGroup, Pagination } from "react-bootstrap";
-import MyNavbar from "../components/MyNavbar";
-import { useEffect, useState } from "react";
-import axios from "axios";
-import { BACKEND_URL } from "../configuration/BackendConfig";
-import { useNavigate } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
-import { FaRegNewspaper, FaRegClock, FaRegUser, FaRegCommentDots, FaRegComments } from 'react-icons/fa';
-import { WiDaySunny, WiDayCloudy, WiRain, WiSnow } from 'react-icons/wi';
-import ShowErrorToast from "../exception/ToastUtils";
+import axios from 'axios'
+import { useEffect, useState } from 'react'
+import { Button, Card, Col, Container, Pagination, Row } from 'react-bootstrap'
+import { FaRegClock, FaRegCommentDots, FaRegComments, FaRegNewspaper, FaRegUser } from 'react-icons/fa'
+import { WiDayCloudy, WiDaySunny, WiRain, WiSnow } from 'react-icons/wi'
+import { useNavigate } from 'react-router-dom'
+import { ToastContainer } from 'react-toastify'
+import { BACKEND_URL } from '../configuration/BackendConfig'
+import ShowErrorToast from '../exception/ToastUtils'
 
-function HomePage() {
-  const token = localStorage.getItem("jwtToken");
-  const navigate = useNavigate();
+function HomePage () {
+  const token = localStorage.getItem('jwtToken')
+  const navigate = useNavigate()
   useEffect(() => {
     if (!token) {
-      delete axios.defaults.headers.common["Authorization"];
-      navigate("/login");
+      delete axios.defaults.headers.common.Authorization
+      navigate('/login')
     } else {
-      axios.defaults.headers.common["Authorization"] = token;
+      axios.defaults.headers.common.Authorization = token
     }
-  }, [token, navigate]);
+  }, [token, navigate])
 
-  const [posts, setPosts] = useState([{ content: [] }]);
-  const [messages, setMessages] = useState([]);
-  const [weatherForecast, setWeatherForecast] = useState([]);
-  const [conversations, setConversations] = useState([]);
+  const [posts, setPosts] = useState([{ content: [] }])
+  const [messages, setMessages] = useState([])
+  const [weatherForecast, setWeatherForecast] = useState([])
+  const [conversations, setConversations] = useState([])
 
-  const [currentPagePosts, setCurrentPagePosts] = useState(1);
-  const [currentPageMessages, setCurrentPageMessages] = useState(1);
-  const [currentPageConversations, setCurrentPageConversations] = useState(1);
+  const [currentPagePosts, setCurrentPagePosts] = useState(1)
+  const [currentPageMessages, setCurrentPageMessages] = useState(1)
+  const [currentPageConversations, setCurrentPageConversations] = useState(1)
 
   useEffect(() => {
-    fetchPosts();
-    fetchMessages();
-    fetchWeatherForecast();
-    fetchConversations();
-  }, []);
+    fetchPosts()
+    fetchMessages()
+    fetchWeatherForecast()
+    fetchConversations()
+  }, [])
 
   const fetchPosts = (pageNumber = 0, pageSize = 2) => {
     axios
-      .get(BACKEND_URL + "/api/posts/all", {
+      .get(BACKEND_URL + '/api/posts/all', {
         params: {
           page: pageNumber,
           size: pageSize
         }
       })
       .then((response) => {
-        console.log(response.data);
-        setPosts(response.data);
+        console.log(response.data)
+        setPosts(response.data)
       })
       .catch((error) => {
-        ShowErrorToast(error, "Error retrieving posts!");
-      });
-  };
+        ShowErrorToast(error, 'Error retrieving posts!')
+      })
+  }
 
   const fetchMessages = (pageNumber = 0, pageSize = 2) => {
     axios
-      .get(BACKEND_URL + "/api/messages/mine", {
+      .get(BACKEND_URL + '/api/messages/mine', {
         params: {
           page: pageNumber,
           size: pageSize
         }
       })
       .then((response) => {
-        console.log(response.data);
-        setMessages(response.data);
+        console.log(response.data)
+        setMessages(response.data)
       })
       .catch((error) => {
-        ShowErrorToast(error, "Error retrieving messages!");
-      });
-  };
-
+        ShowErrorToast(error, 'Error retrieving messages!')
+      })
+  }
 
   const fetchConversations = (pageNumber = 0, pageSize = 2) => {
     axios
-      .get(BACKEND_URL + "/api/conversations/all", {
+      .get(BACKEND_URL + '/api/conversations/all', {
         params: {
           page: pageNumber,
           size: pageSize
         }
       })
       .then((response) => {
-        console.log(response.data);
-        setConversations(response.data);
+        console.log(response.data)
+        setConversations(response.data)
       })
       .catch((error) => {
-        ShowErrorToast(error, "Error retrieving conversations!");
-      });
+        ShowErrorToast(error, 'Error retrieving conversations!')
+      })
   }
 
   const fetchWeatherForecast = () => {
-
     axios
-      .get(BACKEND_URL + "/api/weather/all")
+      .get(BACKEND_URL + '/api/weather/all')
       .then((response) => {
-        console.log(response.data);
-        setWeatherForecast(response.data);
+        console.log(response.data)
+        setWeatherForecast(response.data)
       })
       .catch((error) => {
-        ShowErrorToast(error, "Error retrieving weather forecast!");
-      });
-  };
+        ShowErrorToast(error, 'Error retrieving weather forecast!')
+      })
+  }
 
   const handlePageChangePosts = (pageNumber) => {
     if (pageNumber < 0 || pageNumber > posts.totalPages + 1) {
-      return;
+      return
     }
 
-    setCurrentPagePosts(pageNumber);
-    fetchPosts(pageNumber - 1);
-  };
+    setCurrentPagePosts(pageNumber)
+    fetchPosts(pageNumber - 1)
+  }
 
   const handlePageChangeMessages = (pageNumber) => {
     if (pageNumber < 0 || pageNumber > messages.totalPages + 1) {
-      return;
+      return
     }
 
-    setCurrentPageMessages(pageNumber);
-    fetchMessages(pageNumber - 1);
-  };
+    setCurrentPageMessages(pageNumber)
+    fetchMessages(pageNumber - 1)
+  }
 
   const handlePageChangeConversations = (pageNumber) => {
     if (pageNumber < 0 || pageNumber > conversations.totalPages + 1) {
-      return;
+      return
     }
 
-    setCurrentPageConversations(pageNumber);
-    fetchConversations(pageNumber - 1);
-  };
+    setCurrentPageConversations(pageNumber)
+    fetchConversations(pageNumber - 1)
+  }
 
   const getShortenedContent = (content) => {
     if (content.length > 10) {
-      return content.substring(0, 10) + "...";
+      return content.substring(0, 10) + '...'
     } else {
-      return content;
+      return content
     }
-  };
+  }
 
   return (
     <>
@@ -146,10 +143,12 @@ function HomePage() {
             <Card>
               <Card.Header>Recent Messages</Card.Header>
               <Card.Body>
-                {messages.content && messages.content.length === 0 ? (
+                {messages.content && messages.content.length === 0
+                  ? (
                   <p>No recent messages found.</p>
-                ) : (
-                  messages.content && messages.content.map((message, index) => (
+                    )
+                  : (
+                      messages.content && messages.content.map((message, index) => (
                     <Card
                       key={index}
                       className="card-hover-effect mb-3"
@@ -164,8 +163,8 @@ function HomePage() {
                         <small>Conversation: {message.conversationName}</small>
                       </Card.Footer>
                     </Card>
-                  ))
-                )}
+                      ))
+                    )}
               </Card.Body>
               <Card.Footer>
                 <Container>
@@ -194,10 +193,12 @@ function HomePage() {
             <Card className="mt-4">
               <Card.Header>All Conversations</Card.Header>
               <Card.Body>
-                {conversations.content && conversations.content.length === 0 ? (
+                {conversations.content && conversations.content.length === 0
+                  ? (
                   <p>No conversations found.</p>
-                ) : (
-                  conversations.content && conversations.content.map((conversation, index) => (
+                    )
+                  : (
+                      conversations.content && conversations.content.map((conversation, index) => (
                     <Card
                       key={index}
                       className="card-hover-effect mb-3"
@@ -210,8 +211,8 @@ function HomePage() {
                         <small><FaRegUser className="me-1" />Participants: {conversation.participants.join(', ')}</small>
                       </Card.Footer>
                     </Card>
-                  ))
-                )}
+                      ))
+                    )}
               </Card.Body>
               <Card.Footer>
                 <Container>
@@ -237,16 +238,17 @@ function HomePage() {
               </Card.Footer>
             </Card>
 
-
           </Col>
           <Col>
             <Card>
               <Card.Header>Posts</Card.Header>
               <Card.Body>
-                {posts.content && posts.content.length === 0 ? (
+                {posts.content && posts.content.length === 0
+                  ? (
                   <p>No posts found.</p>
-                ) : (
-                  posts.content && posts.content.map((post, index) => (
+                    )
+                  : (
+                      posts.content && posts.content.map((post, index) => (
                     <Card key={index} className="mb-3 card-hover-effect" onClick={() => navigate(`/post/${post.id}`)}>
                       <Card.Body>
                         <Card.Title><FaRegNewspaper className="me-2" />{post.title}</Card.Title>
@@ -260,8 +262,8 @@ function HomePage() {
                         <small className="ms-3"><FaRegUser className="me-1" />{post.author}</small>
                       </Card.Footer>
                     </Card>
-                  ))
-                )}
+                      ))
+                    )}
               </Card.Body>
               <Card.Footer>
                 <Container>
@@ -291,9 +293,11 @@ function HomePage() {
             <Card className="mt-4">
               <Card.Header>Weather Forecast</Card.Header>
               <Card.Body>
-                {weatherForecast.length === 0 ? (
+                {weatherForecast.length === 0
+                  ? (
                   <p>No weather forecast data found.</p>
-                ) : (
+                    )
+                  : (
                   <table className="table table-striped table-hover table-responsive-md">
                     <thead >
                       <tr>
@@ -320,7 +324,7 @@ function HomePage() {
                       ))}
                     </tbody>
                   </table>
-                )}
+                    )}
               </Card.Body>
             </Card>
           </Col>
@@ -328,7 +332,7 @@ function HomePage() {
         <hr />
       </Container>
     </>
-  );
+  )
 }
 
-export default HomePage;
+export default HomePage

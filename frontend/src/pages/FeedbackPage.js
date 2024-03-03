@@ -1,88 +1,83 @@
-import { Col, Container, Row, Button, Card, Form, Pagination } from "react-bootstrap";
-import MyNavbar from "../components/MyNavbar";
-import axios from "axios";
-import { useState, useEffect } from "react";
-import BackendConfig, { BACKEND_URL } from "../configuration/BackendConfig";
-import { useNavigate } from "react-router-dom";
-import NewPost from "../components/NewPost";
-import { FaPlusCircle } from "react-icons/fa";
-import { ToastContainer, toast } from "react-toastify";
-import Feedback from "../components/Feedback";
-import ShowErrorToast from "../exception/ToastUtils";
+import axios from 'axios'
+import { useEffect, useState } from 'react'
+import { Button, Col, Container, Form, Pagination, Row } from 'react-bootstrap'
+import { useNavigate } from 'react-router-dom'
+import { ToastContainer, toast } from 'react-toastify'
+import Feedback from '../components/Feedback'
+import { BACKEND_URL } from '../configuration/BackendConfig'
+import ShowErrorToast from '../exception/ToastUtils'
 
-function FeedbackPage() {
-  const [feedbacks, setFeedbacks] = useState([]);
-  const [consent, setConsent] = useState(false);
-  const [satisfaction, setSatisfaction] = useState("neutral")
-  const [content, setContent] = useState("");
-  const [selectedFeature, setSelectedFeature] = useState("All");
-  const [currentPage, setCurrentPage] = useState(0);
+function FeedbackPage () {
+  const [feedbacks, setFeedbacks] = useState([])
+  const [consent, setConsent] = useState(false)
+  const [satisfaction, setSatisfaction] = useState('neutral')
+  const [content, setContent] = useState('')
+  const [selectedFeature, setSelectedFeature] = useState('All')
+  const [currentPage, setCurrentPage] = useState(0)
 
-
-  const token = localStorage.getItem("jwtToken");
-  const navigate = useNavigate();
+  const token = localStorage.getItem('jwtToken')
+  const navigate = useNavigate()
   useEffect(() => {
     if (!token) {
-      delete axios.defaults.headers.common["Authorization"];
-      navigate("/login");
+      delete axios.defaults.headers.common.Authorization
+      navigate('/login')
     } else {
-      axios.defaults.headers.common["Authorization"] = token;
+      axios.defaults.headers.common.Authorization = token
     }
-  }, [token, navigate]);
+  }, [token, navigate])
 
   useEffect(() => {
-    fetchFeedbacks();
-  }, []);
+    fetchFeedbacks()
+  }, [])
 
   const fetchFeedbacks = (pageNumber = 0, pageSize = 2) => {
     axios
-      .get(BACKEND_URL + "/api/feedbacks/all", {
+      .get(BACKEND_URL + '/api/feedbacks/all', {
         params: {
           page: pageNumber,
-          size: pageSize,
-        },
+          size: pageSize
+        }
       })
       .then((response) => {
-        console.log(response.data);
-        setFeedbacks(response.data);
+        console.log(response.data)
+        setFeedbacks(response.data)
       })
       .catch((error) => {
-        ShowErrorToast(error, "Error retrieving feedbacks!");
-      });
+        ShowErrorToast(error, 'Error retrieving feedbacks!')
+      })
   }
 
   const handleNewFeedback = () => {
     if (!consent) {
-      toast.error("You must agree to the terms and conditions");
-      return;
+      toast.error('You must agree to the terms and conditions')
+      return
     }
 
     axios
-      .post(BACKEND_URL + "/api/feedbacks/create", {
-        content: content,
-        satisfaction: satisfaction,
+      .post(BACKEND_URL + '/api/feedbacks/create', {
+        content,
+        satisfaction,
         feature: selectedFeature
       })
       .then((response) => {
-        console.log(response.data);
-        toast.success("Feedback submitted successfully!");
-        fetchFeedbacks();
+        console.log(response.data)
+        toast.success('Feedback submitted successfully!')
+        fetchFeedbacks()
       }
       )
       .catch((error) => {
-        ShowErrorToast(error, "Error submitting feedback!");
-      });
+        ShowErrorToast(error, 'Error submitting feedback!')
+      })
   }
-
 
   const handlePageChange = (pageNumber) => {
     if (pageNumber < 0 || pageNumber > feedbacks.totalPages + 1) {
-      return;
+      return
     }
 
-    setCurrentPage(pageNumber);
-    fetchFeedbacks(pageNumber - 1);
-  };
+    setCurrentPage(pageNumber)
+    fetchFeedbacks(pageNumber - 1)
+  }
 
   return (
     <>
@@ -122,28 +117,28 @@ function FeedbackPage() {
                   label="Very satisfied"
                   name="radioOptions"
                   id="radio-1"
-                  onChange={() => setSatisfaction("very satisfied")}
+                  onChange={() => setSatisfaction('very satisfied')}
                 />
                 <Form.Check
                   type="radio"
                   label="Satisfied"
                   name="radioOptions"
                   id="radio-2"
-                  onChange={() => setSatisfaction("satisfied")}
+                  onChange={() => setSatisfaction('satisfied')}
                 />
                 <Form.Check
                   type="radio"
                   label="Neutral"
                   name="radioOptions"
                   id="radio-3"
-                  onChange={() => setSatisfaction("neutral")}
+                  onChange={() => setSatisfaction('neutral')}
                 />
                 <Form.Check
                   type="radio"
                   label="Unsatisfied"
                   name="radioOptions"
                   id="radio-4"
-                  onChange={() => setSatisfaction("unsatisfied")}
+                  onChange={() => setSatisfaction('unsatisfied')}
                 />
               </Form.Group>
               <Form.Group controlId="checkbox" className="mt-3">
@@ -176,17 +171,19 @@ function FeedbackPage() {
         <hr />
         <Row>
           <Col>
-            {feedbacks.content && feedbacks.content.length === 0 ? (
+            {feedbacks.content && feedbacks.content.length === 0
+              ? (
               <h2 className="text-center">No feedbacks found</h2>
-            ) : (
-              feedbacks.content && feedbacks.content.map((feedback, index) => <Feedback key={index} feedback={feedback} fetchFeedbacks={fetchFeedbacks} />)
-            )}
+                )
+              : (
+                  feedbacks.content && feedbacks.content.map((feedback, index) => <Feedback key={index} feedback={feedback} fetchFeedbacks={fetchFeedbacks} />)
+                )}
           </Col>
         </Row>
         <hr />
       </Container>
     </>
-  );
+  )
 }
 
-export default FeedbackPage;
+export default FeedbackPage
