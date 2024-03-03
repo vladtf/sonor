@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import { BACKEND_URL } from "../configuration/BackendConfig";
 import { getClaimFromToken } from "../token/TokeUtils";
+import ShowErrorToast from "../exception/ToastUtils";
 
 function LoginPage() {
   const [username, setUsername] = useState("");
@@ -45,8 +46,7 @@ function LoginPage() {
         navigate("/home");
       })
       .catch((error) => {
-        toast.error("Error logging in!");
-        console.error(error.response.data);
+        ShowErrorToast(error, "Invalid username or password!");
       })
       .finally(() => {
         setLoading(false); // Set loading state to false after the request completes

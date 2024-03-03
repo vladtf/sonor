@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import { FaRegNewspaper, FaRegClock, FaRegUser, FaRegCommentDots, FaRegComments } from 'react-icons/fa';
 import { WiDaySunny, WiDayCloudy, WiRain, WiSnow } from 'react-icons/wi';
+import ShowErrorToast from "../exception/ToastUtils";
 
 function HomePage() {
   const token = localStorage.getItem("jwtToken");
@@ -49,8 +50,7 @@ function HomePage() {
         setPosts(response.data);
       })
       .catch((error) => {
-        toast.error("Error retrieving posts!");
-        console.error(error.response.data);
+        ShowErrorToast(error, "Error retrieving posts!");
       });
   };
 
@@ -67,8 +67,7 @@ function HomePage() {
         setMessages(response.data);
       })
       .catch((error) => {
-        toast.error("Error retrieving messages!");
-        console.error(error.response.data);
+        ShowErrorToast(error, "Error retrieving messages!");
       });
   };
 
@@ -86,8 +85,7 @@ function HomePage() {
         setConversations(response.data);
       })
       .catch((error) => {
-        toast.error("Error retrieving conversations!");
-        console.error(error.response.data);
+        ShowErrorToast(error, "Error retrieving conversations!");
       });
   }
 
@@ -100,8 +98,7 @@ function HomePage() {
         setWeatherForecast(response.data);
       })
       .catch((error) => {
-        toast.error("Error retrieving weather forecast!");
-        console.error(error.response.data);
+        ShowErrorToast(error, "Error retrieving weather forecast!");
       });
   };
 

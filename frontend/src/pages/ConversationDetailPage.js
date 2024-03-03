@@ -12,6 +12,7 @@ import Message from "../components/Message";
 import { toast } from "react-toastify";
 import NewParticipant from "../components/NewParticipant";
 import { FaUserCircle } from "react-icons/fa";
+import ShowErrorToast from "../exception/ToastUtils";
 
 function ConversationDetailPage() {
   const { conversationId } = useParams();
@@ -37,23 +38,17 @@ function ConversationDetailPage() {
     fetchConversation();
   }, [conversationId]);
 
-  const fetchConversation = async () => {
-    try {
+  const fetchConversation = () => {
       axios
         .get(BACKEND_URL + "/api/conversations/" + conversationId)
         .then((response) => {
           console.log(response.data);
           setConversation(response.data);
-
         })
         .catch((error) => {
-          toast.error("Error retrieving conversation!");
-          console.error(error.response.data);
+          ShowErrorToast(error, "Error retrieving conversation!");
           navigate("/messages");
         });
-    } catch (error) {
-      console.error(error.response.data);
-    }
   };
 
   const handleMessageSubmit = async (event) => {

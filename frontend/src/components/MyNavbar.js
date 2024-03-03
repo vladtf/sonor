@@ -6,6 +6,7 @@ import { BACKEND_URL } from "../configuration/BackendConfig";
 import { useNavigate } from "react-router-dom";
 import { MdOutlineFeedback } from "react-icons/md";
 import { useLocation } from "react-router-dom";
+import ShowErrorToast from "../exception/ToastUtils";
 
 
 const MyNavbar = () => {
@@ -29,7 +30,7 @@ const MyNavbar = () => {
         console.log(response.data);
       })
       .catch((error) => {
-        console.log(error);
+        ShowErrorToast(error, "Error logging out!");
       });
     navigate("/login");
   };

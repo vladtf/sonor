@@ -8,6 +8,7 @@ import NewPost from "../components/NewPost";
 import { FaPlusCircle } from "react-icons/fa";
 import { ToastContainer, toast } from "react-toastify";
 import Feedback from "../components/Feedback";
+import ShowErrorToast from "../exception/ToastUtils";
 
 function FeedbackPage() {
   const [feedbacks, setFeedbacks] = useState([]);
@@ -46,8 +47,7 @@ function FeedbackPage() {
         setFeedbacks(response.data);
       })
       .catch((error) => {
-        toast.error("Error retrieving feedbacks!");
-        console.error(error.response.data);
+        ShowErrorToast(error, "Error retrieving feedbacks!");
       });
   }
 
@@ -70,8 +70,7 @@ function FeedbackPage() {
       }
       )
       .catch((error) => {
-        console.error(error.response.data);
-        toast.error("Error submitting feedback!");
+        ShowErrorToast(error, "Error submitting feedback!");
       });
   }
 

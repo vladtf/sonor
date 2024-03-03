@@ -8,6 +8,7 @@ import NewConversation from "../components/NewConversation";
 import { FaPlusCircle } from "react-icons/fa";
 import ConversationListItem from "../components/ConversationListItem";
 import { ToastContainer, toast } from "react-toastify";
+import ShowErrorToast from "../exception/ToastUtils";
 
 function ConversationsPage() {
   const [conversations, setConversations] = useState([]);
@@ -47,8 +48,7 @@ function ConversationsPage() {
         }
       })
       .catch((error) => {
-        toast.error("Error retrieving conversations!");
-        console.error(error.response.data);
+        ShowErrorToast(error, "Error retrieving conversations!");
       });
   };
 
@@ -66,8 +66,7 @@ function ConversationsPage() {
         setConversations(response.data);
       })
       .catch((error) => {
-        toast.error("Error retrieving conversations!");
-        console.error(error.response.data);
+        ShowErrorToast(error, "Error retrieving conversations!");
       });
   }
 

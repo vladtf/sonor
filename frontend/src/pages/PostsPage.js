@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import NewPost from "../components/NewPost";
 import { BACKEND_URL } from "../configuration/BackendConfig";
+import ShowErrorToast from "../exception/ToastUtils";
 
 function PostPage() {
   const [posts, setPosts] = useState([]);
@@ -87,7 +88,7 @@ function PostPage() {
         fetchPosts();
       })
       .catch((error) => {
-        toast.error("Failed to delete post. Please try again.");
+        ShowErrorToast(error, "Failed to delete post.");
         console.error(error.response.data);
       });
   };

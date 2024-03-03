@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Button, Form, Modal, Spinner } from "react-bootstrap";
 import { ToastContainer, toast } from "react-toastify";
 import { BACKEND_URL } from "../configuration/BackendConfig";
+import ShowErrorToast from "../exception/ToastUtils";
 
 export default function NewParticipant({ fetchConversation, conversationId, show, setShow }) {
 
@@ -24,8 +25,7 @@ export default function NewParticipant({ fetchConversation, conversationId, show
                     setUsernames(response.data);
                 })
                 .catch((error) => {
-                    console.error(error.response.data);
-                    toast.error("Error retrieving usernames!");
+                    ShowErrorToast(error, "Error retrieving usernames!");
                 })
                 .finally(() => {
                     setLoadingUsernames(false);
@@ -54,8 +54,7 @@ export default function NewParticipant({ fetchConversation, conversationId, show
                 fetchConversation(conversationId);
             })
             .catch((error) => {
-                console.error(error.response.data);
-                toast.error("Failed to add participant. Please try again.");
+                ShowErrorToast(error, "Error adding participant!");
             });
 
         setUsername("");

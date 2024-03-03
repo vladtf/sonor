@@ -5,6 +5,7 @@ import { FaRegClock, FaRegNewspaper, FaRegUser } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import { BACKEND_URL } from "../configuration/BackendConfig";
+import ShowErrorToast from "../exception/ToastUtils";
 
 function AdminPage() {
   const [users, setUsers] = useState([]);
@@ -40,8 +41,7 @@ function AdminPage() {
         setUsers(response.data);
       })
       .catch((error) => {
-        toast.error("Error retrieving users!");
-        console.error(error.response.data);
+        ShowErrorToast(error, "Error retrieving users!");
       });
   };
 
@@ -58,8 +58,7 @@ function AdminPage() {
         setUsers(response.data);
       })
       .catch((error) => {
-        toast.error("Error retrieving users!");
-        console.error(error.response.data);
+        ShowErrorToast(error, "Error retrieving users!");
       });
   };
 
@@ -85,8 +84,7 @@ function AdminPage() {
         fetchData();
       })
       .catch((error) => {
-        toast.error("Failed to delete user. Please try again.");
-        console.error(error.response.data);
+        ShowErrorToast(error, "Failed to delete user.");
       });
   };
 

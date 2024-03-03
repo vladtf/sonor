@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Button, Form, Modal } from "react-bootstrap";
 import { ToastContainer, toast } from "react-toastify";
 import { BACKEND_URL } from "../configuration/BackendConfig";
+import ShowErrorToast from "../exception/ToastUtils";
 
 export default function NewPost({ fetchPosts, show, setShow }) {
     const [title, setTitle] = useState("");
@@ -41,8 +42,7 @@ export default function NewPost({ fetchPosts, show, setShow }) {
                 fetchPosts();
             })
             .catch((error) => {
-                toast.error("Failed to create post. Please try again.");
-                console.error(error.response.data);
+                ShowErrorToast(error, "Error creating new post!");
             });
 
         // clear the form

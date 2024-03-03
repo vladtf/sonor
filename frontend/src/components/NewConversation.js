@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Button, Form, Modal } from "react-bootstrap";
 import { ToastContainer, toast } from "react-toastify";
 import { BACKEND_URL } from "../configuration/BackendConfig";
+import ShowErrorToast from "../exception/ToastUtils";
 
 export default function NewConversation({ fetchConversations, show, setShow }) {
 
@@ -21,11 +22,11 @@ export default function NewConversation({ fetchConversations, show, setShow }) {
             })
             .then((response) => {
                 console.log(response.data);
+                toast.success("New conversation created successfully!");
                 fetchConversations();
             })
             .catch((error) => {
-                console.error(error.response.data);
-                toast.error("Failed to create conversation. Please try again.");
+                ShowErrorToast(error, "Error creating new conversation!");
             });
 
         setName("");
