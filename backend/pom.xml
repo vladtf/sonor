@@ -129,11 +129,6 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
 
         <dependency>
             <groupId>org.mindrot</groupId>
@@ -159,6 +154,12 @@
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-security</artifactId>
             <version>1.6.13</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>RELEASE</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 

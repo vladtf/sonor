@@ -21,17 +21,6 @@ public class WeatherService {
         );
     }
 
-    public static class WeatherForecastResponse {
-        public String date;
-        public String temperature;
-        public String humidity;
-        public String condition;
-
-        public WeatherForecastResponse(String date, String temperature, String humidity, String condition) {
-            this.date = date;
-            this.temperature = temperature;
-            this.humidity = humidity;
-            this.condition = condition;
-        }
+    public record WeatherForecastResponse(String date, String temperature, String humidity, String condition) {
     }
 }

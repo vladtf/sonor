@@ -26,8 +26,6 @@ public class OpenApiConfig {
 
     @Bean
     public OpenApiCustomiser securitySchemesCustomizer() {
-        return openApi -> openApi.getPaths().values().forEach(pathItem -> pathItem.readOperations().forEach(operation -> {
-            operation.addSecurityItem(new SecurityRequirement().addList("BearerAuth"));
-        }));
+        return openApi -> openApi.getPaths().values().forEach(pathItem -> pathItem.readOperations().forEach(operation -> operation.addSecurityItem(new SecurityRequirement().addList("BearerAuth"))));
     }
 }

@@ -28,8 +28,6 @@ public class CommentService {
     }
 
     public Collection<Comment> getAllComments(Integer postId) {
-        // check if post exists
-        // if not, throw exception
         if (!postRepository.existsById(postId)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found");
         }
@@ -38,8 +36,6 @@ public class CommentService {
     }
 
     public void addComment(org.springframework.security.core.userdetails.User user, CommentController.AddCommentRequest addCommentRequest) {
-        // check if post exists
-        // if not, throw exception
         if (!postRepository.existsById(addCommentRequest.postId)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found");
         }
@@ -100,8 +96,6 @@ public class CommentService {
     }
 
     public void updateComment(org.springframework.security.core.userdetails.User user, Integer id, CommentController.UpdateCommentRequest request) {
-        // check if comment exists
-        // if not, throw exception
         if (!commentRepository.existsById(id)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Comment not found");
         }

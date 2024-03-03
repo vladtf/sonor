@@ -2,6 +2,7 @@ package com.pweb.backend.mock;
 
 import com.pweb.backend.dao.entities.*;
 import com.pweb.backend.dao.repositories.*;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -35,7 +36,7 @@ public class DatabaseInitializer implements ApplicationListener<ContextRefreshed
 
 
     @Override
-    public void onApplicationEvent(ContextRefreshedEvent event) {
+    public void onApplicationEvent(@NotNull ContextRefreshedEvent event) {
         deleteAll();
         provisionUsers();
         provisionPostsToUser();
