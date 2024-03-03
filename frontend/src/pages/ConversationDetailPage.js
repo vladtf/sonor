@@ -47,7 +47,7 @@ function ConversationDetailPage() {
         })
         .catch((error) => {
           ShowErrorToast(error, "Error retrieving conversation!");
-          navigate("/messages");
+          navigate("/conversations");
         });
   };
 

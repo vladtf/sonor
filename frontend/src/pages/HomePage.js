@@ -171,7 +171,7 @@ function HomePage() {
                 <Container>
                   <Row>
                     <Col md={6} className="d-flex align-items-center">
-                      <Button variant="primary" href="/messages">
+                      <Button variant="primary" href="/conversations">
                         Go to Messages
                       </Button>
                     </Col>
