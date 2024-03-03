@@ -1,32 +1,17 @@
-# Stage 1: Build the React application
+# Build stage
 FROM node:18 as build
-
-# Set the working directory in the container
 WORKDIR /app
-
-# Copy the package.json and package-lock.json (or yarn.lock)
 COPY package*.json ./
-
-# Install dependencies
 RUN npm install
-
-# Copy the rest of your app's source code
 COPY . ./
-
-# Build your app
 RUN npm run build
 
-# Stage 2: Serve the app using Nginx
-FROM nginx:stable-alpine
+# Serve stage
+FROM node:18
+WORKDIR /app
+COPY --from=build /app/build .
+RUN npm install -g serve
+CMD ["serve", "-s", "."]
 
-# Copy the build output to replace the default nginx contents.
-COPY --from=build /app/build /usr/share/nginx/html
-
-# Copy the nginx configuration file
-COPY nginx.conf /etc/nginx/nginx.conf
-
-# Expose port 80 to the Docker host, so we can access it from the outside.
-EXPOSE 80
-
-# Start Nginx and keep it running in the foreground
-CMD ["nginx", "-g", "daemon off;"]
+# Optional: Expose port (e.g., 3000) if you plan to run the container with port mapping
+EXPOSE 3000

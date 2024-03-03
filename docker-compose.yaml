@@ -9,7 +9,7 @@ services:
       - REACT_APP_LOAD_BALANCER_DNS=localhost
     container_name: frontend_container
     ports:
-      - "3000:80"
+      - "3000:3000"
   backend:
     build:
       context: backend

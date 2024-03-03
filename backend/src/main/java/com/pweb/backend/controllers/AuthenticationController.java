@@ -68,6 +68,10 @@ public class AuthenticationController {
     }
 
     @GetMapping("/logout")
+    @Operation(summary = "Logout",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "User logged out successfully")
+            })
     public ResponseEntity<String> logout() {
         return ResponseEntity.ok().body("Logged out");
     }
