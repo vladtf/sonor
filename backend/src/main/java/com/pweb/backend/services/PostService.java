@@ -8,8 +8,10 @@ import com.pweb.backend.dao.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 import java.util.Optional;
@@ -38,50 +40,58 @@ public class PostService {
         return postRepository.findAll(pageable);
     }
 
-    public List<Post> createPost(org.springframework.security.core.userdetails.User user, PostController.NewPostRequest newPostRequest) {
+    public void createPost(org.springframework.security.core.userdetails.User user, PostController.NewPostRequest newPostRequest) {
         Optional<User> userOptional = userRepository.findByUsername(user.getUsername());
         if (userOptional.isEmpty()) {
-            throw new RuntimeException("User not found.");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found.");
         }
-        User user1 = userOptional.get();
-        Post post = new Post();
-        post.setTitle(newPostRequest.title);
-        post.setContent(newPostRequest.content);
-        post.setCategory(newPostRequest.category);
-        post.setUser(user1);
-        postRepository.save(post);
-        return getAllPosts(user);
+
+        try {
+            User user1 = userOptional.get();
+            Post post = new Post();
+            post.setTitle(newPostRequest.title);
+            post.setContent(newPostRequest.content);
+            post.setCategory(newPostRequest.category);
+            post.setUser(user1);
+            postRepository.save(post);
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid request.");
+        }
     }
 
     @Transactional
     public void deletePost(org.springframework.security.core.userdetails.User user, Integer id) {
         Optional<User> userOptional = userRepository.findByUsername(user.getUsername());
         if (userOptional.isEmpty()) {
-            throw new RuntimeException("User not found.");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found.");
         }
         Optional<Post> postOptional = postRepository.findById(id);
         if (postOptional.isEmpty()) {
-            throw new RuntimeException("Post not found.");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found.");
         }
 
         Post post = postOptional.get();
 
         // check if the post is owned by the user
         if (!post.getUser().getId().equals(userOptional.get().getId())) {
-            throw new RuntimeException("Post not found.");
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allowed to delete this post.");
         }
 
-        postRepository.deleteByIdAndUser(id, userOptional.get());
+        try {
+            postRepository.deleteByIdAndUser(id, userOptional.get());
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid request.");
+        }
     }
 
     public Post getPost(org.springframework.security.core.userdetails.User user, Integer id) {
         Optional<User> userOptional = userRepository.findByUsername(user.getUsername());
         if (userOptional.isEmpty()) {
-            throw new RuntimeException("User not found.");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found.");
         }
         Optional<Post> postOptional = postRepository.findById(id);
         if (postOptional.isEmpty()) {
-            throw new RuntimeException("Post not found.");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found.");
         }
         return postOptional.get();
     }

@@ -1,6 +1,8 @@
 package com.pweb.backend.controllers;
 
 import com.pweb.backend.services.MessageService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -24,6 +26,14 @@ public class MessageController {
 
     @DeleteMapping("/delete/{id}")
     @Secured("ROLE_USER")
+    @Operation(summary = "Delete a message",
+            responses = {
+                    @ApiResponse(responseCode = "401", description = "Unauthorized"),
+                    @ApiResponse(responseCode = "204", description = "Message deleted successfully"),
+                    @ApiResponse(responseCode = "404", description = "Message not found"),
+                    @ApiResponse(responseCode = "400", description = "Bad request"),
+                    @ApiResponse(responseCode = "403", description = "Forbidden")
+            })
     public ResponseEntity<Void> deleteMessage(@PathVariable Integer id) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         messageService.deleteMessage(id, user.getUsername());
@@ -32,6 +42,12 @@ public class MessageController {
 
     @GetMapping("/mine")
     @Secured("ROLE_USER")
+    @Operation(summary = "Get all my messages",
+            responses = {
+                    @ApiResponse(responseCode = "401", description = "Unauthorized"),
+                    @ApiResponse(responseCode = "200", description = "List of messages"),
+                    @ApiResponse(responseCode = "403", description = "Forbidden")
+            })
     public ResponseEntity<Page<MessageResponse>> getAllMyMessages(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Pageable pageable = PageRequest.of(page, size, org.springframework.data.domain.Sort.by("createdAt").descending());
