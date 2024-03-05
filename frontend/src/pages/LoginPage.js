@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
 import { BACKEND_URL } from '../configuration/BackendConfig'
 import ShowErrorToast from '../exception/ToastUtils'
-import { getClaimFromToken } from '../token/TokeUtils'
+import { getClaimFromToken } from '../token/TokenUtils'
 
 function LoginPage() {
   const [username, setUsername] = useState('')
