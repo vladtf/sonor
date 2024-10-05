@@ -6,6 +6,7 @@
   - [Table of Contents](#table-of-contents)
   - [Run Docker Compose](#run-docker-compose)
   - [Stop Docker Compose](#stop-docker-compose)
+  - [Swagger](#swagger)
 
 ## Run Docker Compose
 
@@ -30,3 +31,7 @@ You need docker and docker-compose installed on your machine.
 # stop docker-compose
 ❯ docker-compose down -v
 ```
+
+## Swagger
+
+Navigate to [http://localhost:8090/swagger-ui](http://localhost:8090/swagger-ui) to see the Swagger documentation.

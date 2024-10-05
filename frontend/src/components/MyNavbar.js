@@ -12,7 +12,7 @@ const MyNavbar = () => {
   const jwtToken = localStorage.getItem('jwtToken')
   const roles = localStorage.getItem('roles')
   const location = useLocation()
-  const hideOnRoutes = ['/login', '/registration']
+  const hideOnRoutes = ['/login', '/registration', '/']
 
   const currentPage = window.location.pathname
 
