@@ -8,7 +8,7 @@ spec:
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: "/mnt/data"  # Adjust this path as needed for your local environment
+    path: "/mnt/data"
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -83,7 +83,7 @@ spec:
     spec:
       containers:
       - name: backend
-        image: backend-image:latest  # Replace this with your backend image
+        image: backend-image:latest
         env:
         - name: SPRING_DATASOURCE_URL
           value: "jdbc:postgresql://db-service:5432/mobylab-app"
@@ -122,7 +122,7 @@ spec:
     spec:
       containers:
       - name: frontend
-        image: frontend-image:latest  # Replace this with your frontend image
+        image: frontend-image:latest
         env:
         - name: REACT_APP_LOAD_BALANCER_DNS
           value: "localhost"
@@ -140,4 +140,4 @@ spec:
     - protocol: TCP
       port: 3000
       targetPort: 3000
-  type: NodePort  # To access the service locally via Minikube
+  type: NodePort
