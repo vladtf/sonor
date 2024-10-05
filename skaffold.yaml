@@ -1,5 +1,7 @@
-apiVersion: skaffold/v2beta26
+apiVersion: skaffold/v4beta11
 kind: Config
+metadata:
+  name: sonar-demo
 build:
   artifacts:
     - image: frontend-image
@@ -10,10 +12,11 @@ build:
       context: backend
       docker:
         dockerfile: Dockerfile
+manifests:
+   rawYaml:
+      - k8s-*
 deploy:
-  kubectl:
-    manifests:
-      - kubernetes-deployment.yaml
+  kubectl: {}
 portForward:
   - resourceType: service
     resourceName: frontend-service

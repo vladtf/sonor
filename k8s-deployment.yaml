@@ -1,3 +1,4 @@
+---
 apiVersion: v1
 kind: PersistentVolume
 metadata:
@@ -8,7 +9,7 @@ spec:
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: "/mnt/data"
+    path: "/mnt/data"  
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -20,6 +21,30 @@ spec:
   resources:
     requests:
       storage: 1Gi
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: db-secret
+type: Opaque
+stringData:
+  POSTGRES_DB: "mobylab-app"
+  POSTGRES_USER: "mobylab-app"
+  POSTGRES_PASSWORD: "mobylab-app"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backend-config
+data:
+  SPRING_DATASOURCE_URL: "jdbc:postgresql://db-service:5432/mobylab-app"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: frontend-config
+data:
+  REACT_APP_LOAD_BALANCER_DNS: "localhost"
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -40,13 +65,29 @@ spec:
         image: postgres:latest
         env:
         - name: POSTGRES_DB
-          value: "mobylab-app"
+          valueFrom:
+            secretKeyRef:
+              name: db-secret
+              key: POSTGRES_DB
         - name: POSTGRES_USER
-          value: "mobylab-app"
+          valueFrom:
+            secretKeyRef:
+              name: db-secret
+              key: POSTGRES_USER
         - name: POSTGRES_PASSWORD
-          value: "mobylab-app"
+          valueFrom:
+            secretKeyRef:
+              name: db-secret
+              key: POSTGRES_PASSWORD
         ports:
         - containerPort: 5432
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
         volumeMounts:
         - mountPath: /var/lib/postgresql/data
           name: postgres-data
@@ -86,13 +127,29 @@ spec:
         image: backend-image:latest
         env:
         - name: SPRING_DATASOURCE_URL
-          value: "jdbc:postgresql://db-service:5432/mobylab-app"
+          valueFrom:
+            configMapKeyRef:
+              name: backend-config
+              key: SPRING_DATASOURCE_URL
         - name: SPRING_DATASOURCE_USERNAME
-          value: "mobylab-app"
+          valueFrom:
+            secretKeyRef:
+              name: db-secret
+              key: POSTGRES_USER
         - name: SPRING_DATASOURCE_PASSWORD
-          value: "mobylab-app"
+          valueFrom:
+            secretKeyRef:
+              name: db-secret
+              key: POSTGRES_PASSWORD
         ports:
         - containerPort: 8090
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
 ---
 apiVersion: v1
 kind: Service
@@ -123,11 +180,18 @@ spec:
       containers:
       - name: frontend
         image: frontend-image:latest
-        env:
-        - name: REACT_APP_LOAD_BALANCER_DNS
-          value: "localhost"
+        envFrom:
+        - configMapRef:
+            name: frontend-config
         ports:
         - containerPort: 3000
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
 ---
 apiVersion: v1
 kind: Service
@@ -140,4 +204,4 @@ spec:
     - protocol: TCP
       port: 3000
       targetPort: 3000
-  type: NodePort
+  type: NodePort  
