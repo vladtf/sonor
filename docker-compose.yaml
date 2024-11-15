@@ -22,8 +22,10 @@ services:
       - SPRING_DATASOURCE_USERNAME=mobylab-app
       - SPRING_DATASOURCE_PASSWORD=mobylab-app
       - AUTHENTICATION_SERVER_URL=http://authentication:5000
+      - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
     ports:
       - "8090:8090"
+      - "5005:5005"
     networks:
       - app_network
     depends_on:

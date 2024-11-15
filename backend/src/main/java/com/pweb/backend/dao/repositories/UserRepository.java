@@ -1,6 +1,7 @@
 package com.pweb.backend.dao.repositories;
 
 import com.pweb.backend.dao.entities.User;
+import jakarta.persistence.Table;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

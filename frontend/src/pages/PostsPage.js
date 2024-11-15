@@ -122,7 +122,7 @@ function PostPage () {
         </Row>
         <hr />
         <Row>
-          <Col md={6}>
+          <Col md={4}>
             <Form.Control
               type="text"
               placeholder="Search posts"
@@ -136,13 +136,15 @@ function PostPage () {
               }
             />
           </Col>
-          <Col md={1}>
-            <Button variant="primary" onClick={() => handleSearch(0, 5)} disabled={searchTerm.length === 0}>
+          <Col md={2}>
+            <Button variant="primary" className="w-100" 
+            onClick={() => handleSearch(0, 5)} disabled={searchTerm.length === 0}>
               Search
             </Button>
           </Col>
-          <Col md={1}>
-            <Button variant="secondary" onClick={() => { setSearchTerm(''); fetchPosts(0, 5) }}>
+          <Col md={2}>
+            <Button variant="secondary" className="w-100" 
+            onClick={() => { setSearchTerm(''); fetchPosts(0, 5) }}>
               Reset
             </Button>
           </Col>

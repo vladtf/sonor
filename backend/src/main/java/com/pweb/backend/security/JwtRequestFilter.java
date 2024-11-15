@@ -23,6 +23,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
+import java.util.List;
+import java.util.stream.Collectors;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
@@ -62,9 +65,13 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 if (responseEntity.getStatusCode() == HttpStatus.OK) {
                     Map<String, Object> body = responseEntity.getBody();
                     username = (String) body.get("username");
+                    List<String> roles = (List<String>) body.get("roles");
+
+                    // prepend "ROLE_" to each role if it doesn't already start with it
+                    roles = roles.stream().map(role -> role.startsWith("ROLE_") ? role : "ROLE_" + role).toList();
 
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                            username, null, Collections.emptyList());
+                            username, null, roles.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList()));
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 }
@@ -75,7 +82,8 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         } else {
             logger.warn("Authorization header is missing or invalid");
         }
-
+        
+        logger.info("Authorization header is valid");
         chain.doFilter(request, response);
     }
 }

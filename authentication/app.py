@@ -45,7 +45,7 @@ def register():
     new_user = User(username=data['username'], password=hashed_password)
     db.session.add(new_user)
     db.session.commit()
-    default_role = Role(name='ROLE_USER', user_id=new_user.id)
+    default_role = Role(name='USER', user_id=new_user.id)
     db.session.add(default_role)
     db.session.commit()
 
@@ -78,8 +78,9 @@ def validate_token():
 
     try:
         data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"])
+        roles = data.get('roles', [])
         logger.info('Token validated successfully for username: %s', data['username'])
-        return jsonify({'username': data['username']}), 200
+        return jsonify({'username': data['username'], 'roles': roles}), 200
     except jwt.ExpiredSignatureError:
         logger.warning('Token has expired')
         return jsonify({'message': 'Token has expired'}), 401
@@ -93,10 +94,10 @@ def create_default_user():
         default_user = User(username='user', password=hashed_password)
         db.session.add(default_user)
         db.session.commit()
-        default_role = Role(name='ROLE_USER', user_id=default_user.id)
+        default_role = Role(name='USER', user_id=default_user.id)
         db.session.add(default_role)
         db.session.commit()
-        logger.info('Default user created: user with ROLE_USER')
+        logger.info('Default user created: user with USER')
 
 if __name__ == '__main__':
     db.create_all()
