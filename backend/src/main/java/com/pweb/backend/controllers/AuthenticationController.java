@@ -1,70 +1,66 @@
 package com.pweb.backend.controllers;
 
-import com.pweb.backend.security.JwtUtil;
-import com.pweb.backend.services.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.*;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/")
 public class AuthenticationController {
-    private final JwtUtil jwtUtil;
-    private final AuthenticationManager authenticationManager;
-    private final UserService userService;
+    private static final Logger logger = LoggerFactory.getLogger(AuthenticationController.class);
 
-    public AuthenticationController(JwtUtil jwtUtil, AuthenticationManager authenticationManager, UserService userService) {
-        this.jwtUtil = jwtUtil;
-        this.authenticationManager = authenticationManager;
-        this.userService = userService;
+    private final RestTemplate restTemplate;
+
+    @Value("${authentication.server.url}")
+    private String authenticationServerUrl;
+
+    public AuthenticationController(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
     }
 
     @PostMapping("/login")
-    @Operation(summary = "Login",
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "User logged in successfully"),
-                    @ApiResponse(responseCode = "401", description = "Invalid credentials")
-            })
     public ResponseEntity<String> login(@RequestBody LoginRequest request) {
+        logger.info("Received login request for user: " + request.username);
+        String url = authenticationServerUrl + "/login";
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<LoginRequest> entity = new HttpEntity<>(request, headers);
         try {
-            Authentication authenticate = authenticationManager
-                    .authenticate(
-                            new UsernamePasswordAuthenticationToken(
-                                    request.username, request.password
-                            )
-                    );
-
-            User user = (User) authenticate.getPrincipal();
-            String token = jwtUtil.generateToken(user);
-
-            return ResponseEntity.ok(token);
-        } catch (BadCredentialsException ex) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            logger.info("Sending login request to authentication server");
+            ResponseEntity<Map> response = restTemplate.postForEntity(url, entity, Map.class);
+            String token = (String) response.getBody().get("token");
+            return ResponseEntity.ok(token.startsWith("Bearer ") ? token.replace("Bearer ", "") : token);
+        } catch (Exception ex) {
+            logger.error("Login request failed for user: " + request.username, ex);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
         }
     }
 
-
     @PostMapping("/register")
-    @Operation(summary = "Register a new user",
-            responses = {
-                    @ApiResponse(responseCode = "200", description = "User registered successfully"),
-                    @ApiResponse(responseCode = "400", description = "Username already taken"),
-                    @ApiResponse(responseCode = "400", description = "Username cannot be empty")
-            })
-    public ResponseEntity<com.pweb.backend.dao.entities.User> register(@RequestBody RegisterRequest registerRequest) {
-        if (registerRequest.username == null || registerRequest.username.isEmpty()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username cannot be empty");
-        }
+    public ResponseEntity<String> register(@RequestBody RegisterRequest registerRequest) {
+        logger.info("Received register request for user: " + registerRequest.username);
+        String url = authenticationServerUrl + "/register";
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
 
-        return ResponseEntity.ok(userService.registerUser(registerRequest));
+        HttpEntity<RegisterRequest> entity = new HttpEntity<>(registerRequest, headers);
+        try {
+            logger.info("Sending register request to authentication server");
+            ResponseEntity<String> response = restTemplate.postForEntity(url, entity, String.class);
+            return ResponseEntity.ok("User registered successfully");
+        } catch (Exception ex) {
+            logger.error("Register request failed for user: " + registerRequest.username, ex);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Registration failed");
+        }
     }
 
     @GetMapping("/logout")
