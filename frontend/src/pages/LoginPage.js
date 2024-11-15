@@ -36,7 +36,7 @@ function LoginPage() {
         localStorage.setItem('jwtToken', 'Bearer ' + token)
         axios.defaults.headers.common.Authorization = 'Bearer ' + token
 
-        const user = getClaimFromToken(token, 'sub')
+        const user = getClaimFromToken(token, 'username')
         localStorage.setItem('username', user)
 
         const roles = getClaimFromToken(token, 'roles')
