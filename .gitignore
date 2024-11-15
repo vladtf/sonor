@@ -157,5 +157,7 @@ dist
 # remove .idea folder
 .idea/
 
+.venv/
+
 # remove .DS_Store
 .DS_Store
