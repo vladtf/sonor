@@ -42,6 +42,24 @@ services:
       - app_network
     volumes:
       - postgres_data:/var/lib/postgresql/data
+  admin:
+    build:
+      context: pgadmin
+      dockerfile: Dockerfile
+    container_name: pgadmin_container
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_LISTEN_PORT: 80
+    ports:
+      - "5050:80"
+    depends_on:
+      - db
+    networks:
+      - app_network
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+      - ./pgadmin/servers.json:/pgadmin4/servers.json
 
 networks:
   app_network:
@@ -49,3 +67,4 @@ networks:
 
 volumes:
   postgres_data:
+  pgadmin_data:
