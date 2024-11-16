@@ -151,9 +151,9 @@ function AdminPage () {
                   <Card className="card-hover-effect">
                     <Card.Body>
                       <Card.Title><FaRegUser className="me-2" />{user.username}</Card.Title>
-                      <Card.Subtitle className="mb-2 text-muted">
+                      {/* <Card.Subtitle className="mb-2 text-muted">
                         Roles: {user.roles.join(', ')}
-                      </Card.Subtitle>
+                      </Card.Subtitle> */}
                       <Card.Text>Posts: {user.postCount}</Card.Text>
                       <Card.Text>Comments: {user.commentCount}</Card.Text>
                       <Card.Text>Messages: {user.messageCount || 0}</Card.Text>

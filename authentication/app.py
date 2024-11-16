@@ -106,6 +106,22 @@ def create_default_user():
         default_user = User.query.filter_by(username='user').first()
         hashed_password = generate_password_hash('user', method='sha256')
 
+    if not User.query.filter_by(username='admin').first():
+        hashed_password = generate_password_hash('admin', method='sha256')
+        default_admin = User(username='admin', password=hashed_password)
+        db.session.add(default_admin)
+        db.session.commit()
+        admin_role = Role(name='ADMIN', user_id=default_admin.id)
+        user_role = Role(name='USER', user_id=default_admin.id)  # Add USER role to admin
+        db.session.add(admin_role)
+        db.session.add(user_role)
+        db.session.commit()
+        logger.info('Default admin created: admin with ADMIN and USER roles')
+    else:
+        # update the password if the default admin already exists
+        default_admin = User.query.filter_by(username='admin').first()
+        hashed_password = generate_password_hash('admin', method='sha256')
+
 if __name__ == '__main__':
     db.create_all()  # Uncomment this line to create tables
     create_default_user()  # Uncomment this line to create the default user if it does not exist

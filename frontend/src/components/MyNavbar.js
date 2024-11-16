@@ -87,7 +87,7 @@ const MyNavbar = () => {
           </Nav.Link>
         </Nav>
         <Nav style={dropdownContainerStyle}>
-          {roles.includes('ROLE_ADMIN') && jwtToken && (
+          {roles.includes('ADMIN') && jwtToken && (
             <Nav.Link href="/admin" style={navLinkStyle} className="px-2">
               <FaUserShield style={{ marginRight: '5px' }} /> Admin
             </Nav.Link>
