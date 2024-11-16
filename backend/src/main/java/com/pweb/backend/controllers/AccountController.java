@@ -16,13 +16,13 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/users")
-public class UserController {
+public class AccountController {
 
     private final UserService userService;
 
 
     @Autowired
-    public UserController(UserService userService) {
+    public AccountController(UserService userService) {
         this.userService = userService;
     }
 

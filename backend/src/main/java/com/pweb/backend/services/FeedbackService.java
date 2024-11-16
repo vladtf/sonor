@@ -4,7 +4,7 @@ import com.pweb.backend.controllers.FeedbackController;
 import com.pweb.backend.dao.entities.Feedback;
 import com.pweb.backend.dao.entities.Account;
 import com.pweb.backend.dao.repositories.FeedbackRepository;
-import com.pweb.backend.dao.repositories.UserRepository;
+import com.pweb.backend.dao.repositories.AccountRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -17,11 +17,11 @@ import java.util.Optional;
 public class FeedbackService {
 
     private final FeedbackRepository feedbackRepository;
-    private final UserRepository userRepository;
+    private final AccountRepository accountRepository;
 
-    public FeedbackService(FeedbackRepository feedbackRepository, UserRepository userRepository) {
+    public FeedbackService(FeedbackRepository feedbackRepository, AccountRepository accountRepository) {
         this.feedbackRepository = feedbackRepository;
-        this.userRepository = userRepository;
+        this.accountRepository = accountRepository;
     }
 
 
@@ -30,7 +30,7 @@ public class FeedbackService {
     }
 
     public void createFeedback(FeedbackController.CreateFeedbackRequest feedback, String username) {
-        Optional<Account> user = userRepository.findByUsername(username);
+        Optional<Account> user = accountRepository.findByUsername(username);
         if (user.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
         }
@@ -48,7 +48,7 @@ public class FeedbackService {
     }
 
     public void deleteFeedback(Integer id, String username) {
-        Optional<Account> user = userRepository.findByUsername(username);
+        Optional<Account> user = accountRepository.findByUsername(username);
         if (user.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
         }

@@ -5,7 +5,7 @@ import com.pweb.backend.dao.entities.Conversation;
 import com.pweb.backend.dao.entities.Message;
 import com.pweb.backend.dao.repositories.ConversationRepository;
 import com.pweb.backend.dao.repositories.MessageRepository;
-import com.pweb.backend.dao.repositories.UserRepository;
+import com.pweb.backend.dao.repositories.AccountRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -17,12 +17,12 @@ import org.springframework.web.server.ResponseStatusException;
 public class ConversationService {
 
     private final MessageRepository messageRepository;
-    private final UserRepository userRepository;
+    private final AccountRepository accountRepository;
     private final ConversationRepository conversationRepository;
 
-    public ConversationService(MessageRepository messageRepository, UserRepository userRepository, ConversationRepository conversationRepository) {
+    public ConversationService(MessageRepository messageRepository, AccountRepository accountRepository, ConversationRepository conversationRepository) {
         this.messageRepository = messageRepository;
-        this.userRepository = userRepository;
+        this.accountRepository = accountRepository;
         this.conversationRepository = conversationRepository;
     }
 
@@ -31,7 +31,7 @@ public class ConversationService {
         if (username == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username cannot be null");
         }
-        if (!userRepository.existsByUsername(username)) {
+        if (!accountRepository.existsByUsername(username)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
         }
 
@@ -43,7 +43,7 @@ public class ConversationService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username cannot be null");
         }
 
-        if (!userRepository.existsByUsername(username)) {
+        if (!accountRepository.existsByUsername(username)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
         }
 
@@ -55,7 +55,7 @@ public class ConversationService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username cannot be null");
         }
 
-        var user = userRepository.findByUsername(username);
+        var user = accountRepository.findByUsername(username);
         if (user.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
         }
@@ -78,7 +78,7 @@ public class ConversationService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Conversation not found");
         }
 
-        var user = userRepository.findByUsername(username);
+        var user = accountRepository.findByUsername(username);
         if (user.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
         }
@@ -102,7 +102,7 @@ public class ConversationService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Conversation not found");
         }
 
-        var user = userRepository.findByUsername(username);
+        var user = accountRepository.findByUsername(username);
         if (user.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
         }
@@ -126,7 +126,7 @@ public class ConversationService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Conversation not found");
         }
 
-        var user = userRepository.findByUsername(username);
+        var user = accountRepository.findByUsername(username);
         if (user.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
         }
@@ -150,7 +150,7 @@ public class ConversationService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Conversation not found");
         }
 
-        var found = userRepository.findByUsername(username);
+        var found = accountRepository.findByUsername(username);
         if (found.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
         }
@@ -172,7 +172,7 @@ public class ConversationService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Conversation not found");
         }
 
-        var user = userRepository.findByUsername(username);
+        var user = accountRepository.findByUsername(username);
         if (user.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
         }

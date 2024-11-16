@@ -4,7 +4,7 @@ import com.pweb.backend.controllers.PostController;
 import com.pweb.backend.dao.entities.Account;
 import com.pweb.backend.dao.entities.Post;
 import com.pweb.backend.dao.repositories.PostRepository;
-import com.pweb.backend.dao.repositories.UserRepository;
+import com.pweb.backend.dao.repositories.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,16 +20,16 @@ import java.util.Optional;
 public class PostService {
 
     private final PostRepository postRepository;
-    private final UserRepository userRepository;
+    private final AccountRepository accountRepository;
 
     @Autowired
-    public PostService(PostRepository postRepository, UserRepository userRepository) {
+    public PostService(PostRepository postRepository, AccountRepository accountRepository) {
         this.postRepository = postRepository;
-        this.userRepository = userRepository;
+        this.accountRepository = accountRepository;
     }
 
     public List<Post> getAllPosts(org.springframework.security.core.userdetails.User user) {
-        Optional<Account> userOptional = userRepository.findByUsername(user.getUsername());
+        Optional<Account> userOptional = accountRepository.findByUsername(user.getUsername());
         if (userOptional.isEmpty()) {
             throw new RuntimeException("User not found.");
         }
@@ -41,7 +41,7 @@ public class PostService {
     }
 
     public void createPost(org.springframework.security.core.userdetails.User user, PostController.NewPostRequest newPostRequest) {
-        Optional<Account> userOptional = userRepository.findByUsername(user.getUsername());
+        Optional<Account> userOptional = accountRepository.findByUsername(user.getUsername());
         if (userOptional.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found.");
         }
@@ -61,7 +61,7 @@ public class PostService {
 
     @Transactional
     public void deletePost(org.springframework.security.core.userdetails.User user, Integer id) {
-        Optional<Account> userOptional = userRepository.findByUsername(user.getUsername());
+        Optional<Account> userOptional = accountRepository.findByUsername(user.getUsername());
         if (userOptional.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found.");
         }
@@ -85,7 +85,7 @@ public class PostService {
     }
 
     public Post getPost(org.springframework.security.core.userdetails.User user, Integer id) {
-        Optional<Account> userOptional = userRepository.findByUsername(user.getUsername());
+        Optional<Account> userOptional = accountRepository.findByUsername(user.getUsername());
         if (userOptional.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found.");
         }

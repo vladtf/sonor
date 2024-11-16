@@ -2,7 +2,7 @@ package com.pweb.backend.services;
 
 import com.pweb.backend.dao.entities.Message;
 import com.pweb.backend.dao.repositories.MessageRepository;
-import com.pweb.backend.dao.repositories.UserRepository;
+import com.pweb.backend.dao.repositories.AccountRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -13,11 +13,11 @@ import org.springframework.web.server.ResponseStatusException;
 public class MessageService {
 
     private final MessageRepository messageRepository;
-    private final UserRepository userRepository;
+    private final AccountRepository accountRepository;
 
-    public MessageService(MessageRepository messageRepository, UserRepository userRepository) {
+    public MessageService(MessageRepository messageRepository, AccountRepository accountRepository) {
         this.messageRepository = messageRepository;
-        this.userRepository = userRepository;
+        this.accountRepository = accountRepository;
     }
 
     public void deleteMessage(Integer id, String username) {
@@ -27,7 +27,7 @@ public class MessageService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Message not found");
         }
 
-        var user = userRepository.findByUsername(username);
+        var user = accountRepository.findByUsername(username);
         if (user.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
         }
@@ -48,7 +48,7 @@ public class MessageService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username cannot be null");
         }
 
-        if (!userRepository.existsByUsername(username)) {
+        if (!accountRepository.existsByUsername(username)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
         }
         return messageRepository.findAllByAccountUsername(username, pageable);

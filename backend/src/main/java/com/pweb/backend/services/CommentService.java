@@ -6,7 +6,7 @@ import com.pweb.backend.dao.entities.Comment;
 import com.pweb.backend.dao.entities.Post;
 import com.pweb.backend.dao.repositories.CommentRepository;
 import com.pweb.backend.dao.repositories.PostRepository;
-import com.pweb.backend.dao.repositories.UserRepository;
+import com.pweb.backend.dao.repositories.AccountRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -19,12 +19,12 @@ public class CommentService {
 
     private final CommentRepository commentRepository;
     private final PostRepository postRepository;
-    private final UserRepository userRepository;
+    private final AccountRepository accountRepository;
 
-    public CommentService(CommentRepository commentRepository, PostRepository postRepository, UserRepository userRepository) {
+    public CommentService(CommentRepository commentRepository, PostRepository postRepository, AccountRepository accountRepository) {
         this.commentRepository = commentRepository;
         this.postRepository = postRepository;
-        this.userRepository = userRepository;
+        this.accountRepository = accountRepository;
     }
 
     public Collection<Comment> getAllComments(Integer postId) {
@@ -40,7 +40,7 @@ public class CommentService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found");
         }
 
-        Optional<Account> found = userRepository.findByUsername(user.getUsername());
+        Optional<Account> found = accountRepository.findByUsername(user.getUsername());
 
         if (found.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
@@ -65,7 +65,7 @@ public class CommentService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Comment not found");
         }
 
-        Optional<Account> found = userRepository.findByUsername(user.getUsername());
+        Optional<Account> found = accountRepository.findByUsername(user.getUsername());
 
         if (found.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
@@ -89,7 +89,7 @@ public class CommentService {
     }
 
     public Collection<Comment> getAllComments(org.springframework.security.core.userdetails.User user) {
-        if (userRepository.existsByUsername(user.getUsername())) {
+        if (accountRepository.existsByUsername(user.getUsername())) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
         }
         return commentRepository.findAllByAccountUsername(user.getUsername());
@@ -100,7 +100,7 @@ public class CommentService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Comment not found");
         }
 
-        Optional<Account> found = userRepository.findByUsername(user.getUsername());
+        Optional<Account> found = accountRepository.findByUsername(user.getUsername());
 
         if (found.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");

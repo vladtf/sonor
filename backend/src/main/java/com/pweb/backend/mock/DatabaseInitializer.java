@@ -12,7 +12,7 @@ import java.util.List;
 @Component
 public class DatabaseInitializer implements ApplicationListener<ContextRefreshedEvent> {
 
-    private final UserRepository userRepository;
+    private final AccountRepository accountRepository;
     /*private final RoleRepository roleRepository;*/
     private final CommentRepository commentRepository;
     private final ConversationRepository conversationRepository;
@@ -22,8 +22,8 @@ public class DatabaseInitializer implements ApplicationListener<ContextRefreshed
 
     /*private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();*/
 
-    public DatabaseInitializer(UserRepository userRepository, /*RoleRepository roleRepository,*/ CommentRepository commentRepository, ConversationRepository conversationRepository, FeedbackRepository feedbackRepository, MessageRepository messageRepository, PostRepository postRepository/*, PasswordEncoder passwordEncoder*/) {
-        this.userRepository = userRepository;
+    public DatabaseInitializer(AccountRepository accountRepository, /*RoleRepository roleRepository,*/ CommentRepository commentRepository, ConversationRepository conversationRepository, FeedbackRepository feedbackRepository, MessageRepository messageRepository, PostRepository postRepository/*, PasswordEncoder passwordEncoder*/) {
+        this.accountRepository = accountRepository;
         /*this.roleRepository = roleRepository;*/
         this.commentRepository = commentRepository;
         this.conversationRepository = conversationRepository;
@@ -43,7 +43,7 @@ public class DatabaseInitializer implements ApplicationListener<ContextRefreshed
     }
 
     private void provisionFeedback() {
-        var user = userRepository.findByUsername("user").orElseThrow();
+        var user = accountRepository.findByUsername("user").orElseThrow();
         var feedbacks = List.of(
                 new Feedback("This is a great app", user, "5", "Feature 1"),
                 new Feedback("Feature 2 is not working", user, "3", "Feature 2")
@@ -56,9 +56,9 @@ public class DatabaseInitializer implements ApplicationListener<ContextRefreshed
         Account admin = new Account();
         admin.setUsername("admin");
         /*admin.setPassword(passwordEncoder.encode("admin"));  // Use SHA-256 method*/
-        userRepository.save(admin);
+        accountRepository.save(admin);
 
-        admin = userRepository.findByUsername("admin").orElseThrow();
+        admin = accountRepository.findByUsername("admin").orElseThrow();
         /*roleRepository.save(new Role(Role.RoleEnum.USER, admin));
         roleRepository.save(new Role(Role.RoleEnum.ADMIN, admin));*/
 
@@ -66,23 +66,23 @@ public class DatabaseInitializer implements ApplicationListener<ContextRefreshed
         Account account = new Account();
         account.setUsername("user");
         /*user.setPassword(passwordEncoder.encode("user"));  // Use SHA-256 method*/
-        userRepository.save(account);
+        accountRepository.save(account);
 
-        account = userRepository.findByUsername("user").orElseThrow();
+        account = accountRepository.findByUsername("user").orElseThrow();
         /*roleRepository.save(new Role(Role.RoleEnum.USER, account));*/
 
         for (int i = 0; i < 5; i++) {
             account = new Account();
             account.setUsername("user" + i);
             /*user.setPassword(passwordEncoder.encode("user" + i));  // Use SHA-256 method*/
-            userRepository.save(account);
-            account = userRepository.findByUsername("user" + i).orElseThrow();
+            accountRepository.save(account);
+            account = accountRepository.findByUsername("user" + i).orElseThrow();
             /*roleRepository.save(new Role(Role.RoleEnum.USER, account));*/
         }
     }
 
     private void provisionPostsToUser() {
-        var user = userRepository.findByUsername("user").orElseThrow();
+        var user = accountRepository.findByUsername("user").orElseThrow();
         var posts = List.of(
                 new Post("My First Post", "This is my first post", Post.PostCategory.OTHER, user),
                 new Post("Title 1", "Content 1", Post.PostCategory.OTHER, user),
@@ -97,8 +97,8 @@ public class DatabaseInitializer implements ApplicationListener<ContextRefreshed
     }
 
     private void provisionConversation() {
-        var user = userRepository.findByUsername("user").orElseThrow();
-        var admin = userRepository.findByUsername("admin").orElseThrow();
+        var user = accountRepository.findByUsername("user").orElseThrow();
+        var admin = accountRepository.findByUsername("admin").orElseThrow();
         var conversation = new Conversation(List.of(user, admin), "User-Admin Conversation");
         conversationRepository.save(conversation);
 
@@ -121,7 +121,7 @@ public class DatabaseInitializer implements ApplicationListener<ContextRefreshed
 
 
     private void deleteAll() {
-        userRepository.deleteAll();
+        accountRepository.deleteAll();
         /*roleRepository.deleteAll();*/
         commentRepository.deleteAll();
         conversationRepository.deleteAll();
