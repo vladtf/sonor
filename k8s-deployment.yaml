@@ -325,6 +325,20 @@ spec:
           requests:
             memory: "256Mi"
             cpu: "250m"
+        volumeMounts:
+        - name: servers-json-volume
+          mountPath: /pgadmin4/servers.json
+          subPath: servers.json
+        - name: pgpass-volume
+          mountPath: /pgpass
+          subPath: pgpass
+      volumes:
+      - name: servers-json-volume
+        configMap:
+          name: pgadmin-servers-config
+      - name: pgpass-volume
+        secret:
+          secretName: pgpass-secret
 ---
 apiVersion: v1
 kind: Service
@@ -551,3 +565,32 @@ spec:
     ports:
     - protocol: TCP
       port: 5432
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pgadmin-servers-config
+data:
+  servers.json: |
+    {
+      "Servers": {
+        "1": {
+          "Group": "Servers",
+          "Name": "My Local Postgres",
+          "Host": "db-service",
+          "Port": 5432,
+          "MaintenanceDB": "mobylab-app",
+          "Username": "mobylab-app",
+          "PassFile": "/pgpass",
+          "SSLMode": "prefer"
+        }
+      }
+    }
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: pgpass-secret
+type: Opaque
+stringData:
+  pgpass: "db-service:5432:*:mobylab-app:mobylab-app"
