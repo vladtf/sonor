@@ -4,3 +4,4 @@ Werkzeug==2.0.2
 PyJWT==2.1.0
 SQLAlchemy==1.4.25
 psycopg2-binary
+prometheus_client==0.12.0

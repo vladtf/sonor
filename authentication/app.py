@@ -5,6 +5,7 @@ from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 import jwt
 import datetime
+from prometheus_client import generate_latest, Counter, Histogram
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'your_secret_key')
@@ -19,6 +20,21 @@ db = SQLAlchemy(app)
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# Define Prometheus metrics
+REQUEST_COUNT = Counter('request_count', 'Total number of requests')
+REQUEST_LATENCY = Histogram('request_latency_seconds', 'Request latency in seconds')
+
+@app.before_request
+def before_request():
+    request.start_time = datetime.datetime.now()
+
+@app.after_request
+def after_request(response):
+    REQUEST_COUNT.inc()
+    latency = datetime.datetime.now() - request.start_time
+    REQUEST_LATENCY.observe(latency.total_seconds())
+    return response
 
 class Role(db.Model):
     __tablename__ = 'roles'  # Match the table name used by the Java server
@@ -90,6 +106,10 @@ def validate_token():
     except jwt.InvalidTokenError:
         logger.warning('Invalid token')
         return jsonify({'message': 'Invalid token'}), 401
+
+@app.route('/metrics')
+def metrics():
+    return generate_latest(), 200, {'Content-Type': 'text/plain; charset=utf-8'}
 
 def create_default_user():
     if not User.query.filter_by(username='user').first():
