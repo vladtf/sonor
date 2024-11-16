@@ -9,6 +9,9 @@ import org.springframework.web.client.RestTemplate;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Tag;
+import io.micrometer.core.instrument.Tags;
 
 import java.util.Map;
 
@@ -18,16 +21,19 @@ public class AuthenticationController {
     private static final Logger logger = LoggerFactory.getLogger(AuthenticationController.class);
 
     private final RestTemplate restTemplate;
+    private final MeterRegistry meterRegistry;
 
     @Value("${authentication.server.url}")
     private String authenticationServerUrl;
 
-    public AuthenticationController(RestTemplate restTemplate) {
+    public AuthenticationController(RestTemplate restTemplate, MeterRegistry meterRegistry) {
         this.restTemplate = restTemplate;
+        this.meterRegistry = meterRegistry;
     }
 
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginRequest request) {
+        meterRegistry.counter("api_requests_total", "endpoint", "/login").increment();
         logger.info("Received login request for user: " + request.username);
         String url = authenticationServerUrl + "/login";
         HttpHeaders headers = new HttpHeaders();
@@ -47,6 +53,7 @@ public class AuthenticationController {
 
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody RegisterRequest registerRequest) {
+        meterRegistry.counter("api_requests_total", "endpoint", "/register").increment();
         logger.info("Received register request for user: " + registerRequest.username);
         String url = authenticationServerUrl + "/register";
         HttpHeaders headers = new HttpHeaders();
@@ -69,6 +76,7 @@ public class AuthenticationController {
                     @ApiResponse(responseCode = "200", description = "User logged out successfully")
             })
     public ResponseEntity<String> logout() {
+        meterRegistry.counter("api_requests_total", "endpoint", "/logout").increment();
         return ResponseEntity.ok().body("Logged out");
     }
 

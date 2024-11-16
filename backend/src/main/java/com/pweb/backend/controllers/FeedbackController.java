@@ -12,6 +12,9 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Tag;
+import io.micrometer.core.instrument.Tags;
 
 
 @RestController
@@ -19,10 +22,12 @@ import java.util.Date;
 public class FeedbackController {
 
     private final FeedbackService feedbackService;
+    private final MeterRegistry meterRegistry;
 
 
-    public FeedbackController(FeedbackService feedbackService) {
+    public FeedbackController(FeedbackService feedbackService, MeterRegistry meterRegistry) {
         this.feedbackService = feedbackService;
+        this.meterRegistry = meterRegistry;
     }
 
     @GetMapping("/all")
@@ -33,6 +38,7 @@ public class FeedbackController {
                     @ApiResponse(responseCode = "401", description = "Unauthorized"),
             })
     public ResponseEntity<Page<FeedbackResponse>> getAllFeedbacks(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+        meterRegistry.counter("api_requests_total", "endpoint", "/api/feedbacks/all").increment();
         Pageable pageable = PageRequest.of(page, size);
 
         return ResponseEntity.ok(feedbackService.getAllFeedbacks(pageable).map(feedback -> new FeedbackResponse() {
@@ -57,6 +63,7 @@ public class FeedbackController {
                     @ApiResponse(responseCode = "404", description = "Not found")
             })
     public ResponseEntity<Void> createFeedback(@RequestBody CreateFeedbackRequest request) {
+        meterRegistry.counter("api_requests_total", "endpoint", "/api/feedbacks/create").increment();
         User user = (User) org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         feedbackService.createFeedback(request, user.getUsername());
         return ResponseEntity.ok().build();
@@ -72,6 +79,7 @@ public class FeedbackController {
                     @ApiResponse(responseCode = "403", description = "Forbidden")
             })
     public ResponseEntity<Void> deleteFeedback(@PathVariable Integer id) {
+        meterRegistry.counter("api_requests_total", "endpoint", "/api/feedbacks/delete/{id}").increment();
         User user = (User) org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         feedbackService.deleteFeedback(id, user.getUsername());
         return ResponseEntity.ok().build();

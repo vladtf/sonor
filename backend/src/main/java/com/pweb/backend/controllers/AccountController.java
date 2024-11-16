@@ -12,18 +12,21 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Tag;
+import io.micrometer.core.instrument.Tags;
 
 @RestController
 @RequestMapping("/api/users")
 public class AccountController {
 
     private final UserService userService;
-
+    private final MeterRegistry meterRegistry;
 
     @Autowired
-    public AccountController(UserService userService) {
+    public AccountController(UserService userService, MeterRegistry meterRegistry) {
         this.userService = userService;
+        this.meterRegistry = meterRegistry;
     }
 
     @GetMapping("/usernames")
@@ -34,6 +37,7 @@ public class AccountController {
                     @ApiResponse(responseCode = "200", description = "List of usernames")
             })
     public ResponseEntity<List<String>> getAllUsers() {
+        meterRegistry.counter("api_requests_total", "endpoint", "/api/users/usernames").increment();
         return ResponseEntity.ok(userService.getAllUsernames());
     }
 
@@ -47,6 +51,7 @@ public class AccountController {
                     @ApiResponse(responseCode = "403", description = "Forbidden")
             })
     public ResponseEntity<Void> deleteUser(@PathVariable Integer id) {
+        meterRegistry.counter("api_requests_total", "endpoint", "/api/users/delete/{id}").increment();
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
     }
@@ -60,6 +65,7 @@ public class AccountController {
                     @ApiResponse(responseCode = "403", description = "Forbidden")
             })
     public ResponseEntity<Page<UserResponse>> getAllUsers(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+        meterRegistry.counter("api_requests_total", "endpoint", "/api/users/all").increment();
         Pageable pageable = PageRequest.of(page, size);
         return ResponseEntity.ok(userService.getAllUsers(pageable).map(user -> {
             if (user == null) {
@@ -86,6 +92,7 @@ public class AccountController {
                     @ApiResponse(responseCode = "403", description = "Forbidden")
             })
     public ResponseEntity<Page<UserResponse>> searchUsers(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, @RequestParam String query) {
+        meterRegistry.counter("api_requests_total", "endpoint", "/api/users/search").increment();
         Pageable pageable = PageRequest.of(page, size);
         return ResponseEntity.ok(userService.searchUsers(query, pageable).map(user -> {
             if (user == null) {

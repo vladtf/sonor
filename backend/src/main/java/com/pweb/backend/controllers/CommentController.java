@@ -13,14 +13,21 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Date;
 import java.util.List;
 
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.Tag;
+import io.micrometer.core.instrument.Tags;
+
 @RestController
 @RequestMapping("/api/comments")
 public class CommentController {
 
     private final CommentService commentService;
+    private final MeterRegistry meterRegistry;
 
-    public CommentController(CommentService commentService) {
+    public CommentController(CommentService commentService, MeterRegistry meterRegistry) {
         this.commentService = commentService;
+        this.meterRegistry = meterRegistry;
     }
 
     @GetMapping("/all")
@@ -32,6 +39,7 @@ public class CommentController {
                     @ApiResponse(responseCode = "404", description = "Not found")
             })
     public ResponseEntity<List<CommentResponse>> getAllComments() {
+        meterRegistry.counter("api_requests_total", "endpoint", "/api/comments/all").increment();
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return new ResponseEntity<>(commentService.getAllComments(user).stream().map(comment -> {
             CommentResponse commentResponse = new CommentResponse();
@@ -54,6 +62,7 @@ public class CommentController {
             })
 
     public ResponseEntity<List<CommentResponse>> getAllComments(@PathVariable Integer postId) {
+        meterRegistry.counter("api_requests_total", "endpoint", "/api/comments/post/{postId}").increment();
         return new ResponseEntity<>(commentService.getAllComments(postId).stream().map(comment -> {
             CommentResponse commentResponse = new CommentResponse();
             commentResponse.id = comment.getId();
@@ -76,6 +85,7 @@ public class CommentController {
                     @ApiResponse(responseCode = "404", description = "Not found")
             })
     public ResponseEntity<Void> addComment(@RequestBody AddCommentRequest addCommentRequest) {
+        meterRegistry.counter("api_requests_total", "endpoint", "/api/comments/create").increment();
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         commentService.addComment(user, addCommentRequest);
         return new ResponseEntity<>(HttpStatus.CREATED);
@@ -92,6 +102,7 @@ public class CommentController {
                     @ApiResponse(responseCode = "403", description = "Forbidden")
             })
     public ResponseEntity<Void> deleteComment(@PathVariable Integer id) {
+        meterRegistry.counter("api_requests_total", "endpoint", "/api/comments/delete/{id}").increment();
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         commentService.deleteComment(user, id);
         return new ResponseEntity<>(HttpStatus.OK);
@@ -108,6 +119,7 @@ public class CommentController {
                     @ApiResponse(responseCode = "400", description = "Bad request")
             })
     public ResponseEntity<Void> updateComment(@PathVariable Integer id, @RequestBody UpdateCommentRequest request) {
+        meterRegistry.counter("api_requests_total", "endpoint", "/api/comments/update/{id}").increment();
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         commentService.updateComment(user, id, request);
         return new ResponseEntity<>(HttpStatus.OK);

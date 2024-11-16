@@ -17,15 +17,20 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Collection;
 import java.util.Date;
 import java.util.stream.Collectors;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Tag;
+import io.micrometer.core.instrument.Tags;
 
 @RestController
 @RequestMapping("/api/conversations")
 public class ConversationController {
 
     private final ConversationService conversationService;
+    private final MeterRegistry meterRegistry;
 
-    public ConversationController(ConversationService conversationService) {
+    public ConversationController(ConversationService conversationService, MeterRegistry meterRegistry) {
         this.conversationService = conversationService;
+        this.meterRegistry = meterRegistry;
     }
 
     @GetMapping("/all")
@@ -38,6 +43,7 @@ public class ConversationController {
                     @ApiResponse(responseCode = "400", description = "Bad request")
             })
     public ResponseEntity<Page<ConversationResponse>> getAllConversations(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
+        meterRegistry.counter("api_requests_total", "endpoint", "/api/conversations/all").increment();
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Pageable pageable = PageRequest.of(page, size, Conversation.DEFAULT_SORT);
 
@@ -69,6 +75,7 @@ public class ConversationController {
                     @ApiResponse(responseCode = "400", description = "Bad request")
             })
     public ResponseEntity<Page<ConversationResponse>> searchConversations(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size, @RequestParam String searchTerm) {
+        meterRegistry.counter("api_requests_total", "endpoint", "/api/conversations/search").increment();
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Pageable pageable = PageRequest.of(page, size);
 
@@ -99,6 +106,7 @@ public class ConversationController {
                     @ApiResponse(responseCode = "400", description = "Bad request")
             })
     public ResponseEntity<ConversationResponse> createConversation(@RequestBody CreateConversationRequest request) {
+        meterRegistry.counter("api_requests_total", "endpoint", "/api/conversations/create").increment();
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         Conversation conversation = conversationService.createConversation(user.getUsername(), request.name);
@@ -122,6 +130,7 @@ public class ConversationController {
                     @ApiResponse(responseCode = "404", description = "Not found")
             })
     public ResponseEntity<Void> deleteConversation(@PathVariable Integer id) {
+        meterRegistry.counter("api_requests_total", "endpoint", "/api/conversations/delete/{id}").increment();
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         conversationService.deleteConversation(id, user.getUsername());
         return ResponseEntity.ok().build();
@@ -138,6 +147,7 @@ public class ConversationController {
                     @ApiResponse(responseCode = "404", description = "Not found")
             })
     public ResponseEntity<Void> addUserToConversation(@RequestBody ChangeUserConversationRequest request) {
+        meterRegistry.counter("api_requests_total", "endpoint", "/api/conversations/addUser").increment();
         conversationService.addUserToConversation(request.conversationId, request.username);
         return ResponseEntity.ok().build();
     }
@@ -152,6 +162,7 @@ public class ConversationController {
                     @ApiResponse(responseCode = "404", description = "Not found")
             })
     public ResponseEntity<Void> removeUserFromConversation(@RequestBody ChangeUserConversationRequest request) {
+        meterRegistry.counter("api_requests_total", "endpoint", "/api/conversations/removeUser").increment();
         conversationService.removeUserFromConversation(request.conversationId, request.username);
         return ResponseEntity.ok().build();
     }
@@ -166,6 +177,7 @@ public class ConversationController {
                     @ApiResponse(responseCode = "404", description = "Not found")
             })
     public ResponseEntity<Void> addMessageToConversation(@RequestBody AddMessageRequest request) {
+        meterRegistry.counter("api_requests_total", "endpoint", "/api/conversations/addMessage").increment();
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         conversationService.addMessageToConversation(request, user.getUsername());
         return ResponseEntity.ok().build();
@@ -181,6 +193,7 @@ public class ConversationController {
                     @ApiResponse(responseCode = "403", description = "Forbidden"),
             })
     public ResponseEntity<ConversationResponse> getConversation(@PathVariable Integer id) {
+        meterRegistry.counter("api_requests_total", "endpoint", "/api/conversations/{id}").increment();
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Conversation conversation = conversationService.getConversation(id, user.getUsername());
         return ResponseEntity.ok(new ConversationResponse() {

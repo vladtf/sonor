@@ -16,6 +16,7 @@ import org.springframework.security.web.util.matcher.RegexRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+import org.springframework.security.config.Customizer;
 
 @Configuration
 @EnableWebSecurity
@@ -65,6 +66,7 @@ public class SecurityConfig {
                         authorizeRequests
                                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/webjars/**").permitAll()
                                 .requestMatchers("/login", "/register").permitAll()
+                                .requestMatchers("/metrics").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .logout()

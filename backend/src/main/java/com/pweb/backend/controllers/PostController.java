@@ -15,15 +15,21 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.Tag;
+import io.micrometer.core.instrument.Tags;
 
 @RestController
 @RequestMapping("/api/posts")
 public class PostController {
 
     private final PostService postService;
+    private final MeterRegistry meterRegistry;
 
-    public PostController(PostService postService) {
+    public PostController(PostService postService, MeterRegistry meterRegistry) {
         this.postService = postService;
+        this.meterRegistry = meterRegistry;
     }
 
     @GetMapping("/all")
@@ -34,6 +40,7 @@ public class PostController {
                     @ApiResponse(responseCode = "401", description = "Unauthorized"),
             })
     public ResponseEntity<Page<PostResponse>> getAllPosts(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+        meterRegistry.counter("api_requests_total", "endpoint", "/api/posts/all").increment();
         Pageable pageable = PageRequest.of(page, size, Post.DEFAULT_SORT);
         return new ResponseEntity<>(buildResponseBody(postService.getAllPosts(pageable)), HttpStatus.OK);
     }
@@ -46,6 +53,7 @@ public class PostController {
                     @ApiResponse(responseCode = "401", description = "Unauthorized"),
             })
     public ResponseEntity<Page<PostResponse>> searchPosts(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, @RequestParam String searchTerm) {
+        meterRegistry.counter("api_requests_total", "endpoint", "/api/posts/search").increment();
         Pageable pageable = PageRequest.of(page, size);
         return new ResponseEntity<>(buildResponseBody(postService.searchPosts(pageable, searchTerm)), HttpStatus.OK);
     }
@@ -60,6 +68,7 @@ public class PostController {
                     @ApiResponse(responseCode = "404", description = "Not found")
             })
     public ResponseEntity<PostResponse> getPost(@PathVariable Integer id) {
+        meterRegistry.counter("api_requests_total", "endpoint", "/api/posts/{id}").increment();
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Post post = postService.getPost(user, id);
         PostResponse postResponse = new PostResponse();
@@ -83,6 +92,7 @@ public class PostController {
                     @ApiResponse(responseCode = "404", description = "Not found")
             })
     public ResponseEntity<Void> createPost(@RequestBody NewPostRequest newPostRequest) {
+        meterRegistry.counter("api_requests_total", "endpoint", "/api/posts/create").increment();
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         postService.createPost(user, newPostRequest);
         return new ResponseEntity<>(HttpStatus.CREATED);
@@ -98,6 +108,7 @@ public class PostController {
                     @ApiResponse(responseCode = "403", description = "Forbidden")
             })
     public ResponseEntity<Void> deletePost(@RequestBody DeletePostRequest deletePostRequest) {
+        meterRegistry.counter("api_requests_total", "endpoint", "/api/posts/delete").increment();
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         postService.deletePost(user, deletePostRequest.id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

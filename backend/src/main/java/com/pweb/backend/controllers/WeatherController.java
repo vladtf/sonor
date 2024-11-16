@@ -1,6 +1,10 @@
 package com.pweb.backend.controllers;
 
 import com.pweb.backend.services.WeatherService;
+import io.micrometer.core.instrument.Counter;
+import io.micrometer.core.instrument.MeterRegistry;
+import io.micrometer.core.instrument.Tag;
+import io.micrometer.core.instrument.Tags;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.security.access.annotation.Secured;
@@ -15,9 +19,11 @@ import java.util.List;
 public class WeatherController {
 
     private final WeatherService weatherService;
+    private final Counter apiRequestsCounter;
 
-    public WeatherController(WeatherService weatherService) {
+    public WeatherController(WeatherService weatherService, MeterRegistry meterRegistry) {
         this.weatherService = weatherService;
+        this.apiRequestsCounter = meterRegistry.counter("api_requests_total", Tags.of("endpoint", "/api/weather/all"));
     }
 
     @GetMapping("/all")
@@ -28,8 +34,7 @@ public class WeatherController {
                     @ApiResponse(responseCode = "401", description = "Unauthorized"),
             })
     public List<WeatherService.WeatherForecastResponse> getExchangeRates() {
+        apiRequestsCounter.increment();
         return weatherService.getWeatherForecast();
     }
-
-
 }
