@@ -12,6 +12,18 @@ build:
       context: backend
       docker:
         dockerfile: Dockerfile
+    - image: authentication-image
+      context: authentication
+      docker:
+        dockerfile: Dockerfile
+    - image: db-image
+      context: database
+      docker:
+        dockerfile: Dockerfile
+    - image: pgadmin-image
+      context: pgadmin
+      docker:
+        dockerfile: Dockerfile
 manifests:
    rawYaml:
       - k8s-*
@@ -26,3 +38,19 @@ portForward:
     resourceName: backend-service
     port: 8090
     localPort: 8090
+  - resourceType: service
+    resourceName: backend-service
+    port: 5005
+    localPort: 5005
+  - resourceType: service
+    resourceName: authentication-service
+    port: 5000
+    localPort: 5000
+  - resourceType: service
+    resourceName: db-service
+    port: 5432
+    localPort: 5432
+  - resourceType: service
+    resourceName: pgadmin-service
+    port: 5050
+    localPort: 5050

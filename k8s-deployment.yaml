@@ -141,8 +141,13 @@ spec:
             secretKeyRef:
               name: db-secret
               key: POSTGRES_PASSWORD
+        - name: AUTHENTICATION_SERVER_URL
+          value: "http://authentication-service:5000"
+        - name: JAVA_TOOL_OPTIONS
+          value: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
         ports:
         - containerPort: 8090
+        - containerPort: 5005
         resources:
           limits:
             memory: "512Mi"
@@ -160,8 +165,13 @@ spec:
     app: backend
   ports:
     - protocol: TCP
+      name: http
       port: 8090
       targetPort: 8090
+    - protocol: TCP
+      name: debug
+      port: 5005
+      targetPort: 5005
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -204,4 +214,118 @@ spec:
     - protocol: TCP
       port: 3000
       targetPort: 3000
-  type: NodePort  
+  type: NodePort
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: authentication-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: authentication
+  template:
+    metadata:
+      labels:
+        app: authentication
+    spec:
+      containers:
+      - name: authentication
+        image: authentication-image:latest
+        env:
+        - name: FLASK_APP
+          value: "app.py"
+        - name: FLASK_RUN_HOST
+          value: "0.0.0.0"
+        - name: SQLALCHEMY_DATABASE_URI
+          value: "postgresql://mobylab-app:mobylab-app@db-service:5432/mobylab-app"
+        - name: SECRET_KEY
+          value: "your_secret_key"
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: db-secret
+              key: POSTGRES_USER
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: db-secret
+              key: POSTGRES_PASSWORD
+        - name: POSTGRES_DB
+          valueFrom:
+            secretKeyRef:
+              name: db-secret
+              key: POSTGRES_DB
+        - name: POSTGRES_HOST
+          value: "db-service"
+        - name: FLASK_RUN_PORT
+          value: "5000"
+        ports:
+        - containerPort: 5000
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: authentication-service
+spec:
+  selector:
+    app: authentication
+  ports:
+    - protocol: TCP
+      port: 5000
+      targetPort: 5000
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pgadmin-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pgadmin
+  template:
+    metadata:
+      labels:
+        app: pgadmin
+    spec:
+      containers:
+      - name: pgadmin
+        image: dpage/pgadmin4:latest
+        env:
+        - name: PGADMIN_DEFAULT_EMAIL
+          value: "admin@admin.com"
+        - name: PGADMIN_DEFAULT_PASSWORD
+          value: "admin"
+        - name: PGADMIN_LISTEN_PORT
+          value: "80"
+        ports:
+        - containerPort: 80
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+          requests:
+            memory: "256Mi"
+            cpu: "250m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pgadmin-service
+spec:
+  selector:
+    app: pgadmin
+  ports:
+    - protocol: TCP
+      port: 5050
+      targetPort: 80
+  type: NodePort
