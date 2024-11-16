@@ -1,9 +1,7 @@
 package com.pweb.backend.services;
 
 import com.pweb.backend.controllers.AuthenticationController;
-import com.pweb.backend.dao.entities.Role;
-import com.pweb.backend.dao.entities.User;
-import com.pweb.backend.dao.repositories.RoleRepository;
+import com.pweb.backend.dao.entities.Account;
 import com.pweb.backend.dao.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -19,39 +17,39 @@ import java.util.List;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
+    /*private final RoleRepository roleRepository;*/
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserService(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, /*RoleRepository roleRepository,*/ PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
+        /*this.roleRepository = roleRepository;*/
         this.passwordEncoder = passwordEncoder;
     }
 
 
-    public User registerUser(AuthenticationController.RegisterRequest registerRequest) {
+    public Account registerUser(AuthenticationController.RegisterRequest registerRequest) {
         // check if username is already taken
         if (userRepository.existsByUsername(registerRequest.username)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username already taken");
         }
-        User user = new User();
+        Account account = new Account();
 
-        user.setUsername(registerRequest.username);
-        user.setPassword(passwordEncoder.encode(registerRequest.password));
+        account.setUsername(registerRequest.username);
+        /*account.setPassword(passwordEncoder.encode(registerRequest.password));*/
 
-        user = userRepository.save(user);
+        account = userRepository.save(account);
 
-        Role role = new Role();
+        /*Role role = new Role();
         role.setName(Role.RoleEnum.USER);
-        role.setUser(user);
-        roleRepository.save(role);
+        role.setUser(account);
+        roleRepository.save(role);*/
 
-        return user;
+        return account;
     }
 
     public List<String> getAllUsernames() {
-        return userRepository.findAll().stream().map(User::getUsername).toList();
+        return userRepository.findAll().stream().map(Account::getUsername).toList();
     }
 
     //    @Transactional
@@ -63,11 +61,11 @@ public class UserService {
     }
 
 
-    public Page<User> getAllUsers(Pageable pageable) {
+    public Page<Account> getAllUsers(Pageable pageable) {
         return userRepository.findAll(pageable);
     }
 
-    public Page<User> searchUsers(String query, Pageable pageable) {
+    public Page<Account> searchUsers(String query, Pageable pageable) {
         return userRepository.findAllByUsernameContaining(query, pageable);
     }
 }

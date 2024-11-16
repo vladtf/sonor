@@ -32,7 +32,7 @@ public class MessageService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
         }
 
-        if (!message.get().getUser().equals(user.get())) {
+        if (!message.get().getAccount().equals(user.get())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You cannot delete this message");
         }
 
@@ -51,6 +51,6 @@ public class MessageService {
         if (!userRepository.existsByUsername(username)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
         }
-        return messageRepository.findAllByUserUsername(username, pageable);
+        return messageRepository.findAllByAccountUsername(username, pageable);
     }
 }

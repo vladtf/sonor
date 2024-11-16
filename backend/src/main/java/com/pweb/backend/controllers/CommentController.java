@@ -37,7 +37,7 @@ public class CommentController {
             CommentResponse commentResponse = new CommentResponse();
             commentResponse.id = comment.getId();
             commentResponse.content = comment.getContent();
-            commentResponse.author = comment.getUser().getUsername();
+            commentResponse.author = comment.getAccount().getUsername();
             commentResponse.createdAt = comment.getCreatedAt();
             commentResponse.postId = comment.getPost().getId();
             return commentResponse;
@@ -58,7 +58,7 @@ public class CommentController {
             CommentResponse commentResponse = new CommentResponse();
             commentResponse.id = comment.getId();
             commentResponse.content = comment.getContent();
-            commentResponse.author = comment.getUser().getUsername();
+            commentResponse.author = comment.getAccount().getUsername();
             commentResponse.createdAt = comment.getCreatedAt();
             commentResponse.postId = comment.getPost().getId();
 

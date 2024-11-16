@@ -1,9 +1,9 @@
 package com.pweb.backend.services;
 
 import com.pweb.backend.controllers.CommentController;
+import com.pweb.backend.dao.entities.Account;
 import com.pweb.backend.dao.entities.Comment;
 import com.pweb.backend.dao.entities.Post;
-import com.pweb.backend.dao.entities.User;
 import com.pweb.backend.dao.repositories.CommentRepository;
 import com.pweb.backend.dao.repositories.PostRepository;
 import com.pweb.backend.dao.repositories.UserRepository;
@@ -40,7 +40,7 @@ public class CommentService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Post not found");
         }
 
-        Optional<User> found = userRepository.findByUsername(user.getUsername());
+        Optional<Account> found = userRepository.findByUsername(user.getUsername());
 
         if (found.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
@@ -65,7 +65,7 @@ public class CommentService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Comment not found");
         }
 
-        Optional<User> found = userRepository.findByUsername(user.getUsername());
+        Optional<Account> found = userRepository.findByUsername(user.getUsername());
 
         if (found.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
@@ -77,7 +77,7 @@ public class CommentService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Comment not found");
         }
 
-        if (!comment.get().getUser().equals(found.get())) {
+        if (!comment.get().getAccount().equals(found.get())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not the author of this comment");
         }
 
@@ -92,7 +92,7 @@ public class CommentService {
         if (userRepository.existsByUsername(user.getUsername())) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
         }
-        return commentRepository.findAllByUserUsername(user.getUsername());
+        return commentRepository.findAllByAccountUsername(user.getUsername());
     }
 
     public void updateComment(org.springframework.security.core.userdetails.User user, Integer id, CommentController.UpdateCommentRequest request) {
@@ -100,7 +100,7 @@ public class CommentService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Comment not found");
         }
 
-        Optional<User> found = userRepository.findByUsername(user.getUsername());
+        Optional<Account> found = userRepository.findByUsername(user.getUsername());
 
         if (found.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
@@ -112,7 +112,7 @@ public class CommentService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Comment not found");
         }
 
-        if (!comment.get().getUser().equals(found.get())) {
+        if (!comment.get().getAccount().equals(found.get())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not the author of this comment");
         }
 

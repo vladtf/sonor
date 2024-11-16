@@ -18,8 +18,8 @@ public class Message {
     private String content;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "account_id")
+    private Account account;
 
     @ManyToOne
     @JoinColumn(name = "conversation_id")
@@ -32,8 +32,8 @@ public class Message {
 
     @PreRemove
     public void preRemove() {
-        if (user != null) {
-            user.getMessages().remove(this);
+        if (account != null) {
+            account.getMessages().remove(this);
         }
         conversation.getMessages().remove(this);
     }
@@ -42,9 +42,9 @@ public class Message {
     public Message() {
     }
 
-    public Message(String content, User user, Conversation conversation) {
+    public Message(String content, Account account, Conversation conversation) {
         this.content = content;
-        this.user = user;
+        this.account = account;
         this.conversation = conversation;
     }
 
@@ -64,12 +64,12 @@ public class Message {
         this.content = content;
     }
 
-    public User getUser() {
-        return user;
+    public Account getAccount() {
+        return account;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setAccount(Account account) {
+        this.account = account;
     }
 
     public Conversation getConversation() {

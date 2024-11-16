@@ -74,7 +74,7 @@
         </createTable>
     </changeSet>
     <changeSet author="vtiftilov (generated)" id="1709635447624-7">
-        <createTable tableName="users">
+        <createTable tableName="accounts">
             <column autoIncrement="true" name="user_id" type="INTEGER">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="users_pkey"/>
             </column>
@@ -83,7 +83,7 @@
         </createTable>
     </changeSet>
     <changeSet author="vtiftilov (generated)" id="1709635447624-8">
-        <addUniqueConstraint columnNames="username" constraintName="uk_r43af9ap4edm43mmtq01oddj6" tableName="users"/>
+        <addUniqueConstraint columnNames="username" constraintName="uk_r43af9ap4edm43mmtq01oddj6" tableName="accounts"/>
     </changeSet>
     <changeSet author="vtiftilov (generated)" id="1709635447624-9">
         <createTable tableName="conversations_users">
@@ -96,28 +96,28 @@
         </createTable>
     </changeSet>
     <changeSet author="vtiftilov (generated)" id="1709635447624-10">
-        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="feedbacks" constraintName="fk312drfl5lquu37mu4trk8jkwx" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="user_id" referencedTableName="users" validate="true"/>
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="feedbacks" constraintName="fk312drfl5lquu37mu4trk8jkwx" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="user_id" referencedTableName="accounts" validate="true"/>
     </changeSet>
     <changeSet author="vtiftilov (generated)" id="1709635447624-11">
-        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="posts" constraintName="fk5lidm6cqbc7u4xhqpxm898qme" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="user_id" referencedTableName="users" validate="true"/>
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="posts" constraintName="fk5lidm6cqbc7u4xhqpxm898qme" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="user_id" referencedTableName="accounts" validate="true"/>
     </changeSet>
     <changeSet author="vtiftilov (generated)" id="1709635447624-12">
         <addForeignKeyConstraint baseColumnNames="conversations_conversation_id" baseTableName="conversations_users" constraintName="fk76vd7ol3xy6harwys8ses83rr" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="conversation_id" referencedTableName="conversations" validate="true"/>
     </changeSet>
     <changeSet author="vtiftilov (generated)" id="1709635447624-13">
-        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="comments" constraintName="fk8omq0tc18jd43bu5tjh6jvraq" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="user_id" referencedTableName="users" validate="true"/>
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="comments" constraintName="fk8omq0tc18jd43bu5tjh6jvraq" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="user_id" referencedTableName="accounts" validate="true"/>
     </changeSet>
     <changeSet author="vtiftilov (generated)" id="1709635447624-14">
-        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="roles" constraintName="fk97mxvrajhkq19dmvboprimeg1" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="user_id" referencedTableName="users" validate="true"/>
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="roles" constraintName="fk97mxvrajhkq19dmvboprimeg1" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="user_id" referencedTableName="accounts" validate="true"/>
     </changeSet>
     <changeSet author="vtiftilov (generated)" id="1709635447624-15">
         <addForeignKeyConstraint baseColumnNames="post_id" baseTableName="comments" constraintName="fkh4c7lvsc298whoyd4w9ta25cr" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="post_id" referencedTableName="posts" validate="true"/>
     </changeSet>
     <changeSet author="vtiftilov (generated)" id="1709635447624-16">
-        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="messages" constraintName="fkpsmh6clh3csorw43eaodlqvkn" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="user_id" referencedTableName="users" validate="true"/>
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="messages" constraintName="fkpsmh6clh3csorw43eaodlqvkn" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="user_id" referencedTableName="accounts" validate="true"/>
     </changeSet>
     <changeSet author="vtiftilov (generated)" id="1709635447624-17">
-        <addForeignKeyConstraint baseColumnNames="users_user_id" baseTableName="conversations_users" constraintName="fksetym4geai3g19jpo8tiin9ka" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="user_id" referencedTableName="users" validate="true"/>
+        <addForeignKeyConstraint baseColumnNames="users_user_id" baseTableName="conversations_users" constraintName="fksetym4geai3g19jpo8tiin9ka" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="user_id" referencedTableName="accounts" validate="true"/>
     </changeSet>
     <changeSet author="vtiftilov (generated)" id="1709635447624-18">
         <addForeignKeyConstraint baseColumnNames="conversation_id" baseTableName="messages" constraintName="fkt492th6wsovh1nush5yl5jj8e" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="conversation_id" referencedTableName="conversations" validate="true"/>
@@ -196,7 +196,7 @@
         </createTable>
     </changeSet>
     <changeSet author="vtiftilov (generated)" id="1709635529037-7">
-        <createTable tableName="users">
+        <createTable tableName="accounts">
             <column autoIncrement="true" name="user_id" type="INTEGER">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="users_pkey"/>
             </column>
@@ -205,7 +205,7 @@
         </createTable>
     </changeSet>
     <changeSet author="vtiftilov (generated)" id="1709635529037-8">
-        <addUniqueConstraint columnNames="username" constraintName="uk_r43af9ap4edm43mmtq01oddj6" tableName="users"/>
+        <addUniqueConstraint columnNames="username" constraintName="uk_r43af9ap4edm43mmtq01oddj6" tableName="accounts"/>
     </changeSet>
     <changeSet author="vtiftilov (generated)" id="1709635529037-9">
         <createTable tableName="conversations_users">
@@ -218,28 +218,28 @@
         </createTable>
     </changeSet>
     <changeSet author="vtiftilov (generated)" id="1709635529037-10">
-        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="feedbacks" constraintName="fk312drfl5lquu37mu4trk8jkwx" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="user_id" referencedTableName="users" validate="true"/>
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="feedbacks" constraintName="fk312drfl5lquu37mu4trk8jkwx" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="user_id" referencedTableName="accounts" validate="true"/>
     </changeSet>
     <changeSet author="vtiftilov (generated)" id="1709635529037-11">
-        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="posts" constraintName="fk5lidm6cqbc7u4xhqpxm898qme" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="user_id" referencedTableName="users" validate="true"/>
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="posts" constraintName="fk5lidm6cqbc7u4xhqpxm898qme" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="user_id" referencedTableName="accounts" validate="true"/>
     </changeSet>
     <changeSet author="vtiftilov (generated)" id="1709635529037-12">
         <addForeignKeyConstraint baseColumnNames="conversations_conversation_id" baseTableName="conversations_users" constraintName="fk76vd7ol3xy6harwys8ses83rr" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="conversation_id" referencedTableName="conversations" validate="true"/>
     </changeSet>
     <changeSet author="vtiftilov (generated)" id="1709635529037-13">
-        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="comments" constraintName="fk8omq0tc18jd43bu5tjh6jvraq" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="user_id" referencedTableName="users" validate="true"/>
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="comments" constraintName="fk8omq0tc18jd43bu5tjh6jvraq" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="user_id" referencedTableName="accounts" validate="true"/>
     </changeSet>
     <changeSet author="vtiftilov (generated)" id="1709635529037-14">
-        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="roles" constraintName="fk97mxvrajhkq19dmvboprimeg1" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="user_id" referencedTableName="users" validate="true"/>
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="roles" constraintName="fk97mxvrajhkq19dmvboprimeg1" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="user_id" referencedTableName="accounts" validate="true"/>
     </changeSet>
     <changeSet author="vtiftilov (generated)" id="1709635529037-15">
         <addForeignKeyConstraint baseColumnNames="post_id" baseTableName="comments" constraintName="fkh4c7lvsc298whoyd4w9ta25cr" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="post_id" referencedTableName="posts" validate="true"/>
     </changeSet>
     <changeSet author="vtiftilov (generated)" id="1709635529037-16">
-        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="messages" constraintName="fkpsmh6clh3csorw43eaodlqvkn" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="user_id" referencedTableName="users" validate="true"/>
+        <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="messages" constraintName="fkpsmh6clh3csorw43eaodlqvkn" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="user_id" referencedTableName="accounts" validate="true"/>
     </changeSet>
     <changeSet author="vtiftilov (generated)" id="1709635529037-17">
-        <addForeignKeyConstraint baseColumnNames="users_user_id" baseTableName="conversations_users" constraintName="fksetym4geai3g19jpo8tiin9ka" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="user_id" referencedTableName="users" validate="true"/>
+        <addForeignKeyConstraint baseColumnNames="users_user_id" baseTableName="conversations_users" constraintName="fksetym4geai3g19jpo8tiin9ka" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="user_id" referencedTableName="accounts" validate="true"/>
     </changeSet>
     <changeSet author="vtiftilov (generated)" id="1709635529037-18">
         <addForeignKeyConstraint baseColumnNames="conversation_id" baseTableName="messages" constraintName="fkt492th6wsovh1nush5yl5jj8e" deferrable="false" initiallyDeferred="false" onDelete="NO ACTION" onUpdate="NO ACTION" referencedColumnNames="conversation_id" referencedTableName="conversations" validate="true"/>

@@ -21,8 +21,8 @@ public class Comment {
     @Column(name = "created_at", nullable = false, updatable = false)
     private Date createdAt;
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "account_id")
+    private Account account;
 
     @ManyToOne
     @JoinColumn(name = "post_id")
@@ -30,8 +30,8 @@ public class Comment {
 
     @PreRemove
     public void preRemove() {
-        if (user != null) {
-            user.getComments().remove(this);
+        if (account != null) {
+            account.getComments().remove(this);
         }
         post.getComments().remove(this);
     }
@@ -39,9 +39,9 @@ public class Comment {
     public Comment() {
     }
 
-    public Comment(String content, User user, Post post) {
+    public Comment(String content, Account account, Post post) {
         this.content = content;
-        this.user = user;
+        this.account = account;
         this.post = post;
     }
 
@@ -61,12 +61,12 @@ public class Comment {
         this.content = content;
     }
 
-    public User getUser() {
-        return user;
+    public Account getAccount() {
+        return account;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setAccount(Account account) {
+        this.account = account;
     }
 
     public Post getPost() {

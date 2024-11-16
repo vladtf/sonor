@@ -8,63 +8,63 @@ import java.util.List;
 
 
 @Entity
-@Table(name = "users")
-public class User {
+@Table(name = "accounts")
+public class Account {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
+    @Column(name = "account_id")
     private Integer id;
 
     @Column(name = "username", unique = true)
     private String username;
-    private String password;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "account", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Post> posts;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+/*
+    @OneToMany(mappedBy = "account", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Role> roles;
+*/
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "account", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "account", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private Collection<Message> messages;
 
-    @ManyToMany(mappedBy = "users", fetch = FetchType.EAGER)
+    @ManyToMany(mappedBy = "accounts", fetch = FetchType.EAGER)
     private Collection<Conversation> conversations;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "account", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private Collection<Feedback> feedbacks;
 
     @PreRemove
     private void preRemove() {
         for (Post post : posts) {
-            post.setUser(null);
+            post.setAccount(null);
         }
-        for (Role role : roles) {
+        /*for (Role role : roles) {
             role.setUser(null);
-        }
+        }*/
         for (Comment comment : comments) {
-            comment.setUser(null);
+            comment.setAccount(null);
         }
         for (Message message : messages) {
-            message.setUser(null);
+            message.setAccount(null);
         }
         for (Conversation conversation : conversations) {
-            conversation.getUsers().remove(this);
+            conversation.getAccounts().remove(this);
         }
 
         for (Feedback feedback : feedbacks) {
-            feedback.setUser(null);
+            feedback.setAccount(null);
         }
     }
 
-    public User() {
+    public Account() {
     }
 
-    public User(String username, String password) {
-        this.password = password;
+    public Account(String username) {
         this.username = username;
     }
 
@@ -84,14 +84,6 @@ public class User {
         this.username = username;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
     public List<Post> getPosts() {
         return posts;
     }
@@ -100,13 +92,13 @@ public class User {
         this.posts = posts;
     }
 
-    public List<Role> getRoles() {
+    /*public List<Role> getRoles() {
         return roles;
     }
 
     public void setRoles(List<Role> roles) {
         this.roles = roles;
-    }
+    }*/
 
     public List<Comment> getComments() {
         return comments;

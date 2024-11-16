@@ -57,7 +57,7 @@ public class MessageController {
                     MessageResponse response = new MessageResponse();
                     response.id = message.getId();
                     response.content = message.getContent();
-                    response.author = message.getUser().getUsername();
+                    response.author = message.getAccount().getUsername();
                     response.createdAt = message.getCreatedAt();
                     response.conversationName = message.getConversation().getName();
                     response.conversationId = message.getConversation().getId();

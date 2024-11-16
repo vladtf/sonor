@@ -6,7 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.CrudRepository;
 
 public interface MessageRepository extends CrudRepository<Message, Integer> {
-    Page<Message> findAllByUserUsername(String username, Pageable pageable);
+    Page<Message> findAllByAccountUsername(String username, Pageable pageable);
 
     void deleteByConversationId(Integer id);
 }

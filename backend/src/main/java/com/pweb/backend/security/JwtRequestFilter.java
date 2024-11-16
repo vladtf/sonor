@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
@@ -70,8 +71,10 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                     // prepend "ROLE_" to each role if it doesn't already start with it
                     roles = roles.stream().map(role -> role.startsWith("ROLE_") ? role : "ROLE_" + role).toList();
 
+                    User user = new User(username, "", roles.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList()));
+
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                            username, null, roles.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList()));
+                            user, null, roles.stream().map(SimpleGrantedAuthority::new).collect(Collectors.toList()));
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 }

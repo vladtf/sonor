@@ -8,5 +8,5 @@ import java.util.Collection;
 public interface CommentRepository extends CrudRepository<Comment, Integer> {
     Collection<Comment> findAllByPostId(Integer postId);
 
-    Collection<Comment> findAllByUserUsername(String username);
+    Collection<Comment> findAllByAccountUsername(String username);
 }

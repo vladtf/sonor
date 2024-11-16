@@ -34,7 +34,7 @@ public class PostController {
                     @ApiResponse(responseCode = "401", description = "Unauthorized"),
             })
     public ResponseEntity<Page<PostResponse>> getAllPosts(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(page, size, Post.DEFAULT_SORT);
         return new ResponseEntity<>(buildResponseBody(postService.getAllPosts(pageable)), HttpStatus.OK);
     }
 
@@ -67,7 +67,7 @@ public class PostController {
         postResponse.title = post.getTitle();
         postResponse.content = post.getContent();
         postResponse.category = post.getCategory();
-        postResponse.author = post.getUser().getUsername();
+        postResponse.author = post.getAccount().getUsername();
         postResponse.createdAt = post.getCreatedAt();
 
         return new ResponseEntity<>(postResponse, HttpStatus.OK);
@@ -110,7 +110,7 @@ public class PostController {
             postResponse.title = post.getTitle();
             postResponse.content = post.getContent();
             postResponse.category = post.getCategory();
-            postResponse.author = post.getUser().getUsername();
+            postResponse.author = post.getAccount().getUsername();
             postResponse.createdAt = post.getCreatedAt();
 
             return postResponse;

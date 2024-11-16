@@ -1,5 +1,6 @@
 package com.pweb.backend.controllers;
 
+import com.pweb.backend.dao.entities.Account;
 import com.pweb.backend.dao.entities.Conversation;
 import com.pweb.backend.services.ConversationService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -38,19 +39,19 @@ public class ConversationController {
             })
     public ResponseEntity<Page<ConversationResponse>> getAllConversations(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        Pageable pageable = PageRequest.of(page, size);
+        Pageable pageable = PageRequest.of(page, size, Conversation.DEFAULT_SORT);
 
         return ResponseEntity.ok(conversationService.getAllConversations(user.getUsername(), pageable)
                 .map(conversation -> new ConversationResponse() {
                     {
                         id = conversation.getId();
                         name = conversation.getName();
-                        participants = conversation.getUsers().stream().map(com.pweb.backend.dao.entities.User::getUsername).collect(Collectors.toList());
+                        participants = conversation.getAccounts().stream().map(Account::getUsername).collect(Collectors.toList());
                         messages = conversation.getMessages().stream().map(message -> new ConversationResponse.MessageResponse() {
                             {
                                 id = message.getId();
                                 content = message.getContent();
-                                author = message.getUser().getUsername();
+                                author = message.getAccount().getUsername();
                                 createdAt = message.getCreatedAt();
                             }
                         }).collect(Collectors.toList());
@@ -76,12 +77,12 @@ public class ConversationController {
                     {
                         id = conversation.getId();
                         name = conversation.getName();
-                        participants = conversation.getUsers().stream().map(com.pweb.backend.dao.entities.User::getUsername).collect(Collectors.toList());
+                        participants = conversation.getAccounts().stream().map(Account::getUsername).collect(Collectors.toList());
                         messages = conversation.getMessages().stream().map(message -> new ConversationResponse.MessageResponse() {
                             {
                                 id = message.getId();
                                 content = message.getContent();
-                                author = message.getUser().getUsername();
+                                author = message.getAccount().getUsername();
                                 createdAt = message.getCreatedAt();
                             }
                         }).collect(Collectors.toList());
@@ -105,7 +106,7 @@ public class ConversationController {
             {
                 id = conversation.getId();
                 name = conversation.getName();
-                participants = conversation.getUsers().stream().map(com.pweb.backend.dao.entities.User::getUsername).collect(Collectors.toList());
+                participants = conversation.getAccounts().stream().map(Account::getUsername).collect(Collectors.toList());
             }
         });
     }
@@ -186,12 +187,12 @@ public class ConversationController {
             {
                 id = conversation.getId();
                 name = conversation.getName();
-                participants = conversation.getUsers().stream().map(com.pweb.backend.dao.entities.User::getUsername).collect(Collectors.toList());
+                participants = conversation.getAccounts().stream().map(Account::getUsername).collect(Collectors.toList());
                 messages = conversation.getMessages().stream().map(message -> new ConversationResponse.MessageResponse() {
                     {
                         id = message.getId();
                         content = message.getContent();
-                        author = message.getUser().getUsername();
+                        author = message.getAccount().getUsername();
                         createdAt = message.getCreatedAt();
                     }
                 }).collect(Collectors.toList());

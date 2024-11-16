@@ -5,7 +5,6 @@ import com.pweb.backend.dao.repositories.*;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -14,24 +13,23 @@ import java.util.List;
 public class DatabaseInitializer implements ApplicationListener<ContextRefreshedEvent> {
 
     private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
+    /*private final RoleRepository roleRepository;*/
     private final CommentRepository commentRepository;
     private final ConversationRepository conversationRepository;
     private final FeedbackRepository feedbackRepository;
     private final MessageRepository messageRepository;
     private final PostRepository postRepository;
 
-    private final PasswordEncoder passwordEncoder;
+    /*private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();*/
 
-    public DatabaseInitializer(UserRepository userRepository, RoleRepository roleRepository, CommentRepository commentRepository, ConversationRepository conversationRepository, FeedbackRepository feedbackRepository, MessageRepository messageRepository, PostRepository postRepository, PasswordEncoder passwordEncoder) {
+    public DatabaseInitializer(UserRepository userRepository, /*RoleRepository roleRepository,*/ CommentRepository commentRepository, ConversationRepository conversationRepository, FeedbackRepository feedbackRepository, MessageRepository messageRepository, PostRepository postRepository/*, PasswordEncoder passwordEncoder*/) {
         this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
+        /*this.roleRepository = roleRepository;*/
         this.commentRepository = commentRepository;
         this.conversationRepository = conversationRepository;
         this.feedbackRepository = feedbackRepository;
         this.messageRepository = messageRepository;
         this.postRepository = postRepository;
-        this.passwordEncoder = passwordEncoder;
     }
 
 
@@ -55,31 +53,31 @@ public class DatabaseInitializer implements ApplicationListener<ContextRefreshed
     }
 
     private void provisionUsers() {
-        User admin = new User();
+        Account admin = new Account();
         admin.setUsername("admin");
-        admin.setPassword(passwordEncoder.encode("admin"));
+        /*admin.setPassword(passwordEncoder.encode("admin"));  // Use SHA-256 method*/
         userRepository.save(admin);
 
         admin = userRepository.findByUsername("admin").orElseThrow();
-        roleRepository.save(new Role(Role.RoleEnum.USER, admin));
-        roleRepository.save(new Role(Role.RoleEnum.ADMIN, admin));
+        /*roleRepository.save(new Role(Role.RoleEnum.USER, admin));
+        roleRepository.save(new Role(Role.RoleEnum.ADMIN, admin));*/
 
 
-        User user = new User();
-        user.setUsername("user");
-        user.setPassword(passwordEncoder.encode("user"));
-        userRepository.save(user);
+        Account account = new Account();
+        account.setUsername("user");
+        /*user.setPassword(passwordEncoder.encode("user"));  // Use SHA-256 method*/
+        userRepository.save(account);
 
-        user = userRepository.findByUsername("user").orElseThrow();
-        roleRepository.save(new Role(Role.RoleEnum.USER, user));
+        account = userRepository.findByUsername("user").orElseThrow();
+        /*roleRepository.save(new Role(Role.RoleEnum.USER, account));*/
 
         for (int i = 0; i < 5; i++) {
-            user = new User();
-            user.setUsername("user" + i);
-            user.setPassword(passwordEncoder.encode("user" + i));
-            userRepository.save(user);
-            user = userRepository.findByUsername("user" + i).orElseThrow();
-            roleRepository.save(new Role(Role.RoleEnum.USER, user));
+            account = new Account();
+            account.setUsername("user" + i);
+            /*user.setPassword(passwordEncoder.encode("user" + i));  // Use SHA-256 method*/
+            userRepository.save(account);
+            account = userRepository.findByUsername("user" + i).orElseThrow();
+            /*roleRepository.save(new Role(Role.RoleEnum.USER, account));*/
         }
     }
 
@@ -124,7 +122,7 @@ public class DatabaseInitializer implements ApplicationListener<ContextRefreshed
 
     private void deleteAll() {
         userRepository.deleteAll();
-        roleRepository.deleteAll();
+        /*roleRepository.deleteAll();*/
         commentRepository.deleteAll();
         conversationRepository.deleteAll();
         feedbackRepository.deleteAll();

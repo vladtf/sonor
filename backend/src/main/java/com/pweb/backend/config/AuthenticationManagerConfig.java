@@ -1,6 +1,7 @@
+/*
 package com.pweb.backend.config;
 
-import com.pweb.backend.security.DatabaseUserDetailsService;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -12,12 +13,18 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class AuthenticationManagerConfig {
 
     private final PasswordEncoder passwordEncoder;
-    private final DatabaseUserDetailsService databaseUserDetailsService;
+    */
+/*private final DatabaseUserDetailsService databaseUserDetailsService;*//*
 
 
-    public AuthenticationManagerConfig(PasswordEncoder passwordEncoder, DatabaseUserDetailsService databaseUserDetailsService) {
+
+    public AuthenticationManagerConfig(PasswordEncoder passwordEncoder, */
+/*DatabaseUserDetailsService databaseUserDetailsService*//*
+) {
         this.passwordEncoder = passwordEncoder;
-        this.databaseUserDetailsService = databaseUserDetailsService;
+        */
+/*this.databaseUserDetailsService = databaseUserDetailsService;*//*
+
     }
 
     @Bean
@@ -29,3 +36,4 @@ public class AuthenticationManagerConfig {
                 .build();
     }
 }
+*/

@@ -39,7 +39,7 @@ public class FeedbackController {
             {
                 id = feedback.getId();
                 content = feedback.getContent();
-                username = feedback.getUser().getUsername();
+                username = feedback.getAccount().getUsername();
                 satisfaction = feedback.getSatisfaction();
                 feature = feedback.getFeature();
                 createdAt = feedback.getCreatedAt();

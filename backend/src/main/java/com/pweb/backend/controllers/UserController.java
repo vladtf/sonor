@@ -69,7 +69,7 @@ public class UserController {
             UserResponse response = new UserResponse();
             response.id = user.getId();
             response.username = user.getUsername();
-            response.roles = user.getRoles().stream().map(role -> role.getName().name()).toList();
+            /*response.roles = user.getRoles().stream().map(role -> role.getName().name()).toList();*/
             response.postCount = user.getPosts().size();
             response.commentCount = user.getComments().size();
             response.messageCount = user.getMessages().size();
@@ -95,7 +95,7 @@ public class UserController {
             UserResponse response = new UserResponse();
             response.id = user.getId();
             response.username = user.getUsername();
-            response.roles = user.getRoles().stream().map(role -> role.getName().name()).toList();
+            /*response.roles = user.getRoles().stream().map(role -> role.getName().name()).toList();*/
             response.postCount = user.getPosts().size();
             response.commentCount = user.getComments().size();
             response.messageCount = user.getMessages().size();

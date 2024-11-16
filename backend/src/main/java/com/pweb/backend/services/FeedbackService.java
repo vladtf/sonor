@@ -2,7 +2,7 @@ package com.pweb.backend.services;
 
 import com.pweb.backend.controllers.FeedbackController;
 import com.pweb.backend.dao.entities.Feedback;
-import com.pweb.backend.dao.entities.User;
+import com.pweb.backend.dao.entities.Account;
 import com.pweb.backend.dao.repositories.FeedbackRepository;
 import com.pweb.backend.dao.repositories.UserRepository;
 import org.springframework.data.domain.Page;
@@ -30,7 +30,7 @@ public class FeedbackService {
     }
 
     public void createFeedback(FeedbackController.CreateFeedbackRequest feedback, String username) {
-        Optional<User> user = userRepository.findByUsername(username);
+        Optional<Account> user = userRepository.findByUsername(username);
         if (user.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
         }
@@ -40,7 +40,7 @@ public class FeedbackService {
             newFeedback.setContent(feedback.content);
             newFeedback.setSatisfaction(feedback.satisfaction);
             newFeedback.setFeature(feedback.feature);
-            newFeedback.setUser(user.get());
+            newFeedback.setAccount(user.get());
             feedbackRepository.save(newFeedback);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid request");
@@ -48,7 +48,7 @@ public class FeedbackService {
     }
 
     public void deleteFeedback(Integer id, String username) {
-        Optional<User> user = userRepository.findByUsername(username);
+        Optional<Account> user = userRepository.findByUsername(username);
         if (user.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
         }
@@ -58,7 +58,7 @@ public class FeedbackService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Feedback not found");
         }
 
-        if (!feedback.get().getUser().equals(user.get())) {
+        if (!feedback.get().getAccount().equals(user.get())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You cannot delete this feedback");
         }
 

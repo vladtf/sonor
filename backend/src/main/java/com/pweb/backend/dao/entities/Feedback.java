@@ -21,8 +21,8 @@ public class Feedback {
     private String feature;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "account_id")
+    private Account account;
 
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
@@ -31,17 +31,17 @@ public class Feedback {
 
     @PreRemove
     public void preRemove() {
-        if (user != null) {
-            user.getFeedbacks().remove(this);
+        if (account != null) {
+            account.getFeedbacks().remove(this);
         }
     }
 
     public Feedback() {
     }
 
-    public Feedback(String content, User user, String satisfaction, String feature) {
+    public Feedback(String content, Account account, String satisfaction, String feature) {
         this.content = content;
-        this.user = user;
+        this.account = account;
         this.satisfaction = satisfaction;
         this.feature = feature;
     }
@@ -62,12 +62,12 @@ public class Feedback {
         this.content = content;
     }
 
-    public User getUser() {
-        return user;
+    public Account getAccount() {
+        return account;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setAccount(Account account) {
+        this.account = account;
     }
 
     public Date getCreatedAt() {

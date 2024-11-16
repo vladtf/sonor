@@ -2,6 +2,7 @@ package com.pweb.backend.dao.entities;
 
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.data.domain.Sort;
 
 import java.util.Date;
 import java.util.List;
@@ -10,6 +11,8 @@ import java.util.List;
 @Entity
 @Table(name = "posts")
 public class Post {
+
+    public static final Sort DEFAULT_SORT = Sort.by(Sort.Order.desc("createdAt"));
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,8 +28,8 @@ public class Post {
     private PostCategory category;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "account_id")
+    private Account account;
 
     @OneToMany(mappedBy = "post", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Comment> comments;
@@ -38,19 +41,19 @@ public class Post {
 
     @PreRemove
     public void preRemove() {
-        if (user != null){
-            user.getPosts().remove(this);
+        if (account != null){
+            account.getPosts().remove(this);
         }
     }
 
     public Post() {
     }
 
-    public Post(String title, String content, PostCategory category, User user) {
+    public Post(String title, String content, PostCategory category, Account account) {
         this.title = title;
         this.content = content;
         this.category = category;
-        this.user = user;
+        this.account = account;
     }
 
     public Integer getId() {
@@ -85,12 +88,12 @@ public class Post {
         this.category = postCategory;
     }
 
-    public User getUser() {
-        return user;
+    public Account getAccount() {
+        return account;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setAccount(Account account) {
+        this.account = account;
     }
 
     public List<Comment> getComments() {
