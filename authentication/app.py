@@ -8,6 +8,7 @@ import datetime
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'your_secret_key')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  # Suppress FSADeprecationWarning
 db_user = os.getenv('POSTGRES_USER', 'mobylab-app')
 db_password = os.getenv('POSTGRES_PASSWORD', 'mobylab-app')
 db_host = 'db'
@@ -20,11 +21,13 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 class Role(db.Model):
+    __tablename__ = 'roles'  # Match the table name used by the Java server
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(50), nullable=False)  # Removed unique=True
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    name = db.Column(db.String(50), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)  # Correct foreign key reference
 
 class User(db.Model):
+    __tablename__ = 'users'  # Match the table name used by the Java server
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
     password = db.Column(db.String(200), nullable=False)
@@ -60,7 +63,7 @@ def login():
         return jsonify({'message': 'Username and password required'}), 400
 
     user = User.query.filter_by(username=data['username']).first()
-    if not user or not check_password_hash(user.password, data['password']):
+    if not user or not check_password_hash(user.password, data['password']):  # Check the password directly
         logger.warning('Invalid login attempt for username: %s', data['username'])
         return jsonify({'message': 'Invalid credentials'}), 401
 
@@ -98,8 +101,12 @@ def create_default_user():
         db.session.add(default_role)
         db.session.commit()
         logger.info('Default user created: user with USER')
+    else:
+        # update the password if the default user already exists
+        default_user = User.query.filter_by(username='user').first()
+        hashed_password = generate_password_hash('user', method='sha256')
 
 if __name__ == '__main__':
-    db.create_all()
-    create_default_user()  # Create the default user if it does not exist
+    db.create_all()  # Uncomment this line to create tables
+    create_default_user()  # Uncomment this line to create the default user if it does not exist
     app.run(debug=True, host='0.0.0.0', port=5000)
