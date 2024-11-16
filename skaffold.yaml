@@ -62,3 +62,7 @@ portForward:
     resourceName: portainer-service
     port: 9000
     localPort: 9000
+  - resourceType: service
+    resourceName: grafana-service
+    port: 3100
+    localPort: 3100
