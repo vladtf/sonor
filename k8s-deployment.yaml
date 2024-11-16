@@ -608,6 +608,7 @@ data:
     global:
       scrape_interval: 15s
     scrape_configs:
+      # Existing scrape config
       - job_name: 'kubernetes'
         kubernetes_sd_configs:
           - role: node
@@ -617,6 +618,14 @@ data:
             regex: .*
             source_labels:
               - __address__
+      # Scrape config for kube-state-metrics
+      - job_name: 'kube-state-metrics'
+        static_configs:
+          - targets: ['kube-state-metrics:8080']
+      # Scrape config for node-exporter
+      - job_name: 'node-exporter'
+        static_configs:
+          - targets: ['node-exporter:9100']
 ---
 apiVersion: apps/v1
 kind: Deployment

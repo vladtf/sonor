@@ -66,3 +66,7 @@ portForward:
     resourceName: grafana-service
     port: 3100
     localPort: 3100
+  - resourceType: service
+    resourceName: prometheus-service
+    port: 9090
+    localPort: 9090
