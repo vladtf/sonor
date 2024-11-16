@@ -425,6 +425,54 @@ spec:
     targetPort: 9000
   type: NodePort
 ---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: node-exporter-sa
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: kube-state-metrics-sa
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: metrics-clusterrole
+rules:
+- apiGroups: ["", "apps", "extensions", "batch", "autoscaling", "networking.k8s.io", "storage.k8s.io", "rbac.authorization.k8s.io"]
+  resources: ["*"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: ["", "apps", "extensions", "batch", "autoscaling", "networking.k8s.io", "storage.k8s.io", "rbac.authorization.k8s.io"]
+  resources: ["*"]
+  verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: node-exporter-clusterrolebinding
+subjects:
+- kind: ServiceAccount
+  name: node-exporter-sa
+  namespace: default
+roleRef:
+  kind: ClusterRole
+  name: metrics-clusterrole
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: kube-state-metrics-clusterrolebinding
+subjects:
+- kind: ServiceAccount
+  name: kube-state-metrics-sa
+  namespace: default
+roleRef:
+  kind: ClusterRole
+  name: metrics-clusterrole
+  apiGroup: rbac.authorization.k8s.io
+---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
@@ -569,6 +617,34 @@ spec:
     ports:
     - protocol: TCP
       port: 5432
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: monitoring-network-policy
+spec:
+  podSelector:
+    matchLabels:
+      app: prometheus
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: node-exporter
+        - podSelector:
+            matchLabels:
+              app: kube-state-metrics
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app: node-exporter
+        - podSelector:
+            matchLabels:
+              app: kube-state-metrics
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -763,7 +839,8 @@ data:
                 "mode": "absolute",
                 "steps": [
                   {
-                    "color": "green"
+                    "color": "green",
+                    "value": null
                   },
                   {
                     "color": "red",
@@ -775,7 +852,7 @@ data:
             "overrides": []
           },
           "gridPos": {
-            "h": 11,
+            "h": 6,
             "w": 24,
             "x": 0,
             "y": 0
@@ -808,7 +885,7 @@ data:
               "useBackend": false
             }
           ],
-        "title": "Api Requests",
+          "title": "Api Requests",
           "type": "timeseries"
         },
         {
@@ -868,12 +945,12 @@ data:
             "overrides": []
           },
           "gridPos": {
-            "h": 8,
+            "h": 5,
             "w": 24,
             "x": 0,
-            "y": 11
+            "y": 6
           },
-        "id": 2,
+          "id": 2,
           "options": {
             "legend": {
               "calcs": [],
@@ -902,6 +979,98 @@ data:
             }
           ],
           "title": "Authentication Requests",
+          "type": "timeseries"
+        },
+        {
+          "datasource": "Prometheus",
+          "fieldConfig": {
+            "defaults": {
+              "color": {
+                "mode": "palette-classic"
+              },
+              "custom": {
+                "axisBorderShow": false,
+                "axisCenteredZero": false,
+                "axisColorMode": "text",
+                "axisLabel": "",
+                "axisPlacement": "auto",
+                "barAlignment": 0,
+                "barWidthFactor": 0.6,
+                "drawStyle": "line",
+                "fillOpacity": 0,
+                "gradientMode": "none",
+                "hideFrom": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": false
+                },
+                "insertNulls": false,
+                "lineInterpolation": "linear",
+                "lineWidth": 1,
+                "pointSize": 5,
+                "scaleDistribution": {
+                  "type": "linear"
+                },
+                "showPoints": "auto",
+                "spanNulls": false,
+                "stacking": {
+                  "group": "A",
+                  "mode": "none"
+                },
+                "thresholdsStyle": {
+                  "mode": "off"
+                }
+              },
+              "mappings": [],
+              "thresholds": {
+                "mode": "absolute",
+                "steps": [
+                  {
+                    "color": "green"
+                  },
+                  {
+                    "color": "red",
+                    "value": 80
+                  }
+                ]
+              }
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 18,
+            "w": 24,
+            "x": 0,
+            "y": 11
+          },
+          "id": 3,
+          "options": {
+            "legend": {
+              "calcs": [],
+              "displayMode": "list",
+              "placement": "bottom",
+              "showLegend": true
+            },
+            "tooltip": {
+              "mode": "single",
+              "sort": "none"
+            }
+          },
+          "pluginVersion": "11.3.0+security-01",
+          "targets": [
+            {
+              "disableTextWrap": false,
+              "editorMode": "builder",
+              "expr": "kube_pod_container_info",
+              "fullMetaSearch": false,
+              "includeNullMetadata": true,
+              "legendFormat": "{{pod}}",
+              "range": true,
+              "refId": "A",
+              "useBackend": false
+            }
+          ],
+          "title": "Kube Pod Container Info",
           "type": "timeseries"
         }
       ],
@@ -1038,6 +1207,7 @@ spec:
       labels:
         app: kube-state-metrics
     spec:
+      serviceAccountName: kube-state-metrics-sa
       containers:
       - name: kube-state-metrics
         image: k8s.gcr.io/kube-state-metrics/kube-state-metrics:v2.11.0
@@ -1079,6 +1249,7 @@ spec:
       labels:
         app: node-exporter
     spec:
+      serviceAccountName: node-exporter-sa
       containers:
       - name: node-exporter
         image: prom/node-exporter:latest
