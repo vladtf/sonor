@@ -24,6 +24,10 @@ build:
       context: pgadmin
       docker:
         dockerfile: Dockerfile
+    - image: portainer-image
+      context: portainer
+      docker:
+        dockerfile: Dockerfile
 manifests:
    rawYaml:
       - k8s-*
@@ -54,3 +58,7 @@ portForward:
     resourceName: pgadmin-service
     port: 5050
     localPort: 5050
+  - resourceType: service
+    resourceName: portainer-service
+    port: 9000
+    localPort: 9000
