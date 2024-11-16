@@ -435,15 +435,17 @@ kind: ServiceAccount
 metadata:
   name: kube-state-metrics-sa
 ---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: cadvisor-sa
+---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: metrics-clusterrole
 rules:
-- apiGroups: ["", "apps", "extensions", "batch", "autoscaling", "networking.k8s.io", "storage.k8s.io", "rbac.authorization.k8s.io"]
-  resources: ["*"]
-  verbs: ["get", "list", "watch"]
-- apiGroups: ["", "apps", "extensions", "batch", "autoscaling", "networking.k8s.io", "storage.k8s.io", "rbac.authorization.k8s.io"]
+- apiGroups: ["*"]
   resources: ["*"]
   verbs: ["get", "list", "watch"]
 ---
@@ -472,6 +474,59 @@ roleRef:
   kind: ClusterRole
   name: metrics-clusterrole
   apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: cadvisor-clusterrolebinding
+subjects:
+- kind: ServiceAccount
+  name: cadvisor-sa
+  namespace: default
+roleRef:
+  kind: ClusterRole
+  name: metrics-clusterrole
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cadvisor-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cadvisor
+  template:
+    metadata:
+      labels:
+        app: cadvisor
+    spec:
+      serviceAccountName: cadvisor-sa
+      containers:
+      - name: cadvisor
+        image: gcr.io/cadvisor/cadvisor:latest
+        ports:
+        - containerPort: 8080
+        resources:
+          limits:
+            memory: "256Mi"
+            cpu: "250m"
+          requests:
+            memory: "128Mi"
+            cpu: "125m"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cadvisor-service
+spec:
+  selector:
+    app: cadvisor
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
 ---
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
@@ -685,15 +740,13 @@ data:
       scrape_interval: 15s
     scrape_configs:
       # Existing scrape config
-      - job_name: 'kubernetes'
+      - job_name: 'kubernetes-pods'
         kubernetes_sd_configs:
-          - role: node
           - role: pod
         relabel_configs:
-          - action: keep
-            regex: .*
-            source_labels:
-              - __address__
+          - source_labels: [__meta_kubernetes_pod_label_app]
+            action: keep
+            regex: .+
       # Scrape config for kube-state-metrics
       - job_name: 'kube-state-metrics'
         static_configs:
@@ -702,6 +755,12 @@ data:
       - job_name: 'node-exporter'
         static_configs:
           - targets: ['node-exporter:9100']
+      # Scrape config for cAdvisor
+      - job_name: 'cadvisor'
+        static_configs:
+          - targets: ['cadvisor-service:8080']
+        metrics_path: /metrics
+        scheme: http
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -1061,16 +1120,16 @@ data:
             {
               "disableTextWrap": false,
               "editorMode": "builder",
-              "expr": "kube_pod_container_info",
+              "expr": "kube_deployment_status_replicas_unavailable",
               "fullMetaSearch": false,
               "includeNullMetadata": true,
-              "legendFormat": "{{pod}}",
+              "legendFormat": "{{deployment}}",
               "range": true,
               "refId": "A",
               "useBackend": false
             }
           ],
-          "title": "Kube Pod Container Info",
+          "title": "Kube Deployments Unavailable",
           "type": "timeseries"
         }
       ],
