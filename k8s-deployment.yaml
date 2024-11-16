@@ -306,6 +306,10 @@ spec:
       labels:
         app: pgadmin
     spec:
+      initContainers:
+      - name: wait-for-postgres
+        image: busybox
+        command: ['sh', '-c', 'until nc -z db-service 5432; do echo waiting for postgres; sleep 2; done;']
       containers:
       - name: pgadmin
         image: dpage/pgadmin4:latest
