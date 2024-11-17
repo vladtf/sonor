@@ -1,3 +1,15 @@
+resource "kubernetes_config_map" "backend_config" {
+  metadata {
+    name      = "backend-config"
+    namespace = "default"
+  }
+
+  data = {
+    SPRING_DATASOURCE_URL = "jdbc:postgresql://db-service:5432/mobylab-app"
+    // Add other configuration key-value pairs as needed
+  }
+}
+
 resource "kubernetes_deployment" "backend" {
   metadata {
     name = "backend-deployment"
@@ -35,7 +47,7 @@ resource "kubernetes_deployment" "backend" {
             name = "SPRING_DATASOURCE_URL"
             value_from {
               config_map_key_ref {
-                name = "backend-config"
+                name = kubernetes_config_map.backend_config.metadata[0].name
                 key  = "SPRING_DATASOURCE_URL"
               }
             }
@@ -84,6 +96,8 @@ resource "kubernetes_deployment" "backend" {
       }
     }
   }
+
+  depends_on = [kubernetes_config_map.backend_config]
 }
 
 resource "kubernetes_service" "backend_service" {
