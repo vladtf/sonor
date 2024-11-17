@@ -75,7 +75,7 @@ resource "kubernetes_deployment" "postgres" {
       spec {
         container {
           name  = "postgres"
-          image = "${azurerm_container_registry.acr.login_server}/postgres-image:${var.image_tag}"
+          image = "postgres-image:${var.image_tag}"
 
           env {
             name = "POSTGRES_DB"
@@ -147,7 +147,7 @@ resource "kubernetes_deployment" "postgres" {
     }
   }
 
-  depends_on = [azurerm_role_assignment.aks_acr_pull]
+  depends_on = []
 }
 
 resource "kubernetes_service" "db_service" {

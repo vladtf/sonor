@@ -107,6 +107,11 @@ Navigate to [http://localhost:8090/swagger-ui](http://localhost:8090/swagger-ui)
 
 - Create a `terraform.tfvars` file using the `terraform.tfvars.example` as a template.
 
+- Create the cluster with Kind config:
+```bash
+❯ kind create cluster --config kind-config.yaml
+```
+
 ### Steart
 
 - Initialize terraform

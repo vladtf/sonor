@@ -37,7 +37,7 @@ resource "kubernetes_deployment" "backend" {
       spec {
         container {
           name  = "backend"
-          image = "${azurerm_container_registry.acr.login_server}/backend-image:${var.image_tag}"
+          image = "backend-image:${var.image_tag}"
 
           env {
             name = "SPRING_DATASOURCE_URL"
@@ -78,6 +78,10 @@ resource "kubernetes_deployment" "backend" {
             container_port = 8090
           }
 
+          port {
+            container_port = 5005
+          }
+
           resources {
             limits = {
               memory = "512Mi"
@@ -94,8 +98,7 @@ resource "kubernetes_deployment" "backend" {
   }
 
   depends_on = [
-    kubernetes_config_map.backend_config,
-    azurerm_role_assignment.aks_acr_pull
+    kubernetes_config_map.backend_config
   ]
 }
 
@@ -111,9 +114,18 @@ resource "kubernetes_service" "backend_service" {
 
     port {
       protocol    = "TCP"
+      name        = "http"
       port        = 8090
       target_port = 8090
     }
 
+    port {
+      protocol    = "TCP"
+      name        = "debug"
+      port        = 5005
+      target_port = 5005
+    }
+
+    type = "NodePort"
   }
 }
