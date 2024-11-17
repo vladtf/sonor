@@ -62,7 +62,7 @@ spec:
     spec:
       containers:
       - name: postgres
-        image: postgres:latest
+        image: postgres-image:latest
         env:
         - name: POSTGRES_DB
           valueFrom:

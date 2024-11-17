@@ -28,6 +28,10 @@ build:
       context: portainer
       docker:
         dockerfile: Dockerfile
+    - image: postgres-image
+      context: postgres
+      docker:
+        dockerfile: Dockerfile
 manifests:
    rawYaml:
       - k8s-*
