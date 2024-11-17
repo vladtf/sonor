@@ -9,6 +9,9 @@
   - [Swagger](#swagger)
   - [Kubernetes](#kubernetes)
   - [Skaffold](#skaffold)
+  - [Terraform](#terraform)
+    - [Prerequisites](#prerequisites)
+    - [Steart](#steart)
 
 ## Run Docker Compose
 
@@ -96,4 +99,27 @@ Navigate to [http://localhost:8090/swagger-ui](http://localhost:8090/swagger-ui)
 - Stop minikube
 ```bash
 ❯ minikube stop
+```
+
+## Terraform
+
+### Prerequisites
+
+- Create a `terraform.tfvars` file using the `terraform.tfvars.example` as a template.
+
+### Steart
+
+- Initialize terraform
+```bash
+❯ terraform init
+```
+
+- Plan the
+```bash
+❯ terraform plan
+```
+
+- Apply the changes
+```bash
+❯ terraform apply -var-file="terraform.tfvars"
 ```

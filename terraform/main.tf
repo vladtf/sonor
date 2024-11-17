@@ -1,7 +1,6 @@
 provider "azurerm" {
   features {}
 
-  # sp name: terraform-sp
   client_id       = var.client_id
   client_secret   = var.client_secret
   subscription_id = var.subscription_id
@@ -49,7 +48,7 @@ resource "azurerm_kubernetes_cluster" "aks" {
 }
 
 output "kube_config" {
-  value = azurerm_kubernetes_cluster.aks.kube_config_raw
+  value     = azurerm_kubernetes_cluster.aks.kube_config_raw
   sensitive = true
 }
 
@@ -77,6 +76,7 @@ resource "null_resource" "skaffold_build_push" {
     environment = {
       ACR_USERNAME = azurerm_container_registry.acr.admin_username
       ACR_PASSWORD = azurerm_container_registry.acr.admin_password
+      IMAGE_TAG    = var.image_tag
     }
   }
 

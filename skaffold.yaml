@@ -3,6 +3,9 @@ kind: Config
 metadata:
   name: sonar-demo
 build:
+  tagPolicy:
+    envTemplate:
+      template: "{{.IMAGE_NAME}}:${IMAGE_TAG}"
   artifacts:
     - image: frontend-image
       context: frontend
@@ -29,7 +32,7 @@ build:
       docker:
         dockerfile: Dockerfile
     - image: postgres-image
-      context: postgres
+      context: database
       docker:
         dockerfile: Dockerfile
 manifests:

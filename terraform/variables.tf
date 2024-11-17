@@ -18,3 +18,8 @@ variable "tenant_id" {
   description = "Azure Tenant ID"
   type        = string
 }
+
+variable "image_tag" {
+  description = "The tag for Docker images, typically the Git commit ID."
+  type        = string
+}
