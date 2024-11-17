@@ -35,10 +35,6 @@ resource "kubernetes_deployment" "backend" {
       }
 
       spec {
-        image_pull_secrets {
-          name = kubernetes_secret.acr_pull_secret.metadata[0].name
-        }
-
         container {
           name  = "backend"
           image = "${azurerm_container_registry.acr.login_server}/backend-image:${var.image_tag}"
@@ -97,7 +93,10 @@ resource "kubernetes_deployment" "backend" {
     }
   }
 
-  depends_on = [kubernetes_config_map.backend_config]
+  depends_on = [
+    kubernetes_config_map.backend_config,
+    azurerm_role_assignment.aks_acr_pull
+  ]
 }
 
 resource "kubernetes_service" "backend_service" {

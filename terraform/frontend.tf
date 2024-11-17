@@ -23,10 +23,6 @@ resource "kubernetes_deployment" "frontend" {
       }
 
       spec {
-        image_pull_secrets {
-          name = kubernetes_secret.acr_pull_secret.metadata[0].name
-        }
-
         container {
           name  = "frontend"
           image = "${azurerm_container_registry.acr.login_server}/frontend-image:${var.image_tag}"
@@ -55,6 +51,8 @@ resource "kubernetes_deployment" "frontend" {
       }
     }
   }
+
+  depends_on = [azurerm_role_assignment.aks_acr_pull]
 }
 
 resource "kubernetes_service" "frontend_service" {

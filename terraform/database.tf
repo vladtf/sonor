@@ -73,13 +73,9 @@ resource "kubernetes_deployment" "postgres" {
       }
 
       spec {
-        image_pull_secrets {
-          name = kubernetes_secret.acr_pull_secret.metadata[0].name
-        }
-
         container {
           name  = "postgres"
-          image = "${azurerm_container_registry.acr.login_server}/postgres:${var.image_tag}"
+          image = "${azurerm_container_registry.acr.login_server}/postgres-image:${var.image_tag}"
 
           env {
             name = "POSTGRES_DB"
@@ -150,6 +146,8 @@ resource "kubernetes_deployment" "postgres" {
       }
     }
   }
+
+  depends_on = [azurerm_role_assignment.aks_acr_pull]
 }
 
 resource "kubernetes_service" "db_service" {
