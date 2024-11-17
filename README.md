@@ -107,19 +107,30 @@ Navigate to [http://localhost:8090/swagger-ui](http://localhost:8090/swagger-ui)
 
 - Create a `terraform.tfvars` file using the `terraform.tfvars.example` as a template.
 
-- Create the cluster with Kind config:
+- Create the minikube cluster using the following command
+
 ```bash
-❯ kind create cluster --config kind-config.yaml
+❯ minikube start
 ```
 
-- Get all clusters:
+-- Add 2 worker nodes to the cluster
+
 ```bash
-❯ kind get clusters
+❯ minikube node add --worker
+❯ minikube node add --worker
 ```
 
-- Delete the cluster:
+-- Configure the cluster to use the local docker registry
+
 ```bash
-❯ kind delete cluster
+TODO
+```
+
+-- Stop and delete the cluster
+
+```bash
+❯ minikube stop
+❯ minikube delete
 ```
 
 ### Steart
