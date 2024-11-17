@@ -112,6 +112,16 @@ Navigate to [http://localhost:8090/swagger-ui](http://localhost:8090/swagger-ui)
 ❯ kind create cluster --config kind-config.yaml
 ```
 
+- Get all clusters:
+```bash
+❯ kind get clusters
+```
+
+- Delete the cluster:
+```bash
+❯ kind delete cluster
+```
+
 ### Steart
 
 - Initialize terraform
