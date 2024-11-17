@@ -84,4 +84,6 @@ resource "null_resource" "skaffold_build_push" {
     # This ensures the resource is triggered whenever there are changes.
     timestamp = timestamp()
   }
+
+  depends_on = [azurerm_container_registry.acr]
 }
