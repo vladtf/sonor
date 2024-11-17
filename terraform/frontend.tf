@@ -1,3 +1,14 @@
+resource "kubernetes_config_map" "frontend_config" {
+  metadata {
+    name      = "frontend-config"
+    namespace = "default"
+  }
+
+  data = {
+    REACT_APP_BACKEND_URL = "localhost"
+  }
+}
+
 resource "kubernetes_deployment" "frontend" {
   metadata {
     name = "frontend-deployment"
@@ -52,7 +63,10 @@ resource "kubernetes_deployment" "frontend" {
     }
   }
 
-  depends_on = [azurerm_role_assignment.aks_acr_pull]
+  depends_on = [
+    kubernetes_config_map.backend_config,
+    azurerm_role_assignment.aks_acr_pull
+  ]
 }
 
 resource "kubernetes_service" "frontend_service" {
