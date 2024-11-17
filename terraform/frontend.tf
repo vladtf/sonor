@@ -36,7 +36,7 @@ resource "kubernetes_deployment" "frontend" {
       spec {
         container {
           name  = "frontend"
-          image = "${azurerm_container_registry.acr.login_server}/frontend-image:${var.image_tag}"
+          image = "frontend-image:${var.image_tag}"
 
           env_from {
             config_map_ref {
@@ -65,7 +65,6 @@ resource "kubernetes_deployment" "frontend" {
 
   depends_on = [
     kubernetes_config_map.backend_config,
-    azurerm_role_assignment.aks_acr_pull
   ]
 }
 
