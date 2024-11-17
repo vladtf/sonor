@@ -66,18 +66,9 @@ resource "kubernetes_deployment" "backend" {
             value = "http://authentication-service:5000"
           }
 
-        #   env {
-        #     name  = "JAVA_TOOL_OPTIONS"
-        #     value = "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
-        #   }
-
           port {
             container_port = 8090
           }
-
-        #   port {
-        #     container_port = 5005
-        #   }
 
           resources {
             limits = {
@@ -111,10 +102,5 @@ resource "kubernetes_service" "backend_service" {
       target_port = 8090
     }
 
-    # port {
-    #   protocol    = "TCP"
-    #   port        = 5005
-    #   target_port = 5005
-    # }
   }
 }
