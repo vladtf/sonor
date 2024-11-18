@@ -32,6 +32,11 @@ scrape_configs:
       - targets: ['backend-service:8090']
     metrics_path: /metrics
     scheme: http
+  - job_name: 'authentication'
+    static_configs:
+      - targets: ['authentication-service:8090']
+    metrics_path: /metrics
+    scheme: http
 YAML
   }
 }
