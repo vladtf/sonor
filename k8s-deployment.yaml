@@ -25,7 +25,7 @@ spec:
 apiVersion: v1
 kind: Secret
 metadata:
-  name: db-secret
+  name: postgres-secret
 type: Opaque
 stringData:
   POSTGRES_DB: "mobylab-app"
@@ -37,7 +37,7 @@ kind: ConfigMap
 metadata:
   name: backend-config
 data:
-  SPRING_DATASOURCE_URL: "jdbc:postgresql://db-service:5432/mobylab-app"
+  SPRING_DATASOURCE_URL: "jdbc:postgresql://postgres-service:5432/mobylab-app"
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -49,35 +49,36 @@ data:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: db-deployment
+  name: postgres-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: db
+      app: postgres
   template:
     metadata:
       labels:
-        app: db
+        app: postgres
     spec:
       containers:
       - name: postgres
         image: postgres-image:latest
+        imagePullPolicy: IfNotPresent
         env:
         - name: POSTGRES_DB
           valueFrom:
             secretKeyRef:
-              name: db-secret
+              name: postgres-secret
               key: POSTGRES_DB
         - name: POSTGRES_USER
           valueFrom:
             secretKeyRef:
-              name: db-secret
+              name: postgres-secret
               key: POSTGRES_USER
         - name: POSTGRES_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: db-secret
+              name: postgres-secret
               key: POSTGRES_PASSWORD
         ports:
         - containerPort: 5432
@@ -104,10 +105,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: db-service
+  name: postgres-service
 spec:
   selector:
-    app: db
+    app: postgres
   ports:
     - protocol: TCP
       port: 5432
@@ -130,6 +131,7 @@ spec:
       containers:
       - name: backend
         image: backend-image:latest
+        imagePullPolicy: IfNotPresent
         env:
         - name: SPRING_DATASOURCE_URL
           valueFrom:
@@ -139,12 +141,12 @@ spec:
         - name: SPRING_DATASOURCE_USERNAME
           valueFrom:
             secretKeyRef:
-              name: db-secret
+              name: postgres-secret
               key: POSTGRES_USER
         - name: SPRING_DATASOURCE_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: db-secret
+              name: postgres-secret
               key: POSTGRES_PASSWORD
         - name: AUTHENTICATION_SERVER_URL
           value: "http://authentication-service:5000"
@@ -195,6 +197,7 @@ spec:
       containers:
       - name: frontend
         image: frontend-image:latest
+        imagePullPolicy: IfNotPresent
         envFrom:
         - configMapRef:
             name: frontend-config
@@ -238,36 +241,37 @@ spec:
       initContainers:
       - name: wait-for-postgres
         image: busybox
-        command: ['sh', '-c', 'until nc -z db-service 5432; do echo waiting for postgres; sleep 2; done;']
+        command: ['sh', '-c', 'until nc -z postgres-service 5432; do echo waiting for postgres; sleep 2; done;']
       containers:
       - name: authentication
         image: authentication-image:latest
+        imagePullPolicy: IfNotPresent
         env:
         - name: FLASK_APP
           value: "app.py"
         - name: FLASK_RUN_HOST
           value: "0.0.0.0"
         - name: SQLALCHEMY_DATABASE_URI
-          value: "postgresql://mobylab-app:mobylab-app@db-service:5432/mobylab-app"
+          value: "postgresql://mobylab-app:mobylab-app@postgres-service:5432/mobylab-app"
         - name: SECRET_KEY
           value: "your_secret_key"
         - name: POSTGRES_USER
           valueFrom:
             secretKeyRef:
-              name: db-secret
+              name: postgres-secret
               key: POSTGRES_USER
         - name: POSTGRES_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: db-secret
+              name: postgres-secret
               key: POSTGRES_PASSWORD
         - name: POSTGRES_DB
           valueFrom:
             secretKeyRef:
-              name: db-secret
+              name: postgres-secret
               key: POSTGRES_DB
         - name: POSTGRES_HOST
-          value: "db-service"
+          value: "postgres-service"
         - name: FLASK_RUN_PORT
           value: "5000"
         ports:
@@ -309,10 +313,11 @@ spec:
       initContainers:
       - name: wait-for-postgres
         image: busybox
-        command: ['sh', '-c', 'until nc -z db-service 5432; do echo waiting for postgres; sleep 2; done;']
+        command: ['sh', '-c', 'until nc -z postgres-service 5432; do echo waiting for postgres; sleep 2; done;']
       containers:
       - name: pgadmin
         image: dpage/pgadmin4:latest
+        imagePullPolicy: IfNotPresent
         env:
         - name: PGADMIN_DEFAULT_EMAIL
           value: "admin@admin.com"
@@ -402,6 +407,7 @@ spec:
       containers:
       - name: portainer
         image: portainer-image:latest
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 9000
         resources:
@@ -506,6 +512,7 @@ spec:
       containers:
       - name: cadvisor
         image: gcr.io/cadvisor/cadvisor:latest
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080
         resources:
@@ -531,11 +538,11 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
-  name: db-network-policy
+  name: postgres-network-policy
 spec:
   podSelector:
     matchLabels:
-      app: db
+      app: postgres
   policyTypes:
   - Ingress
   - Egress
@@ -584,7 +591,7 @@ spec:
   - to:
     - podSelector:
         matchLabels:
-          app: db
+          app: postgres
     ports:
     - protocol: TCP
       port: 5432
@@ -640,7 +647,7 @@ spec:
   - to:
     - podSelector:
         matchLabels:
-          app: db
+          app: postgres
     ports:
     - protocol: TCP
       port: 5432
@@ -668,7 +675,7 @@ spec:
   - to:
     - podSelector:
         matchLabels:
-          app: db
+          app: postgres
     ports:
     - protocol: TCP
       port: 5432
@@ -712,7 +719,7 @@ data:
         "1": {
           "Group": "Servers",
           "Name": "My Local Postgres",
-          "Host": "db-service",
+          "Host": "postgres-service",
           "Port": 5432,
           "MaintenanceDB": "mobylab-app",
           "Username": "mobylab-app",
@@ -728,7 +735,7 @@ metadata:
   name: pgpass-secret
 type: Opaque
 stringData:
-  pgpass: "db-service:5432:*:mobylab-app:mobylab-app"
+  pgpass: "postgres-service:5432:*:mobylab-app:mobylab-app"
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -779,6 +786,7 @@ spec:
       containers:
       - name: prometheus
         image: prom/prometheus:latest
+        imagePullPolicy: IfNotPresent
         args:
           - '--config.file=/etc/prometheus/prometheus.yml'
         ports:
@@ -1198,6 +1206,7 @@ spec:
       containers:
       - name: grafana
         image: grafana/grafana:latest
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 3100
         env:
@@ -1270,6 +1279,7 @@ spec:
       containers:
       - name: kube-state-metrics
         image: k8s.gcr.io/kube-state-metrics/kube-state-metrics:v2.11.0
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080
         resources:
@@ -1312,6 +1322,7 @@ spec:
       containers:
       - name: node-exporter
         image: prom/node-exporter:latest
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 9100
           hostPort: 9100

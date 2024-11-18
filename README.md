@@ -113,20 +113,27 @@ Navigate to [http://localhost:8090/swagger-ui](http://localhost:8090/swagger-ui)
 ❯ minikube start
 ```
 
--- Add 2 worker nodes to the cluster
+- Install CNI plugin
+
+```bash
+❯ minikube addons enable cilium
+```
+
+- Add 2 worker nodes to the cluster
 
 ```bash
 ❯ minikube node add --worker
 ❯ minikube node add --worker
 ```
 
--- Configure the cluster to use the local docker registry
+- Load the docker images into the minikube cluster
 
 ```bash
-TODO
+❯ minikube image load frontend:latest
+❯ minikube image load backend:latest
 ```
 
--- Stop and delete the cluster
+- Stop and delete the cluster
 
 ```bash
 ❯ minikube stop

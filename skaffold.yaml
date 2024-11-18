@@ -3,9 +3,6 @@ kind: Config
 metadata:
   name: sonar-demo
 build:
-  tagPolicy:
-    envTemplate:
-      template: "{{.IMAGE_NAME}}:${IMAGE_TAG}"
   artifacts:
     - image: frontend-image
       context: frontend
@@ -19,8 +16,8 @@ build:
       context: authentication
       docker:
         dockerfile: Dockerfile
-    - image: db-image
-      context: database
+    - image: postgres-image
+      context: postgres
       docker:
         dockerfile: Dockerfile
     - image: pgadmin-image
@@ -29,10 +26,6 @@ build:
         dockerfile: Dockerfile
     - image: portainer-image
       context: portainer
-      docker:
-        dockerfile: Dockerfile
-    - image: postgres-image
-      context: database
       docker:
         dockerfile: Dockerfile
 manifests:
@@ -58,7 +51,7 @@ portForward:
     port: 5000
     localPort: 5000
   - resourceType: service
-    resourceName: db-service
+    resourceName: postgres-service
     port: 5432
     localPort: 5432
   - resourceType: service

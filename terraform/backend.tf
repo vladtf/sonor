@@ -5,8 +5,7 @@ resource "kubernetes_config_map" "backend_config" {
   }
 
   data = {
-    SPRING_DATASOURCE_URL = "jdbc:postgresql://db-service:5432/mobylab-app"
-    // Add other configuration key-value pairs as needed
+    SPRING_DATASOURCE_URL = "jdbc:postgresql://postgres-service.default.svc.cluster.local:5432/mobylab-app"
   }
 }
 
@@ -37,8 +36,10 @@ resource "kubernetes_deployment" "backend" {
       spec {
         container {
           name  = "backend"
-          image = "backend-image:${var.image_tag}"
+          image = "backend-image:latest"
 
+          image_pull_policy = "IfNotPresent"
+          
           env {
             name = "SPRING_DATASOURCE_URL"
             value_from {
@@ -53,7 +54,7 @@ resource "kubernetes_deployment" "backend" {
             name = "SPRING_DATASOURCE_USERNAME"
             value_from {
               secret_key_ref {
-                name = kubernetes_secret.db_secret.metadata[0].name
+                name = kubernetes_secret.postgres_secret.metadata[0].name
                 key  = "POSTGRES_USER"
               }
             }
@@ -63,7 +64,7 @@ resource "kubernetes_deployment" "backend" {
             name = "SPRING_DATASOURCE_PASSWORD"
             value_from {
               secret_key_ref {
-                name = kubernetes_secret.db_secret.metadata[0].name
+                name = kubernetes_secret.postgres_secret.metadata[0].name
                 key  = "POSTGRES_PASSWORD"
               }
             }
@@ -98,7 +99,8 @@ resource "kubernetes_deployment" "backend" {
   }
 
   depends_on = [
-    kubernetes_config_map.backend_config
+    kubernetes_config_map.backend_config,
+    kubernetes_service.postgres_service
   ]
 }
 

@@ -36,7 +36,9 @@ resource "kubernetes_deployment" "frontend" {
       spec {
         container {
           name  = "frontend"
-          image = "frontend-image:${var.image_tag}"
+          image = "frontend-image:latest"
+          
+          image_pull_policy = "IfNotPresent"
 
           env_from {
             config_map_ref {

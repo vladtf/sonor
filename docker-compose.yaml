@@ -18,7 +18,7 @@ services:
       dockerfile: Dockerfile
     container_name: backend_container
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/mobylab-app
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/mobylab-app
       - SPRING_DATASOURCE_USERNAME=mobylab-app
       - SPRING_DATASOURCE_PASSWORD=mobylab-app
       - AUTHENTICATION_SERVER_URL=http://authentication:5000
@@ -29,7 +29,7 @@ services:
     networks:
       - app_network
     depends_on:
-      - db
+      - postgres
   authentication:
     build:
       context: authentication
@@ -38,7 +38,7 @@ services:
     environment:
       - FLASK_APP=app.py
       - FLASK_RUN_HOST=0.0.0.0
-      - SQLALCHEMY_DATABASE_URI=postgresql://mobylab-app:mobylab-app@db:5432/mobylab-app
+      - SQLALCHEMY_DATABASE_URI=postgresql://mobylab-app:mobylab-app@postgres:5432/mobylab-app
       - SECRET_KEY=your_secret_key
       - POSTGRES_USER=mobylab-app
       - POSTGRES_PASSWORD=mobylab-app
@@ -46,13 +46,13 @@ services:
     ports:
       - "5000:5000"
     depends_on:
-      - db
+      - postgres
     networks:
       - app_network
     restart: always
-  db:
+  postgres:
     build:
-      context: database
+      context: postgres
       dockerfile: Dockerfile
     container_name: db_container
     command: ["postgres", "-c", "log_statement=all", "-c", "log_destination=stderr"]
@@ -80,7 +80,7 @@ services:
     ports:
       - "5050:80"
     depends_on:
-      - db
+      - postgres
     networks:
       - app_network
     configs:
@@ -90,13 +90,13 @@ services:
         target: /pgadmin4/servers.json  
 configs:
   pgpass:
-    content: db:5432:*:mobylab-app:mobylab-app
+    content: postgres:5432:*:mobylab-app:mobylab-app
   servers.json:
     content: |
       {"Servers": {"1": {
         "Group": "Servers",
         "Name": "My Local Postgres 16.1",
-        "Host": "db",
+        "Host": "postgres",
         "Port": 5432,
         "MaintenanceDB": "mobylab-app",
         "Username": "mobylab-app",

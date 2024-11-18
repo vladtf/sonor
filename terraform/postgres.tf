@@ -1,6 +1,6 @@
-resource "kubernetes_secret" "db_secret" {
+resource "kubernetes_secret" "postgres_secret" {
   metadata {
-    name = "db-secret"
+    name = "postgres-secret"
   }
 
   data = {
@@ -50,9 +50,9 @@ resource "kubernetes_secret" "db_secret" {
 
 resource "kubernetes_deployment" "postgres" {
   metadata {
-    name = "db-deployment"
+    name = "postgres-deployment"
     labels = {
-      app = "db"
+      app = "postgres"
     }
   }
 
@@ -61,27 +61,29 @@ resource "kubernetes_deployment" "postgres" {
 
     selector {
       match_labels = {
-        app = "db"
+        app = "postgres"
       }
     }
 
     template {
       metadata {
         labels = {
-          app = "db"
+          app = "postgres"
         }
       }
 
       spec {
         container {
           name  = "postgres"
-          image = "postgres-image:${var.image_tag}"
+          image = "postgres-image:latest"
 
+          image_pull_policy = "IfNotPresent"
+          
           env {
             name = "POSTGRES_DB"
             value_from {
               secret_key_ref {
-                name = kubernetes_secret.db_secret.metadata[0].name
+                name = kubernetes_secret.postgres_secret.metadata[0].name
                 key  = "POSTGRES_DB"
               }
             }
@@ -91,7 +93,7 @@ resource "kubernetes_deployment" "postgres" {
             name = "POSTGRES_USER"
             value_from {
               secret_key_ref {
-                name = kubernetes_secret.db_secret.metadata[0].name
+                name = kubernetes_secret.postgres_secret.metadata[0].name
                 key  = "POSTGRES_USER"
               }
             }
@@ -101,7 +103,7 @@ resource "kubernetes_deployment" "postgres" {
             name = "POSTGRES_PASSWORD"
             value_from {
               secret_key_ref {
-                name = kubernetes_secret.db_secret.metadata[0].name
+                name = kubernetes_secret.postgres_secret.metadata[0].name
                 key  = "POSTGRES_PASSWORD"
               }
             }
@@ -150,14 +152,14 @@ resource "kubernetes_deployment" "postgres" {
   depends_on = []
 }
 
-resource "kubernetes_service" "db_service" {
+resource "kubernetes_service" "postgres_service" {
   metadata {
-    name = "db-service"
+    name = "postgres-service"
   }
 
   spec {
     selector = {
-      app = "db"
+      app = "postgres"
     }
 
     port {
