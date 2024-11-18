@@ -1,8 +1,8 @@
-# Web Programming - Project
+# Sonor - social app
 
 ## Table of Contents
 
-- [Web Programming - Project](#web-programming---project)
+- [Sonor - social app](#sonor---social-app)
   - [Table of Contents](#table-of-contents)
   - [Run Docker Compose](#run-docker-compose)
   - [Stop Docker Compose](#stop-docker-compose)
