@@ -4,49 +4,49 @@ resource "kubernetes_secret" "postgres_secret" {
   }
 
   data = {
-    POSTGRES_DB       = base64encode("mobylab-app")
-    POSTGRES_USER     = base64encode("mobylab-app")
-    POSTGRES_PASSWORD = base64encode("mobylab-app")
+    POSTGRES_DB       = "mobylab-app"
+    POSTGRES_USER     = "mobylab-app"
+    POSTGRES_PASSWORD = "mobylab-app"
   }
 }
 
-# resource "kubernetes_persistent_volume" "postgres_pv" {
-#   metadata {
-#     name = "postgres-pv"
-#   }
+resource "kubernetes_persistent_volume" "postgres_pv" {
+  metadata {
+    name = "postgres-pv"
+  }
 
-#   spec {
-#     capacity = {
-#       storage = "1Gi"
-#     }
-#     access_modes = ["ReadWriteOnce"]
-#     persistent_volume_reclaim_policy = "Retain"
+  spec {
+    capacity = {
+      storage = "1Gi"
+    }
+    access_modes = ["ReadWriteOnce"]
+    persistent_volume_reclaim_policy = "Retain"
 
-#     persistent_volume_source {
-#       host_path {
-#         path = "/mnt/data"
-#       }
-#     }
-#   }
-# }
+    persistent_volume_source {
+      host_path {
+        path = "/mnt/data"
+      }
+    }
+  }
+}
 
-# resource "kubernetes_persistent_volume_claim" "postgres_pvc" {
-#   metadata {
-#     name = "postgres-pvc"
-#   }
+resource "kubernetes_persistent_volume_claim" "postgres_pvc" {
+  metadata {
+    name = "postgres-pvc"
+  }
 
-#   spec {
-#     access_modes = ["ReadWriteOnce"]
+  spec {
+    access_modes = ["ReadWriteOnce"]
 
-#     resources {
-#       requests = {
-#         storage = "1Gi"
-#       }
-#     }
+    resources {
+      requests = {
+        storage = "1Gi"
+      }
+    }
 
-#     volume_name = kubernetes_persistent_volume.postgres_pv.metadata[0].name
-#   }
-# }
+    volume_name = kubernetes_persistent_volume.postgres_pv.metadata[0].name
+  }
+}
 
 resource "kubernetes_deployment" "postgres" {
   metadata {
@@ -124,10 +124,10 @@ resource "kubernetes_deployment" "postgres" {
             }
           }
 
-        #   volume_mount {
-        #     mount_path = "/var/lib/postgresql/data"
-        #     name       = "postgres-data"
-        #   }
+          volume_mount {
+            mount_path = "/var/lib/postgresql/data"
+            name       = "postgres-data"
+          }
 
           readiness_probe {
             tcp_socket {
@@ -138,13 +138,13 @@ resource "kubernetes_deployment" "postgres" {
           }
         }
 
-        # volume {
-        #   name = "postgres-data"
+        volume {
+          name = "postgres-data"
 
-        #   persistent_volume_claim {
-        #     claim_name = kubernetes_persistent_volume_claim.postgres_pvc.metadata[0].name
-        #   }
-        # }
+          persistent_volume_claim {
+            claim_name = kubernetes_persistent_volume_claim.postgres_pvc.metadata[0].name
+          }
+        }
       }
     }
   }
