@@ -73,6 +73,7 @@ def register():
 
 @app.route('/login', methods=['POST'])
 def login():
+    logger.info('Login request received')
     data = request.get_json()
     if not data or not data.get('username') or not data.get('password'):
         logger.warning('Username and password required for login')
