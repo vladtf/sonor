@@ -172,7 +172,41 @@ resource "kubernetes_service" "postgres_service" {
   }
 }
 
-output "postgres_service_fqdn" {
-  value = "${kubernetes_service.postgres_service.metadata[0].name}.${kubernetes_service.postgres_service.metadata[0].namespace}.svc.cluster.local"
-  description = "Fully Qualified Domain Name of the PostgreSQL service"
+resource "kubernetes_network_policy" "postgres_network_policy" {
+  metadata {
+    name = "postgres-network-policy"
+  }
+
+  spec {
+    pod_selector {
+      match_labels = {
+        app = "postgres"
+      }
+    }
+
+    policy_types = ["Ingress"]
+
+    ingress {
+      from {
+        pod_selector {
+          match_labels = {
+            app = "authentication"
+          }
+        }
+      }
+
+      from {
+        pod_selector {
+          match_labels = {
+            app = "backend"
+          }
+        }
+      }
+
+      ports {
+        protocol = "TCP"
+        port     = 5432
+      }
+    }
+  }
 }
