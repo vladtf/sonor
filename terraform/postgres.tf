@@ -171,3 +171,8 @@ resource "kubernetes_service" "postgres_service" {
     }
   }
 }
+
+output "postgres_service_fqdn" {
+  value = "${kubernetes_service.postgres_service.metadata[0].name}.${kubernetes_service.postgres_service.metadata[0].namespace}.svc.cluster.local"
+  description = "Fully Qualified Domain Name of the PostgreSQL service"
+}
