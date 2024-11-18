@@ -1,10 +1,3 @@
-
-resource "kubernetes_service_account" "authentication_sa" {
-  metadata {
-    name = "authentication-sa"
-  }
-}
-
 resource "kubernetes_deployment" "authentication" {
   metadata {
     name = "authentication-deployment"
@@ -30,8 +23,12 @@ resource "kubernetes_deployment" "authentication" {
       }
 
       spec {
-        service_account_name = kubernetes_service_account.authentication_sa.metadata[0].name
 
+        init_container {
+          name  = "wait-for-postgres"
+          image = "busybox:1.31.1"
+          command = ["sh", "-c", "until nc -z postgres-service 5432; do echo waiting for postgres; sleep 2; done;"]
+        }
         container {
           name  = "authentication"
           image = docker_image.authentication_image.name

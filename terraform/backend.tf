@@ -34,6 +34,11 @@ resource "kubernetes_deployment" "backend" {
       }
 
       spec {
+        init_container {
+          name  = "wait-for-postgres"
+          image = "busybox:1.31.1"
+          command = ["sh", "-c", "until nc -z postgres-service 5432; do echo waiting for postgres; sleep 2; done;"]
+        }
         container {
           name  = "backend"
           image = docker_image.backend_image.name
