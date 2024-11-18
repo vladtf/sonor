@@ -27,6 +27,11 @@ scrape_configs:
       - targets: ['cadvisor-service:8080']
     metrics_path: /metrics
     scheme: http
+  - job_name: 'backend'
+    static_configs:
+      - targets: ['backend-service:8090']
+    metrics_path: /metrics
+    scheme: http
 YAML
   }
 }
