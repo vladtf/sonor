@@ -12,6 +12,7 @@
   - [Terraform](#terraform)
     - [Prerequisites](#prerequisites)
     - [Steart](#steart)
+  - [Known issues](#known-issues)
 
 ## Run Docker Compose
 
@@ -156,3 +157,8 @@ Navigate to [http://localhost:8090/swagger-ui](http://localhost:8090/swagger-ui)
 ```bash
 ❯ terraform apply -var-file="terraform.tfvars"
 ```
+
+## Known issues
+
+* The cluster started with minikube has an issue with the dns resolution. The workaround is to use fqdn instead of the service name.
+* The port-forwarding has to be done manually for all the services.
