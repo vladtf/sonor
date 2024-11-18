@@ -10,24 +10,13 @@ resource "kubernetes_secret" "postgres_secret" {
   }
 }
 
-resource "kubernetes_persistent_volume" "postgres_pv" {
+resource "kubernetes_storage_class" "postgres_sc" {
   metadata {
-    name = "postgres-pv"
+    name = "postgres-storage-class"
   }
 
-  spec {
-    capacity = {
-      storage = "1Gi"
-    }
-    access_modes = ["ReadWriteOnce"]
-    persistent_volume_reclaim_policy = "Retain"
-
-    persistent_volume_source {
-      host_path {
-        path = "/mnt/data"
-      }
-    }
-  }
+  storage_provisioner = "kubernetes.io/no-provisioner" # Use this for Minikube or "kubernetes.io/aws-ebs" for AWS, etc.
+  volume_binding_mode = "Immediate"
 }
 
 resource "kubernetes_persistent_volume_claim" "postgres_pvc" {
@@ -44,7 +33,7 @@ resource "kubernetes_persistent_volume_claim" "postgres_pvc" {
       }
     }
 
-    volume_name = kubernetes_persistent_volume.postgres_pv.metadata[0].name
+    storage_class_name = kubernetes_storage_class.postgres_sc.metadata[0].name
   }
 }
 
@@ -78,7 +67,7 @@ resource "kubernetes_deployment" "postgres" {
           image = "postgres-image:latest"
 
           image_pull_policy = "IfNotPresent"
-          
+
           env {
             name = "POSTGRES_DB"
             value_from {
