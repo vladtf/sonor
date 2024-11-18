@@ -1,0 +1,115 @@
+
+resource "docker_image" "frontend_image" {
+  name = "frontend-image:${var.image_tag}"
+  build {
+    context    = "${path.module}/../frontend"
+    dockerfile = "Dockerfile"
+  }
+}
+
+resource "null_resource" "load_frontend_image" {
+  triggers = {
+    docker_image_id = docker_image.frontend_image.id
+  }
+  provisioner "local-exec" {
+    command = "minikube image load ${docker_image.frontend_image.name}"
+  }
+
+  depends_on = [docker_image.frontend_image]
+}
+
+resource "docker_image" "backend_image" {
+  name = "backend-image:${var.image_tag}"
+  build {
+    context    = "${path.module}/../backend"
+    dockerfile = "Dockerfile"
+  }
+}
+
+resource "null_resource" "load_backend_image" {
+  triggers = {
+    docker_image_id = docker_image.backend_image.id
+  }
+  provisioner "local-exec" {
+    command = "minikube image load ${docker_image.backend_image.name}"
+  }
+
+  depends_on = [docker_image.backend_image]
+}
+
+resource "docker_image" "authentication_image" {
+  name = "authentication-image:${var.image_tag}"
+  build {
+    context    = "${path.module}/../authentication"
+    dockerfile = "Dockerfile"
+  }
+}
+
+resource "null_resource" "load_authentication_image" {
+  triggers = {
+    docker_image_id = docker_image.authentication_image.id
+  }
+  provisioner "local-exec" {
+    command = "minikube image load ${docker_image.authentication_image.name}"
+  }
+
+  depends_on = [docker_image.authentication_image]
+}
+
+resource "docker_image" "postgres_image" {
+  name = "postgres-image:${var.image_tag}"
+  build {
+    context    = "${path.module}/../postgres"
+    dockerfile = "Dockerfile"
+  }
+}
+
+resource "null_resource" "load_postgres_image" {
+  triggers = {
+    docker_image_id = docker_image.postgres_image.id
+  }
+  provisioner "local-exec" {
+    command = "minikube image load ${docker_image.postgres_image.name}"
+  }
+
+  depends_on = [docker_image.postgres_image]
+}
+
+resource "docker_image" "pgadmin_image" {
+  name = "pgadmin-image:${var.image_tag}"
+  build {
+    context    = "${path.module}/../pgadmin"
+    dockerfile = "Dockerfile"
+  }
+}
+
+resource "null_resource" "load_pgadmin_image" {
+  triggers = {
+    docker_image_id = docker_image.pgadmin_image.id
+  }
+  provisioner "local-exec" {
+    command = "minikube image load ${docker_image.pgadmin_image.name}"
+  }
+
+  depends_on = [docker_image.pgadmin_image]
+}
+
+resource "docker_image" "portainer_image" {
+  name = "portainer-image:${var.image_tag}"
+  build {
+    context    = "${path.module}/../portainer"
+    dockerfile = "Dockerfile"
+  }
+}
+
+resource "null_resource" "load_portainer_image" {
+  triggers = {
+    docker_image_id = docker_image.portainer_image.id
+  }
+  provisioner "local-exec" {
+    command = "minikube image load ${docker_image.portainer_image.name}"
+  }
+
+  depends_on = [docker_image.portainer_image]
+}
+

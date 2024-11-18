@@ -36,7 +36,7 @@ resource "kubernetes_deployment" "backend" {
       spec {
         container {
           name  = "backend"
-          image = "backend-image:latest"
+          image = docker_image.backend_image.name
 
           image_pull_policy = "IfNotPresent"
           

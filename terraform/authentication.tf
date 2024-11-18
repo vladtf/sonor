@@ -34,7 +34,7 @@ resource "kubernetes_deployment" "authentication" {
 
         container {
           name  = "authentication"
-          image = "authentication-image:latest"
+          image = docker_image.authentication_image.name
 
           image_pull_policy = "IfNotPresent"
 

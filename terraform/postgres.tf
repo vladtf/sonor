@@ -77,7 +77,7 @@ resource "kubernetes_deployment" "postgres" {
       spec {
         container {
           name  = "postgres"
-          image = "postgres-image:latest"
+          image = docker_image.postgres_image.name
 
           image_pull_policy = "IfNotPresent"
           

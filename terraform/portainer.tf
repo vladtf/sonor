@@ -63,7 +63,7 @@ resource "kubernetes_deployment" "portainer" {
 
         container {
           name  = "portainer"
-          image = "portainer-image:latest"
+          image = docker_image.portainer_image.name
 
           image_pull_policy = "IfNotPresent"
 

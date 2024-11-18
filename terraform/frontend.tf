@@ -36,7 +36,7 @@ resource "kubernetes_deployment" "frontend" {
       spec {
         container {
           name  = "frontend"
-          image = "frontend-image:latest"
+          image = docker_image.frontend_image.name
           
           image_pull_policy = "IfNotPresent"
 
