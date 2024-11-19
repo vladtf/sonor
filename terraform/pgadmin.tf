@@ -13,8 +13,8 @@ resource "kubernetes_config_map" "pgadmin_servers_config" {
       "Name": "My Local Postgres",
       "Host": "postgres-service",
       "Port": 5432,
-      "MaintenanceDB": "mobylab-app",
-      "Username": "mobylab-app",
+      "MaintenanceDB": "${var.db_name}",
+      "Username": "${var.db_user}",
       "PassFile": "/pgpass",
       "SSLMode": "prefer"
     }
@@ -32,7 +32,7 @@ resource "kubernetes_secret" "pgpass_secret" {
   type = "Opaque"
 
   data = {
-    pgpass = "postgres-service:5432:*:mobylab-app:mobylab-app"
+    pgpass = "postgres-service:5432:*:${var.db_user}:${var.db_password}"
   }
 }
 

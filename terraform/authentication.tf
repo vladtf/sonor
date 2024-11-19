@@ -47,7 +47,7 @@ resource "kubernetes_deployment" "authentication" {
 
           env {
             name  = "SQLALCHEMY_DATABASE_URI"
-            value = "postgresql://mobylab-app:mobylab-app@postgres-service.default.svc.cluster.local:5432/mobylab-app"
+            value = "postgresql://${var.db_user}:${var.db_password}@postgres-service.default.svc.cluster.local:5432/${var.db_name}"
           }
 
           env {
@@ -62,28 +62,18 @@ resource "kubernetes_deployment" "authentication" {
 
           env {
             name  = "POSTGRES_DB"
-            value = "mobylab-app"
+            value = var.db_name
           }
 
 
           env {
             name = "POSTGRES_USER"
-            value_from {
-              secret_key_ref {
-                name = kubernetes_secret.postgres_secret.metadata[0].name
-                key  = "POSTGRES_USER"
-              }
-            }
+            value = var.db_user
           }
 
           env {
             name = "POSTGRES_PASSWORD"
-            value_from {
-              secret_key_ref {
-                name = kubernetes_secret.postgres_secret.metadata[0].name
-                key  = "POSTGRES_PASSWORD"
-              }
-            }
+            value = var.db_password
           }
 
           env {

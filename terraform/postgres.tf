@@ -4,9 +4,9 @@ resource "kubernetes_secret" "postgres_secret" {
   }
 
   data = {
-    POSTGRES_DB       = "mobylab-app"
-    POSTGRES_USER     = "mobylab-app"
-    POSTGRES_PASSWORD = "mobylab-app"
+    POSTGRES_DB       = var.db_name
+    POSTGRES_USER     = var.db_user
+    POSTGRES_PASSWORD = var.db_password
   }
 }
 

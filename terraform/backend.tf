@@ -5,9 +5,22 @@ resource "kubernetes_config_map" "backend_config" {
   }
 
   data = {
-    SPRING_DATASOURCE_URL = "jdbc:postgresql://postgres-service.default.svc.cluster.local:5432/mobylab-app"
+    SPRING_DATASOURCE_URL = "jdbc:postgresql://postgres-service.default.svc.cluster.local:5432/${var.db_name}"
   }
 }
+
+// database secrets
+resource "kubernetes_secret" "backend_secret" {
+  metadata {
+    name = "backend-secret"
+  }
+
+  data = {
+    db_user     = var.db_user
+    db_password = var.db_password
+  }
+}
+
 
 resource "kubernetes_deployment" "backend" {
   metadata {
@@ -57,22 +70,12 @@ resource "kubernetes_deployment" "backend" {
 
           env {
             name = "SPRING_DATASOURCE_USERNAME"
-            value_from {
-              secret_key_ref {
-                name = kubernetes_secret.postgres_secret.metadata[0].name
-                key  = "POSTGRES_USER"
-              }
-            }
+            value = kubernetes_secret.backend_secret.data["db_user"]
           }
 
           env {
             name = "SPRING_DATASOURCE_PASSWORD"
-            value_from {
-              secret_key_ref {
-                name = kubernetes_secret.postgres_secret.metadata[0].name
-                key  = "POSTGRES_PASSWORD"
-              }
-            }
+            value = kubernetes_secret.backend_secret.data["db_password"]
           }
 
           env {
