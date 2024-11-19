@@ -11,7 +11,7 @@ resource "kubernetes_config_map" "pgadmin_servers_config" {
     "1": {
       "Group": "Servers",
       "Name": "My Local Postgres",
-      "Host": "postgres-service",
+      "Host": "${kubernetes_service.postgres_service.metadata[0].name}",
       "Port": 5432,
       "MaintenanceDB": "${var.db_name}",
       "Username": "${var.db_user}",
@@ -32,7 +32,7 @@ resource "kubernetes_secret" "pgpass_secret" {
   type = "Opaque"
 
   data = {
-    pgpass = "postgres-service:5432:*:${var.db_user}:${var.db_password}"
+    pgpass = "${kubernetes_service.postgres_service.metadata[0].name}:5432:*:${var.db_user}:${var.db_password}"
   }
 }
 

@@ -27,7 +27,7 @@ resource "kubernetes_deployment" "authentication" {
         init_container {
           name  = "wait-for-postgres"
           image = "busybox:1.31.1"
-          command = ["sh", "-c", "until nc -z postgres-service 5432; do echo waiting for postgres; sleep 2; done;"]
+          command = ["sh", "-c", "until nc -z ${kubernetes_service.postgres_service.metadata[0].name} 5432; do echo waiting for postgres; sleep 2; done;"]
         }
         container {
           name  = "authentication"
@@ -46,18 +46,13 @@ resource "kubernetes_deployment" "authentication" {
           }
 
           env {
-            name  = "SQLALCHEMY_DATABASE_URI"
-            value = "postgresql://${var.db_user}:${var.db_password}@postgres-service.default.svc.cluster.local:5432/${var.db_name}"
-          }
-
-          env {
             name  = "SECRET_KEY"
-            value = "your_secret_key"
+            value = var.authentication_secret
           }
 
           env {
             name  = "POSTGRES_HOST"
-            value = "postgres-service.default.svc.cluster.local"
+            value = kubernetes_service.postgres_service.metadata[0].name
           }
 
           env {

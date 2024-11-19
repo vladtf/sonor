@@ -203,6 +203,14 @@ resource "kubernetes_network_policy" "postgres_network_policy" {
         }
       }
 
+      from {
+        pod_selector {
+          match_labels = {
+            app = "pgadmin"
+          }
+        }
+      }
+
       ports {
         protocol = "TCP"
         port     = 5432

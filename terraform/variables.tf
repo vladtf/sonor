@@ -21,3 +21,9 @@ variable "db_name" {
   type        = string
   default     = "mobylab-app"
 }
+
+variable "authentication_secret" {
+  description = "Secret key for authentication"
+  type        = string
+  default     = "your_secret_key"
+}

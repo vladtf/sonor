@@ -5,7 +5,7 @@ resource "kubernetes_config_map" "backend_config" {
   }
 
   data = {
-    SPRING_DATASOURCE_URL = "jdbc:postgresql://postgres-service.default.svc.cluster.local:5432/${var.db_name}"
+    SPRING_DATASOURCE_URL = "jdbc:postgresql://${kubernetes_service.postgres_service.metadata[0].name}:5432/${var.db_name}"
   }
 }
 
@@ -50,7 +50,7 @@ resource "kubernetes_deployment" "backend" {
         init_container {
           name  = "wait-for-postgres"
           image = "busybox:1.31.1"
-          command = ["sh", "-c", "until nc -z postgres-service 5432; do echo waiting for postgres; sleep 2; done;"]
+          command = ["sh", "-c", "until nc -z ${kubernetes_service.postgres_service.metadata[0].name} 5432; do echo waiting for postgres; sleep 2; done;"]
         }
         container {
           name  = "backend"
