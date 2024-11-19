@@ -41,6 +41,10 @@ YAML
   }
 }
 
+locals {
+  prometheus_config_hash = "${sha1(kubernetes_config_map.prometheus_config.data["prometheus.yml"])}"
+}
+
 
 
 // Prometheus Deployment
@@ -49,6 +53,9 @@ resource "kubernetes_deployment" "prometheus" {
     name = "prometheus-deployment"
     labels = {
       app = "prometheus"
+    }
+    annotations = {
+      "checksum/config-map" = local.prometheus_config_hash
     }
   }
 
@@ -65,6 +72,9 @@ resource "kubernetes_deployment" "prometheus" {
       metadata {
         labels = {
           app = "prometheus"
+        }
+        annotations = {
+          "checksum/config-map" = local.prometheus_config_hash
         }
       }
 
