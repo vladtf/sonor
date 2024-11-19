@@ -4,18 +4,6 @@ resource "kubernetes_service_account" "portainer_sa" {
   }
 }
 
-resource "kubernetes_cluster_role" "portainer_clusterrole" {
-  metadata {
-    name = "portainer-clusterrole"
-  }
-
-  rule {
-    api_groups = ["", "apps", "extensions", "batch", "autoscaling", "networking.k8s.io", "storage.k8s.io", "rbac.authorization.k8s.io"]
-    resources  = ["*"]
-    verbs      = ["get", "list", "watch", "create", "update", "patch", "delete"]
-  }
-}
-
 resource "kubernetes_cluster_role_binding" "portainer_clusterrolebinding" {
   metadata {
     name = "portainer-clusterrolebinding"
@@ -29,7 +17,7 @@ resource "kubernetes_cluster_role_binding" "portainer_clusterrolebinding" {
 
   role_ref {
     kind     = "ClusterRole"
-    name     = kubernetes_cluster_role.portainer_clusterrole.metadata[0].name
+    name     = "cluster-admin"
     api_group = "rbac.authorization.k8s.io"
   }
 }
