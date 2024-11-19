@@ -12,7 +12,7 @@ resource "kubernetes_cluster_role" "portainer_clusterrole" {
   rule {
     api_groups = ["", "apps", "extensions", "batch", "autoscaling", "networking.k8s.io", "storage.k8s.io", "rbac.authorization.k8s.io"]
     resources  = ["*"]
-    verbs      = ["get", "list", "watch"]
+    verbs      = ["get", "list", "watch", "create", "update", "patch", "delete"]
   }
 }
 
