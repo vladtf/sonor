@@ -9,19 +9,9 @@ resource "kubernetes_config_map" "prometheus_config" {
 global:
   scrape_interval: 15s
 scrape_configs:
-  - job_name: 'kubernetes-pods'
-    kubernetes_sd_configs:
-      - role: pod
-    relabel_configs:
-      - source_labels: [__meta_kubernetes_pod_label_app]
-        action: keep
-        regex: .+
   - job_name: 'kube-state-metrics'
     static_configs:
       - targets: ['kube-state-metrics:8080']
-  - job_name: 'node-exporter'
-    static_configs:
-      - targets: ['node-exporter:9100']
   - job_name: 'cadvisor'
     static_configs:
       - targets: ['cadvisor-service:8080']
@@ -30,11 +20,6 @@ scrape_configs:
   - job_name: 'backend'
     static_configs:
       - targets: ['backend-service:8090']
-    metrics_path: /metrics
-    scheme: http
-  - job_name: 'authentication'
-    static_configs:
-      - targets: ['authentication-service:8090']
     metrics_path: /metrics
     scheme: http
 YAML
