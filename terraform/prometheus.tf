@@ -13,10 +13,13 @@ scrape_configs:
     static_configs:
       - targets: ['kube-state-metrics:8080']
   - job_name: 'cadvisor'
-    static_configs:
-      - targets: ['cadvisor-service:8080']
-    metrics_path: /metrics
-    scheme: http
+    kubernetes_sd_configs:
+      - role: node
+    relabel_configs:
+      - source_labels: [__address__]
+        regex: (.*):10250
+        target_label: __address__
+        replacement: $1:31080
   - job_name: 'backend'
     static_configs:
       - targets: ['backend-service:8090']
@@ -27,7 +30,7 @@ YAML
 }
 
 locals {
-  prometheus_config_hash = "${sha1(kubernetes_config_map.prometheus_config.data["prometheus.yml"])}"
+  prometheus_config_hash = sha1(kubernetes_config_map.prometheus_config.data["prometheus.yml"])
 }
 
 
@@ -64,6 +67,8 @@ resource "kubernetes_deployment" "prometheus" {
       }
 
       spec {
+        service_account_name = kubernetes_service_account.prometheus_sa.metadata[0].name
+
         container {
           name  = "prometheus"
           image = "prom/prometheus:latest"
@@ -126,5 +131,60 @@ resource "kubernetes_service" "prometheus_service" {
       port        = 9090
       target_port = 9090
     }
+  }
+}
+
+// Prometheus Service Account
+resource "kubernetes_service_account" "prometheus_sa" {
+  metadata {
+    name = "prometheus-sa"
+  }
+}
+
+resource "kubernetes_cluster_role" "prometheus_role" {
+  metadata {
+    name = "prometheus-role"
+  }
+
+  rule {
+    api_groups = [""]
+    resources  = ["nodes"]
+    verbs      = ["get", "list", "watch"]
+  }
+}
+
+resource "kubernetes_cluster_role_binding" "prometheus_clusterrolebinding" {
+  metadata {
+    name = "prometheus-clusterrolebinding"
+  }
+
+  subject {
+    kind      = "ServiceAccount"
+    name      = kubernetes_service_account.prometheus_sa.metadata[0].name
+    namespace = "default"
+  }
+
+  role_ref {
+    kind      = "ClusterRole"
+    name      = "cluster-admin"
+    api_group = "rbac.authorization.k8s.io"
+  }
+}
+
+resource "kubernetes_cluster_role_binding" "prometheus_node_clusterrolebinding" {
+  metadata {
+    name = "prometheus-node-clusterrolebinding"
+  }
+
+  subject {
+    kind      = "ServiceAccount"
+    name      = kubernetes_service_account.prometheus_sa.metadata[0].name
+    namespace = "default"
+  }
+
+  role_ref {
+    kind      = "ClusterRole"
+    name      = kubernetes_cluster_role.prometheus_role.metadata[0].name
+    api_group = "rbac.authorization.k8s.io"
   }
 }

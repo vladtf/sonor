@@ -61,6 +61,25 @@ resource "kubernetes_service_account" "kube_state_metrics_sa" {
   }
 }
 
+resource "kubernetes_cluster_role_binding" "kube_state_metrics_clusterrolebinding" {
+  metadata {
+    name = "kube-state-metrics-clusterrolebinding"
+  }
+
+  subject {
+    kind      = "ServiceAccount"
+    name      = kubernetes_service_account.kube_state_metrics_sa.metadata[0].name
+    namespace = "default"
+  }
+
+  role_ref {
+    kind      = "ClusterRole"
+    name      = "cluster-admin"
+    api_group = "rbac.authorization.k8s.io"
+  }
+}
+
+
 resource "kubernetes_service" "kube_state_metrics_service" {
   metadata {
     name = "kube-state-metrics"

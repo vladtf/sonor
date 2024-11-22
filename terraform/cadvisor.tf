@@ -5,6 +5,25 @@ resource "kubernetes_service_account" "cadvisor_sa" {
   }
 }
 
+resource "kubernetes_cluster_role_binding" "cadvisor_clusterrolebinding" {
+  metadata {
+    name = "cadvisor-clusterrolebinding"
+  }
+
+  subject {
+    kind      = "ServiceAccount"
+    name      = kubernetes_service_account.cadvisor_sa.metadata[0].name
+    namespace = "default"
+  }
+
+  role_ref {
+    kind     = "ClusterRole"
+    name     = "cluster-admin"
+    api_group = "rbac.authorization.k8s.io"
+  }
+}
+
+
 // cAdvisor DaemonSet
 resource "kubernetes_daemonset" "cadvisor" {
   metadata {
@@ -137,10 +156,13 @@ resource "kubernetes_service" "cadvisor_service" {
       app = "cadvisor"
     }
 
+    type = "NodePort" # Expose on all nodes
+
     port {
       protocol    = "TCP"
       port        = 8080
       target_port = 8080
+      node_port   = 31080 # Static port for easier configuration
     }
   }
 }
