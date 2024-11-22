@@ -121,7 +121,8 @@ resource "kubernetes_daemonset" "cadvisor" {
   }
 
   depends_on = [
-    kubernetes_service_account.cadvisor_sa
+    kubernetes_service_account.cadvisor_sa,
+    null_resource.start_minikube
   ]
 }
 

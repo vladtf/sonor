@@ -50,7 +50,8 @@ resource "kubernetes_deployment" "kube_state_metrics" {
   }
 
   depends_on = [
-    kubernetes_service_account.kube_state_metrics_sa
+    kubernetes_service_account.kube_state_metrics_sa,
+    null_resource.start_minikube
   ]
 }
 

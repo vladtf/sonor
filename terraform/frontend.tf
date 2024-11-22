@@ -67,6 +67,7 @@ resource "kubernetes_deployment" "frontend" {
 
   depends_on = [
     kubernetes_config_map.backend_config,
+    null_resource.start_minikube
   ]
 }
 

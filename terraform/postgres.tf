@@ -151,7 +151,9 @@ resource "kubernetes_deployment" "postgres" {
     }
   }
 
-  depends_on = []
+  depends_on = [
+    null_resource.start_minikube
+  ]
 }
 
 resource "kubernetes_service" "postgres_service" {

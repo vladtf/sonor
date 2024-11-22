@@ -105,7 +105,8 @@ resource "kubernetes_deployment" "prometheus" {
   }
 
   depends_on = [
-    kubernetes_config_map.prometheus_config
+    kubernetes_config_map.prometheus_config,
+    null_resource.start_minikube
   ]
 }
 

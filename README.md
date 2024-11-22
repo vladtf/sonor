@@ -11,7 +11,7 @@
   - [Skaffold](#skaffold)
   - [Terraform](#terraform)
     - [Prerequisites](#prerequisites)
-    - [Steart](#steart)
+    - [Start](#start)
   - [Known issues](#known-issues)
 
 ## Run Docker Compose
@@ -141,7 +141,7 @@ Navigate to [http://localhost:8090/swagger-ui](http://localhost:8090/swagger-ui)
 ❯ minikube delete
 ```
 
-### Steart
+### Start
 
 - Initialize terraform
 ```bash
@@ -153,12 +153,24 @@ Navigate to [http://localhost:8090/swagger-ui](http://localhost:8090/swagger-ui)
 ❯ terraform plan
 ```
 
+- Start the minikube cluster
+```bash
+❯ terraform apply --target=null_resource.start_minikube
+```
+
+> Note: The `--target=null_resource.start_minikube` flag is used to start the minikube cluster only. This is needed because the kubeconfig file is generated only after the cluster is started. 
+
 - Apply the changes
 ```bash
-❯ terraform apply -var-file="terraform.tfvars"
+❯ terraform apply
 ```
+
+- Forwards the ports
+```bash
+❯ ./scripts/forward-all.ps1
+```
+
 
 ## Known issues
 
-* The cluster started with minikube has an issue with the dns resolution. The workaround is to use fqdn instead of the service name.
 * The port-forwarding has to be done manually for all the services.

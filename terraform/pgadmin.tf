@@ -139,7 +139,8 @@ resource "kubernetes_deployment" "pgadmin" {
 
   depends_on = [
     kubernetes_config_map.pgadmin_servers_config,
-    kubernetes_secret.pgpass_secret
+    kubernetes_secret.pgpass_secret,
+    null_resource.start_minikube
   ]
 }
 

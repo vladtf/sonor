@@ -108,7 +108,8 @@ resource "kubernetes_deployment" "authentication" {
 
   depends_on = [
     kubernetes_config_map.backend_config,
-    kubernetes_service.postgres_service
+    kubernetes_service.postgres_service,
+    null_resource.start_minikube
   ]
 }
 

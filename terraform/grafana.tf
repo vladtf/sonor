@@ -595,7 +595,8 @@ resource "kubernetes_deployment" "grafana" {
   depends_on = [
     kubernetes_config_map.grafana_datasources,
     kubernetes_config_map.grafana_dashboards_config,
-    kubernetes_config_map.grafana_dashboards
+    kubernetes_config_map.grafana_dashboards,
+    null_resource.start_minikube
   ]
 }
 

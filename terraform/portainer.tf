@@ -76,7 +76,8 @@ resource "kubernetes_deployment" "portainer" {
 
   depends_on = [
     kubernetes_service_account.portainer_sa,
-    kubernetes_cluster_role_binding.portainer_clusterrolebinding
+    kubernetes_cluster_role_binding.portainer_clusterrolebinding,
+    null_resource.start_minikube
   ]
 }
 
