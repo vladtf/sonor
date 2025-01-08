@@ -6,6 +6,7 @@
 
 - [Sonor - social app](#sonor---social-app)
   - [Table of Contents](#table-of-contents)
+  - [Components](#components)
   - [Run Docker Compose](#run-docker-compose)
   - [Stop Docker Compose](#stop-docker-compose)
   - [Swagger](#swagger)
@@ -15,6 +16,19 @@
     - [Prerequisites](#prerequisites)
     - [Start](#start)
   - [Known issues](#known-issues)
+
+## Components
+
+- **Frontend**: A React-based web application.
+- **Backend**: A Spring Boot application that provides REST APIs.
+- **Authentication**: A Flask-based authentication service.
+- **Database**: A PostgreSQL database.
+- **pgAdmin**: A web-based database management tool.
+- **Portainer**: A container management tool.
+- **Prometheus**: A monitoring and alerting toolkit.
+- **Grafana**: A data visualization and monitoring tool.
+- **cAdvisor**: A container resource usage and performance analysis tool.
+- **kube-state-metrics**: A service that generates metrics about the state of Kubernetes objects.
 
 ## Run Docker Compose
 
