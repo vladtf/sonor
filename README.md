@@ -1,5 +1,7 @@
 # Sonor - social app
 
+[Repository for the Sonor social app](https://github.com/vladtf/sonor).
+
 ## Table of Contents
 
 - [Sonor - social app](#sonor---social-app)
